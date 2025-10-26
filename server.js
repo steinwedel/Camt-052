@@ -29,6 +29,38 @@ const parserOptions = {
 
 const parser = new XMLParser(parserOptions);
 
+// Helper function to convert object to XML string
+function objectToXML(obj, indent = 0) {
+    const spaces = '  '.repeat(indent);
+    let xml = '';
+    
+    for (const [key, value] of Object.entries(obj)) {
+        if (key.startsWith('@_')) continue; // Skip attributes for now
+        
+        if (value === null || value === undefined) continue;
+        
+        if (typeof value === 'object' && !Array.isArray(value)) {
+            xml += `${spaces}<${key}>\n`;
+            xml += objectToXML(value, indent + 1);
+            xml += `${spaces}</${key}>\n`;
+        } else if (Array.isArray(value)) {
+            value.forEach(item => {
+                xml += `${spaces}<${key}>\n`;
+                if (typeof item === 'object') {
+                    xml += objectToXML(item, indent + 1);
+                } else {
+                    xml += `${spaces}  ${item}\n`;
+                }
+                xml += `${spaces}</${key}>\n`;
+            });
+        } else {
+            xml += `${spaces}<${key}>${value}</${key}>\n`;
+        }
+    }
+    
+    return xml;
+}
+
 // Helper function to safely get nested values
 function getNestedValue(obj, path) {
     return path.split('.').reduce((current, key) => current?.[key], obj);
@@ -129,6 +161,9 @@ function parseCamt052(xmlData) {
                                 tx.Refs?.MsgId || 
                                 'N/A';
 
+                // Generate raw XML for this entry
+                const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
+                
                 const transaction = {
                     bookingDate: formatDate(entry.BookgDt?.Dt || entry.BookgDt),
                     valueDate: formatDate(entry.ValDt?.Dt || entry.ValDt),
@@ -147,7 +182,8 @@ function parseCamt052(xmlData) {
                     receiverAccount: creditDebit === 'DBIT' ? creditorAccount : accountInfo.iban,
                     purpose: Array.isArray(remittanceInfo) ? remittanceInfo.join(' ') : remittanceInfo,
                     reference: reference,
-                    status: entry.Sts || 'BOOK'
+                    status: entry.Sts || 'BOOK',
+                    rawXML: rawXML
                 };
 
                 allTransactions.push(transaction);
