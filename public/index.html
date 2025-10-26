@@ -522,7 +522,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Prüfung</th>
                                     <th>Datum Eröffnungsaldo</th>
                                     <th>Eröffnungssaldo</th>
                                     <th>Datum Schlusssaldo</th>
@@ -708,9 +707,8 @@
                     }
                     
                     row.innerHTML = `
-                        <td style="text-align: center;">${validationSymbol}</td>
                         <td>${balanceData.openingDate}</td>
-                        <td>${balanceData.openingAmount}</td>
+                        <td>${balanceData.openingAmount}${validationSymbol}</td>
                         <td>${balanceData.closingDate}</td>
                         <td>${balanceData.closingAmount}</td>
                     `;
