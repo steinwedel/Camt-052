@@ -658,29 +658,42 @@
                     balancesByFile[fileName].push(bal);
                 });
                 
-                // Create a row for each file's balances
+                // Create array of balance data for sorting
+                const balanceRows = [];
                 Object.keys(balancesByFile).forEach(fileName => {
                     const fileBalances = balancesByFile[fileName];
                     const openingBalance = fileBalances.find(b => b.type === 'OPBD');
                     const closingBalance = fileBalances.find(b => b.type === 'CLBD');
                     
                     if (openingBalance || closingBalance) {
-                        const row = document.createElement('tr');
-                        
-                        const openingDate = openingBalance ? openingBalance.date : 'N/A';
-                        const openingAmount = openingBalance ? formatAmount(openingBalance.amount, openingBalance.currency) : 'N/A';
-                        const closingDate = closingBalance ? closingBalance.date : 'N/A';
-                        const closingAmount = closingBalance ? formatAmount(closingBalance.amount, closingBalance.currency) : 'N/A';
-                        
-                        row.innerHTML = `
-                            <td>${openingDate}</td>
-                            <td>${openingAmount}</td>
-                            <td>${closingDate}</td>
-                            <td>${closingAmount}</td>
-                        `;
-                        
-                        balanceTableBody.appendChild(row);
+                        balanceRows.push({
+                            openingBalance: openingBalance,
+                            closingBalance: closingBalance,
+                            openingDate: openingBalance ? openingBalance.date : 'N/A',
+                            openingAmount: openingBalance ? formatAmount(openingBalance.amount, openingBalance.currency) : 'N/A',
+                            closingDate: closingBalance ? closingBalance.date : 'N/A',
+                            closingAmount: closingBalance ? formatAmount(closingBalance.amount, closingBalance.currency) : 'N/A'
+                        });
                     }
+                });
+                
+                // Sort by opening balance date
+                balanceRows.sort((a, b) => {
+                    if (a.openingDate === 'N/A') return 1;
+                    if (b.openingDate === 'N/A') return -1;
+                    return new Date(a.openingDate) - new Date(b.openingDate);
+                });
+                
+                // Create table rows in sorted order
+                balanceRows.forEach(balanceData => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${balanceData.openingDate}</td>
+                        <td>${balanceData.openingAmount}</td>
+                        <td>${balanceData.closingDate}</td>
+                        <td>${balanceData.closingAmount}</td>
+                    `;
+                    balanceTableBody.appendChild(row);
                 });
                 
                 document.getElementById('balanceSection').classList.remove('hidden');
