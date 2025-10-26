@@ -708,9 +708,9 @@
                     
                     row.innerHTML = `
                         <td>${balanceData.openingDate}</td>
-                        <td>${balanceData.openingAmount}${validationSymbol}</td>
+                        <td style="text-align: right;">${balanceData.openingAmount}${validationSymbol}</td>
                         <td>${balanceData.closingDate}</td>
-                        <td>${balanceData.closingAmount}</td>
+                        <td style="text-align: right;">${balanceData.closingAmount}</td>
                     `;
                     balanceTableBody.appendChild(row);
                 });
