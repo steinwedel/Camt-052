@@ -143,12 +143,33 @@ function parseCamt052(xmlData) {
             const txArray = txDetails ? (Array.isArray(txDetails) ? txDetails : [txDetails]) : [{}];
 
             txArray.forEach(tx => {
-                // Extract party information
+                // Extract party information - handle multiple formats
                 const relatedParties = tx.RltdPties || {};
-                const debtor = relatedParties.Dbtr?.Nm || 'N/A';
-                const debtorAccount = getNestedValue(relatedParties, 'DbtrAcct.Id.IBAN') || 'N/A';
-                const creditor = relatedParties.Cdtr?.Nm || 'N/A';
-                const creditorAccount = getNestedValue(relatedParties, 'CdtrAcct.Id.IBAN') || 'N/A';
+                
+                // Try different party structures (Dbtr/Cdtr or Pty)
+                let debtor = relatedParties.Dbtr?.Nm || relatedParties.Pty?.Nm || 'N/A';
+                let debtorAccount = getNestedValue(relatedParties, 'DbtrAcct.Id.IBAN') || 
+                                   getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
+                let creditor = relatedParties.Cdtr?.Nm || relatedParties.Pty?.Nm || 'N/A';
+                let creditorAccount = getNestedValue(relatedParties, 'CdtrAcct.Id.IBAN') || 
+                                     getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
+                
+                // If Pty is used, determine debtor/creditor based on transaction type
+                if (relatedParties.Pty && !relatedParties.Dbtr && !relatedParties.Cdtr) {
+                    if (creditDebit === 'DBIT') {
+                        // Debit: Pty is the creditor (receiver)
+                        creditor = relatedParties.Pty.Nm || 'N/A';
+                        creditorAccount = getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
+                        debtor = accountInfo.owner;
+                        debtorAccount = accountInfo.iban;
+                    } else {
+                        // Credit: Pty is the debtor (sender)
+                        debtor = relatedParties.Pty.Nm || 'N/A';
+                        debtorAccount = getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
+                        creditor = accountInfo.owner;
+                        creditorAccount = accountInfo.iban;
+                    }
+                }
 
                 // Extract remittance information (purpose)
                 const remittanceInfo = tx.RmtInf?.Ustrd || 
