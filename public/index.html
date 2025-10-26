@@ -648,28 +648,40 @@
                 const balanceTableBody = document.getElementById('balanceTableBody');
                 balanceTableBody.innerHTML = '';
                 
-                // Find opening and closing balances
-                const openingBalance = data.balances.find(b => b.type === 'OPBD');
-                const closingBalance = data.balances.find(b => b.type === 'CLBD');
+                // Group balances by fileName
+                const balancesByFile = {};
+                data.balances.forEach(bal => {
+                    const fileName = bal.fileName || 'default';
+                    if (!balancesByFile[fileName]) {
+                        balancesByFile[fileName] = [];
+                    }
+                    balancesByFile[fileName].push(bal);
+                });
                 
-                // Create a table row with opening and closing balance
-                if (openingBalance || closingBalance) {
-                    const row = document.createElement('tr');
+                // Create a row for each file's balances
+                Object.keys(balancesByFile).forEach(fileName => {
+                    const fileBalances = balancesByFile[fileName];
+                    const openingBalance = fileBalances.find(b => b.type === 'OPBD');
+                    const closingBalance = fileBalances.find(b => b.type === 'CLBD');
                     
-                    const openingDate = openingBalance ? openingBalance.date : 'N/A';
-                    const openingAmount = openingBalance ? formatAmount(openingBalance.amount, openingBalance.currency) : 'N/A';
-                    const closingDate = closingBalance ? closingBalance.date : 'N/A';
-                    const closingAmount = closingBalance ? formatAmount(closingBalance.amount, closingBalance.currency) : 'N/A';
-                    
-                    row.innerHTML = `
-                        <td>${openingDate}</td>
-                        <td>${openingAmount}</td>
-                        <td>${closingDate}</td>
-                        <td>${closingAmount}</td>
-                    `;
-                    
-                    balanceTableBody.appendChild(row);
-                }
+                    if (openingBalance || closingBalance) {
+                        const row = document.createElement('tr');
+                        
+                        const openingDate = openingBalance ? openingBalance.date : 'N/A';
+                        const openingAmount = openingBalance ? formatAmount(openingBalance.amount, openingBalance.currency) : 'N/A';
+                        const closingDate = closingBalance ? closingBalance.date : 'N/A';
+                        const closingAmount = closingBalance ? formatAmount(closingBalance.amount, closingBalance.currency) : 'N/A';
+                        
+                        row.innerHTML = `
+                            <td>${openingDate}</td>
+                            <td>${openingAmount}</td>
+                            <td>${closingDate}</td>
+                            <td>${closingAmount}</td>
+                        `;
+                        
+                        balanceTableBody.appendChild(row);
+                    }
+                });
                 
                 document.getElementById('balanceSection').classList.remove('hidden');
             }
