@@ -286,11 +286,12 @@ app.post('/upload', upload.single('xmlFile'), (req, res) => {
                     accountInfo = parsedData.account;
                 }
                 
-                // Combine balances (avoid duplicates)
+                // Add balances with file name for tracking
                 parsedData.balances.forEach(bal => {
-                    if (!balances.find(b => b.type === bal.type && b.date === bal.date)) {
-                        balances.push(bal);
-                    }
+                    balances.push({
+                        ...bal,
+                        fileName: entry.entryName
+                    });
                 });
                 
                 // Combine all transactions
