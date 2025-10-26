@@ -199,29 +199,28 @@ function parseCamt052(xmlData, fileName = '') {
                 }
 
                 // Extract remittance information (purpose)
-                // Combine Purp.Prtry, AddtlTxInf, and RmtInf.Ustrd with spaces
-                const purposeParts = [];
+                // Priority-based selection: Purp > AddtlTxInf > RmtInf.Ustrd
+                let remittanceInfo = 'N/A';
                 
-                // Add Purp.Prtry if exists
+                // First priority: Purp.Prtry
                 const purpPrtry = tx.Purp?.Prtry;
                 if (purpPrtry) {
-                    purposeParts.push(purpPrtry);
+                    remittanceInfo = purpPrtry;
                 }
-                
-                // Add AddtlTxInf if exists
-                const addtlTxInf = tx.AddtlTxInf;
-                if (addtlTxInf) {
-                    purposeParts.push(addtlTxInf);
+                // Second priority: AddtlTxInf (only if Purp doesn't exist)
+                else {
+                    const addtlTxInf = tx.AddtlTxInf;
+                    if (addtlTxInf) {
+                        remittanceInfo = addtlTxInf;
+                    }
+                    // Third priority: RmtInf.Ustrd (only if neither Purp nor AddtlTxInf exist)
+                    else {
+                        const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
+                        if (rmtInfUstrd) {
+                            remittanceInfo = rmtInfUstrd;
+                        }
+                    }
                 }
-                
-                // Add RmtInf.Ustrd if exists
-                const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
-                if (rmtInfUstrd) {
-                    purposeParts.push(rmtInfUstrd);
-                }
-                
-                // Combine all parts with spaces, or use 'N/A' if nothing found
-                const remittanceInfo = purposeParts.length > 0 ? purposeParts.join(' ') : 'N/A';
 
                 // Extract reference
                 const reference = tx.Refs?.EndToEndId || 
