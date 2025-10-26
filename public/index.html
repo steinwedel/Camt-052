@@ -205,6 +205,21 @@
             margin-top: 5px;
         }
 
+        .balance-validation {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .validation-success {
+            color: #28a745;
+        }
+
+        .validation-error {
+            color: #dc3545;
+        }
+
         .transactions-section h2 {
             color: #495057;
             margin-bottom: 20px;
@@ -620,12 +635,50 @@
                 const balanceGrid = document.getElementById('balanceGrid');
                 balanceGrid.innerHTML = '';
                 
+                // Find opening and closing balances for validation
+                const openingBalance = data.balances.find(b => b.type === 'OPBD');
+                const closingBalance = data.balances.find(b => b.type === 'CLBD');
+                
+                // Calculate transaction sum
+                let transactionSum = 0;
+                data.transactions.forEach(t => {
+                    if (t.creditDebit === 'CRDT') {
+                        transactionSum += t.rawAmount;
+                    } else if (t.creditDebit === 'DBIT') {
+                        transactionSum -= t.rawAmount;
+                    }
+                });
+                
+                // Validate balance
+                let isBalanceValid = false;
+                if (openingBalance && closingBalance) {
+                    const openingAmount = openingBalance.creditDebit === 'CRDT' 
+                        ? parseFloat(openingBalance.amount) 
+                        : -parseFloat(openingBalance.amount);
+                    const closingAmount = closingBalance.creditDebit === 'CRDT' 
+                        ? parseFloat(closingBalance.amount) 
+                        : -parseFloat(closingBalance.amount);
+                    
+                    const expectedClosing = openingAmount + transactionSum;
+                    // Use a small epsilon for floating point comparison
+                    isBalanceValid = Math.abs(expectedClosing - closingAmount) < 0.01;
+                }
+                
                 data.balances.forEach(balance => {
                     const balanceItem = document.createElement('div');
                     balanceItem.className = 'balance-item';
+                    
+                    // Add validation symbol for closing balance
+                    let validationSymbol = '';
+                    if (balance.type === 'CLBD' && openingBalance) {
+                        const symbolClass = isBalanceValid ? 'validation-success' : 'validation-error';
+                        const symbol = isBalanceValid ? '✓' : '✗';
+                        validationSymbol = `<span class="balance-validation ${symbolClass}" title="${isBalanceValid ? 'Saldo stimmt überein' : 'Saldo stimmt nicht überein'}">${symbol}</span>`;
+                    }
+                    
                     balanceItem.innerHTML = `
                         <div class="balance-type">${getBalanceTypeName(balance.type)}</div>
-                        <div class="balance-amount">${formatAmount(balance.amount, balance.currency)}</div>
+                        <div class="balance-amount">${formatAmount(balance.amount, balance.currency)}${validationSymbol}</div>
                         <div class="balance-date">${balance.date}</div>
                     `;
                     balanceGrid.appendChild(balanceItem);
