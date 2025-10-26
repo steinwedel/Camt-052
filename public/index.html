@@ -475,13 +475,13 @@
     <div class="container">
         <div class="header">
             <h1>📊 CAMT.052 Kontoauszug Viewer</h1>
-            <p>Laden Sie Ihre CAMT.052 v8 XML-Datei hoch, um Ihre Buchungen anzuzeigen</p>
+            <p>Laden Sie Ihre CAMT.052 v8 XML-Datei oder ZIP-Datei mit mehreren XML-Dateien hoch</p>
         </div>
 
         <div class="upload-section">
             <div class="upload-container">
                 <div class="file-input-wrapper">
-                    <input type="file" id="xmlFile" accept=".xml" />
+                    <input type="file" id="xmlFile" accept=".xml,.zip" />
                     <label for="xmlFile" class="file-input-label">📁 Datei auswählen</label>
                 </div>
                 <div class="file-name" id="fileName">Keine Datei ausgewählt</div>
@@ -542,6 +542,8 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>Auszug vom</th>
+                                    <th>Auszugnummer</th>
                                     <th>Typ</th>
                                     <th>Buchungsdatum</th>
                                     <th>Valutadatum</th>
@@ -706,6 +708,8 @@
                 const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
                 
                 row.innerHTML = `
+                    <td>${transaction.statementDate}</td>
+                    <td>${transaction.statementNumber}</td>
                     <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
                     <td>${transaction.bookingDate}</td>
                     <td>${transaction.valueDate}</td>
