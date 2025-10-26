@@ -131,8 +131,7 @@ function parseCamt052(xmlData, fileName = '') {
             owner: getNestedValue(account, 'Ownr.Nm') || 'N/A'
         };
 
-        // Extract balances
-        const balanceData = rpt.Bal;
+        // Extract balances (reuse balanceData from above)
         if (balanceData) {
             const balArray = Array.isArray(balanceData) ? balanceData : [balanceData];
             balances = balArray.map(bal => ({
