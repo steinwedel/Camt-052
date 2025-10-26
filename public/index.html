@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAMT.052 Kontoauszug Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .upload-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .upload-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .file-input-label:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .file-name {
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            min-width: 250px;
+            color: #495057;
+        }
+
+        .upload-btn {
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .account-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .account-info h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #212529;
+            font-size: 1.1em;
+        }
+
+        .balance-section {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        .balance-section h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .balance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .balance-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .balance-type {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .balance-date {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .transactions-section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .amount-credit {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .amount-debit {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .type-eingang {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .type-ausgang {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #dc3545;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 CAMT.052 Kontoauszug Viewer</h1>
+            <p>Laden Sie Ihre CAMT.052 v8 XML-Datei hoch, um Ihre Buchungen anzuzeigen</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-container">
+                <div class="file-input-wrapper">
+                    <input type="file" id="xmlFile" accept=".xml" />
+                    <label for="xmlFile" class="file-input-label">📁 Datei auswählen</label>
+                </div>
+                <div class="file-name" id="fileName">Keine Datei ausgewählt</div>
+                <button class="upload-btn" id="uploadBtn" disabled>🚀 Hochladen & Analysieren</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Datei wird verarbeitet...</p>
+            </div>
+
+            <div id="error" class="error-message hidden"></div>
+
+            <div id="results" class="hidden">
+                <div class="account-info">
+                    <h2>📋 Kontoinformationen</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">IBAN</span>
+                            <span class="info-value" id="accountIban">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Kontoinhaber</span>
+                            <span class="info-value" id="accountOwner">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Währung</span>
+                            <span class="info-value" id="accountCurrency">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="balanceSection" class="balance-section hidden">
+                    <h2>💰 Kontostände</h2>
+                    <div class="balance-grid" id="balanceGrid"></div>
+                </div>
+
+                <div class="stats" id="statsSection">
+                    <div class="stat-card">
+                        <div class="stat-label">Anzahl Buchungen</div>
+                        <div class="stat-value" id="totalTransactions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Eingänge</div>
+                        <div class="stat-value amount-credit" id="totalCredits">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Ausgänge</div>
+                        <div class="stat-value amount-debit" id="totalDebits">0</div>
+                    </div>
+                </div>
+
+                <div class="transactions-section">
+                    <h2>💳 Buchungen</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Typ</th>
+                                    <th>Buchungsdatum</th>
+                                    <th>Valutadatum</th>
+                                    <th>Absender</th>
+                                    <th>Empfänger</th>
+                                    <th>Betrag</th>
+                                    <th>Verwendungszweck</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('xmlFile');
+        const fileName = document.getElementById('fileName');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const results = document.getElementById('results');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileName.textContent = e.target.files[0].name;
+                uploadBtn.disabled = false;
+            } else {
+                fileName.textContent = 'Keine Datei ausgewählt';
+                uploadBtn.disabled = true;
+            }
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('xmlFile', file);
+
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            results.classList.add('hidden');
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Fehler beim Hochladen');
+                }
+
+                displayResults(data);
+            } catch (err) {
+                error.textContent = `Fehler: ${err.message}`;
+                error.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+
+        function displayResults(data) {
+            // Display account info
+            document.getElementById('accountIban').textContent = data.account.iban;
+            document.getElementById('accountOwner').textContent = data.account.owner;
+            document.getElementById('accountCurrency').textContent = data.account.currency;
+
+            // Display balances
+            if (data.balances && data.balances.length > 0) {
+                const balanceGrid = document.getElementById('balanceGrid');
+                balanceGrid.innerHTML = '';
+                
+                data.balances.forEach(balance => {
+                    const balanceItem = document.createElement('div');
+                    balanceItem.className = 'balance-item';
+                    balanceItem.innerHTML = `
+                        <div class="balance-type">${getBalanceTypeName(balance.type)}</div>
+                        <div class="balance-amount">${formatAmount(balance.amount, balance.currency)}</div>
+                        <div class="balance-date">${balance.date}</div>
+                    `;
+                    balanceGrid.appendChild(balanceItem);
+                });
+                
+                document.getElementById('balanceSection').classList.remove('hidden');
+            }
+
+            // Calculate statistics
+            const totalTransactions = data.transactions.length;
+            const credits = data.transactions.filter(t => t.creditDebit === 'CRDT').length;
+            const debits = data.transactions.filter(t => t.creditDebit === 'DBIT').length;
+
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('totalCredits').textContent = credits;
+            document.getElementById('totalDebits').textContent = debits;
+
+            // Display transactions
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            data.transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const amountClass = transaction.creditDebit === 'CRDT' ? 'amount-credit' : 'amount-debit';
+                const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
+                
+                row.innerHTML = `
+                    <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
+                    <td>${transaction.bookingDate}</td>
+                    <td>${transaction.valueDate}</td>
+                    <td>
+                        <strong>${transaction.sender}</strong><br>
+                        <small style="color: #6c757d;">${transaction.senderAccount}</small>
+                    </td>
+                    <td>
+                        <strong>${transaction.receiver}</strong><br>
+                        <small style="color: #6c757d;">${transaction.receiverAccount}</small>
+                    </td>
+                    <td class="${amountClass}">${transaction.amount}</td>
+                    <td>${transaction.purpose}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            results.classList.remove('hidden');
+        }
+
+        function formatAmount(amount, currency) {
+            const num = parseFloat(amount);
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: currency || 'EUR'
+            }).format(num);
+        }
+
+        function getBalanceTypeName(type) {
+            const types = {
+                'OPBD': 'Eröffnungssaldo',
+                'CLBD': 'Schlusssaldo',
+                'ITBD': 'Zwischensaldo',
+                'PRCD': 'Vorheriger Saldo',
+                'FWAV': 'Verfügbarer Saldo'
+            };
+            return types[type] || type;
+        }
+    </script>
+</body>
+</html>
