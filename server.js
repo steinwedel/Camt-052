@@ -312,10 +312,20 @@ app.post('/upload', upload.single('xmlFile'), (req, res) => {
             const xmlData = fs.readFileSync(req.file.path, 'utf8');
             const parsedData = parseCamt052(xmlData, req.file.originalname);
 
+            // Add fileName to balances for consistency with ZIP handling
+            const balancesWithFileName = parsedData.balances.map(bal => ({
+                ...bal,
+                fileName: req.file.originalname
+            }));
+
             // Clean up uploaded file
             fs.unlinkSync(req.file.path);
 
-            res.json(parsedData);
+            res.json({
+                account: parsedData.account,
+                balances: balancesWithFileName,
+                transactions: parsedData.transactions
+            });
         } else {
             fs.unlinkSync(req.file.path);
             return res.status(400).json({ error: 'Ungültiges Dateiformat. Bitte laden Sie eine XML- oder ZIP-Datei hoch.' });
