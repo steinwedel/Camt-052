@@ -518,7 +518,20 @@
 
                 <div id="balanceSection" class="balance-section hidden">
                     <h2>💰 Kontostände</h2>
-                    <div class="balance-grid" id="balanceGrid"></div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Datum Eröffnungsaldo</th>
+                                    <th>Eröffnungssaldo</th>
+                                    <th>Datum Schlusssaldo</th>
+                                    <th>Schlusssaldo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="balanceTableBody">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="stats" id="statsSection">
@@ -632,63 +645,31 @@
 
             // Display balances
             if (data.balances && data.balances.length > 0) {
-                const balanceGrid = document.getElementById('balanceGrid');
-                balanceGrid.innerHTML = '';
+                const balanceTableBody = document.getElementById('balanceTableBody');
+                balanceTableBody.innerHTML = '';
                 
-                // Check if transactions come from multiple files (ZIP with multiple XML files)
-                const uniqueFiles = [...new Set(data.transactions.map(t => t.fileName).filter(f => f))];
-                const isMultipleFiles = uniqueFiles.length > 1;
-                
-                // Find opening and closing balances for validation
+                // Find opening and closing balances
                 const openingBalance = data.balances.find(b => b.type === 'OPBD');
                 const closingBalance = data.balances.find(b => b.type === 'CLBD');
                 
-                // Only validate balance for single file uploads
-                let isBalanceValid = false;
-                let shouldValidate = !isMultipleFiles && openingBalance && closingBalance;
-                
-                if (shouldValidate) {
-                    // Calculate transaction sum only for single file
-                    let transactionSum = 0;
-                    data.transactions.forEach(t => {
-                        if (t.creditDebit === 'CRDT') {
-                            transactionSum += t.rawAmount;
-                        } else if (t.creditDebit === 'DBIT') {
-                            transactionSum -= t.rawAmount;
-                        }
-                    });
+                // Create a table row with opening and closing balance
+                if (openingBalance || closingBalance) {
+                    const row = document.createElement('tr');
                     
-                    const openingAmount = openingBalance.creditDebit === 'CRDT' 
-                        ? parseFloat(openingBalance.amount) 
-                        : -parseFloat(openingBalance.amount);
-                    const closingAmount = closingBalance.creditDebit === 'CRDT' 
-                        ? parseFloat(closingBalance.amount) 
-                        : -parseFloat(closingBalance.amount);
+                    const openingDate = openingBalance ? openingBalance.date : 'N/A';
+                    const openingAmount = openingBalance ? formatAmount(openingBalance.amount, openingBalance.currency) : 'N/A';
+                    const closingDate = closingBalance ? closingBalance.date : 'N/A';
+                    const closingAmount = closingBalance ? formatAmount(closingBalance.amount, closingBalance.currency) : 'N/A';
                     
-                    const expectedClosing = openingAmount + transactionSum;
-                    // Use a small epsilon for floating point comparison
-                    isBalanceValid = Math.abs(expectedClosing - closingAmount) < 0.01;
-                }
-                
-                data.balances.forEach(balance => {
-                    const balanceItem = document.createElement('div');
-                    balanceItem.className = 'balance-item';
-                    
-                    // Add validation symbol for closing balance (only for single file uploads)
-                    let validationSymbol = '';
-                    if (balance.type === 'CLBD' && shouldValidate) {
-                        const symbolClass = isBalanceValid ? 'validation-success' : 'validation-error';
-                        const symbol = isBalanceValid ? '✓' : '✗';
-                        validationSymbol = `<span class="balance-validation ${symbolClass}" title="${isBalanceValid ? 'Saldo stimmt überein' : 'Saldo stimmt nicht überein'}">${symbol}</span>`;
-                    }
-                    
-                    balanceItem.innerHTML = `
-                        <div class="balance-type">${getBalanceTypeName(balance.type)}</div>
-                        <div class="balance-amount">${formatAmount(balance.amount, balance.currency)}${validationSymbol}</div>
-                        <div class="balance-date">${balance.date}</div>
+                    row.innerHTML = `
+                        <td>${openingDate}</td>
+                        <td>${openingAmount}</td>
+                        <td>${closingDate}</td>
+                        <td>${closingAmount}</td>
                     `;
-                    balanceGrid.appendChild(balanceItem);
-                });
+                    
+                    balanceTableBody.appendChild(row);
+                }
                 
                 document.getElementById('balanceSection').classList.remove('hidden');
             }
