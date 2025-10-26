@@ -274,6 +274,20 @@
             border-bottom: none;
         }
 
+        .balance-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .balance-row:hover {
+            background: #d4e9ff !important;
+        }
+
+        .balance-row.selected {
+            background: #b3d9ff !important;
+            border-left: 4px solid #007bff;
+        }
+
         .amount-credit {
             color: #28a745;
             font-weight: 600;
@@ -605,6 +619,10 @@
         const error = document.getElementById('error');
         const results = document.getElementById('results');
 
+        // Global variables for filtering
+        let allTransactionsData = [];
+        let currentSelectedFileName = null;
+
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 fileName.textContent = e.target.files[0].name;
@@ -647,11 +665,75 @@
             }
         });
 
+        function filterTransactionsByFile(fileName, clickedRow) {
+            // Toggle selection
+            if (currentSelectedFileName === fileName) {
+                // Deselect - show all transactions
+                currentSelectedFileName = null;
+                document.querySelectorAll('.balance-row').forEach(r => r.classList.remove('selected'));
+                displayTransactions(allTransactionsData);
+            } else {
+                // Select - filter transactions
+                currentSelectedFileName = fileName;
+                document.querySelectorAll('.balance-row').forEach(r => r.classList.remove('selected'));
+                clickedRow.classList.add('selected');
+                
+                const filteredTransactions = allTransactionsData.filter(t => t.fileName === fileName);
+                displayTransactions(filteredTransactions);
+            }
+        }
+
+        function displayTransactions(transactions) {
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            transactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                const amountClass = transaction.creditDebit === 'CRDT' ? 'amount-credit' : 'amount-debit';
+                const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
+                
+                row.innerHTML = `
+                    <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
+                    <td>${transaction.bookingDate}</td>
+                    <td>${transaction.valueDate}</td>
+                    <td>
+                        <strong>${transaction.sender}</strong><br>
+                        <small style="color: #6c757d;">${transaction.senderAccount}</small>
+                    </td>
+                    <td>
+                        <strong>${transaction.receiver}</strong><br>
+                        <small style="color: #6c757d;">${transaction.receiverAccount}</small>
+                    </td>
+                    <td class="${amountClass}">${transaction.amount}</td>
+                    <td>${transaction.purpose}</td>
+                    <td>
+                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)})'>
+                            📋 XML anzeigen
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update statistics for current view
+            const totalTransactions = transactions.length;
+            const credits = transactions.filter(t => t.creditDebit === 'CRDT').length;
+            const debits = transactions.filter(t => t.creditDebit === 'DBIT').length;
+
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('totalCredits').textContent = credits;
+            document.getElementById('totalDebits').textContent = debits;
+        }
+
         function displayResults(data) {
             // Display account info
             document.getElementById('accountIban').textContent = data.account.iban;
             document.getElementById('accountOwner').textContent = data.account.owner;
             document.getElementById('accountCurrency').textContent = data.account.currency;
+
+            // Store all transactions globally for filtering
+            allTransactionsData = data.transactions;
+            currentSelectedFileName = null;
 
             // Display balances
             if (data.balances && data.balances.length > 0) {
@@ -677,6 +759,7 @@
                     
                     if (openingBalance || closingBalance) {
                         balanceRows.push({
+                            fileName: fileName,
                             openingBalance: openingBalance,
                             closingBalance: closingBalance,
                             openingDate: openingBalance ? openingBalance.date : 'N/A',
@@ -697,6 +780,13 @@
                 // Create table rows in sorted order with validation
                 balanceRows.forEach((balanceData, index) => {
                     const row = document.createElement('tr');
+                    row.className = 'balance-row';
+                    row.dataset.fileName = balanceData.fileName;
+                    
+                    // Add click handler for filtering transactions
+                    row.addEventListener('click', function() {
+                        filterTransactionsByFile(balanceData.fileName, this);
+                    });
                     
                     // Validate opening balance against previous closing balance
                     let validationSymbol = '';
@@ -728,46 +818,8 @@
                 document.getElementById('balanceSection').classList.remove('hidden');
             }
 
-            // Calculate statistics
-            const totalTransactions = data.transactions.length;
-            const credits = data.transactions.filter(t => t.creditDebit === 'CRDT').length;
-            const debits = data.transactions.filter(t => t.creditDebit === 'DBIT').length;
-
-            document.getElementById('totalTransactions').textContent = totalTransactions;
-            document.getElementById('totalCredits').textContent = credits;
-            document.getElementById('totalDebits').textContent = debits;
-
-            // Display transactions
-            const tbody = document.getElementById('transactionsBody');
-            tbody.innerHTML = '';
-
-            data.transactions.forEach(transaction => {
-                const row = document.createElement('tr');
-                const amountClass = transaction.creditDebit === 'CRDT' ? 'amount-credit' : 'amount-debit';
-                const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
-                
-                row.innerHTML = `
-                    <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
-                    <td>${transaction.bookingDate}</td>
-                    <td>${transaction.valueDate}</td>
-                    <td>
-                        <strong>${transaction.sender}</strong><br>
-                        <small style="color: #6c757d;">${transaction.senderAccount}</small>
-                    </td>
-                    <td>
-                        <strong>${transaction.receiver}</strong><br>
-                        <small style="color: #6c757d;">${transaction.receiverAccount}</small>
-                    </td>
-                    <td class="${amountClass}">${transaction.amount}</td>
-                    <td>${transaction.purpose}</td>
-                    <td>
-                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)})'>
-                            📋 XML anzeigen
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
+            // Display all transactions initially
+            displayTransactions(allTransactionsData);
 
             results.classList.remove('hidden');
         }
