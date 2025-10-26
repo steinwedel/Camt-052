@@ -550,6 +550,7 @@
                                     <th>Eröffnungssaldo</th>
                                     <th>Datum Schlusssaldo</th>
                                     <th>Schlusssaldo</th>
+                                    <th>Anzahl Buchungen</th>
                                 </tr>
                             </thead>
                             <tbody id="balanceTableBody">
@@ -806,11 +807,15 @@
                         }
                     }
                     
+                    // Count transactions for this file
+                    const transactionCount = allTransactionsData.filter(t => t.fileName === balanceData.fileName).length;
+                    
                     row.innerHTML = `
                         <td>${balanceData.openingDate}</td>
                         <td style="text-align: right;">${balanceData.openingAmount}${validationSymbol}</td>
                         <td>${balanceData.closingDate}</td>
                         <td style="text-align: right;">${balanceData.closingAmount}</td>
+                        <td style="text-align: center;">${transactionCount}</td>
                     `;
                     balanceTableBody.appendChild(row);
                 });
