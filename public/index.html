@@ -550,6 +550,7 @@
                                     <th>Eröffnungssaldo</th>
                                     <th>Datum Schlusssaldo</th>
                                     <th>Schlusssaldo</th>
+                                    <th>Berechnet</th>
                                     <th>Anzahl Buchungen</th>
                                 </tr>
                             </thead>
@@ -807,14 +808,38 @@
                         }
                     }
                     
-                    // Count transactions for this file
-                    const transactionCount = allTransactionsData.filter(t => t.fileName === balanceData.fileName).length;
+                    // Count transactions for this file and calculate sum
+                    const fileTransactions = allTransactionsData.filter(t => t.fileName === balanceData.fileName);
+                    const transactionCount = fileTransactions.length;
+                    
+                    // Calculate sum of transactions (CRDT positive, DBIT negative)
+                    const transactionSum = fileTransactions.reduce((sum, t) => {
+                        const amount = t.rawAmount;
+                        return sum + (t.creditDebit === 'CRDT' ? amount : -amount);
+                    }, 0);
+                    
+                    // Validate: opening balance + transaction sum = closing balance
+                    let balanceValidation = '';
+                    if (balanceData.openingBalance && balanceData.closingBalance) {
+                        const openingAmount = parseFloat(balanceData.openingBalance.amount);
+                        const closingAmount = parseFloat(balanceData.closingBalance.amount);
+                        const calculatedClosing = openingAmount + transactionSum;
+                        const isBalanceValid = Math.abs(calculatedClosing - closingAmount) < 0.01;
+                        
+                        const balanceSymbolClass = isBalanceValid ? 'validation-success' : 'validation-error';
+                        const balanceSymbol = isBalanceValid ? '✓' : '✗';
+                        const balanceTitle = isBalanceValid 
+                            ? `Berechnung korrekt: ${formatAmount(openingAmount, 'EUR')} + ${formatAmount(transactionSum, 'EUR')} = ${formatAmount(calculatedClosing, 'EUR')}`
+                            : `Berechnung NICHT korrekt: ${formatAmount(openingAmount, 'EUR')} + ${formatAmount(transactionSum, 'EUR')} = ${formatAmount(calculatedClosing, 'EUR')} ≠ ${formatAmount(closingAmount, 'EUR')}`;
+                        balanceValidation = `<span class="balance-validation ${balanceSymbolClass}" title="${balanceTitle}">${balanceSymbol}</span>`;
+                    }
                     
                     row.innerHTML = `
                         <td>${balanceData.openingDate}</td>
                         <td style="text-align: right;">${balanceData.openingAmount}${validationSymbol}</td>
                         <td>${balanceData.closingDate}</td>
                         <td style="text-align: right;">${balanceData.closingAmount}</td>
+                        <td style="text-align: center; font-size: 1.2em;">${balanceValidation}</td>
                         <td style="text-align: center;">${transactionCount}</td>
                     `;
                     balanceTableBody.appendChild(row);
