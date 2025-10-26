@@ -550,7 +550,6 @@
                                     <th>Eröffnungssaldo</th>
                                     <th>Datum Schlusssaldo</th>
                                     <th>Schlusssaldo</th>
-                                    <th>Berechnet</th>
                                     <th>Anzahl Buchungen</th>
                                 </tr>
                             </thead>
@@ -838,8 +837,7 @@
                         <td>${balanceData.openingDate}</td>
                         <td style="text-align: right;">${balanceData.openingAmount}${validationSymbol}</td>
                         <td>${balanceData.closingDate}</td>
-                        <td style="text-align: right;">${balanceData.closingAmount}</td>
-                        <td style="text-align: center; font-size: 1.2em;">${balanceValidation}</td>
+                        <td style="text-align: right;">${balanceData.closingAmount}${balanceValidation}</td>
                         <td style="text-align: center;">${transactionCount}</td>
                     `;
                     balanceTableBody.appendChild(row);
