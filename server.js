@@ -199,9 +199,29 @@ function parseCamt052(xmlData, fileName = '') {
                 }
 
                 // Extract remittance information (purpose)
-                const remittanceInfo = tx.RmtInf?.Ustrd || 
-                                     getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref') || 
-                                     'N/A';
+                // Combine Purp.Prtry, AddtlTxInf, and RmtInf.Ustrd with spaces
+                const purposeParts = [];
+                
+                // Add Purp.Prtry if exists
+                const purpPrtry = tx.Purp?.Prtry;
+                if (purpPrtry) {
+                    purposeParts.push(purpPrtry);
+                }
+                
+                // Add AddtlTxInf if exists
+                const addtlTxInf = tx.AddtlTxInf;
+                if (addtlTxInf) {
+                    purposeParts.push(addtlTxInf);
+                }
+                
+                // Add RmtInf.Ustrd if exists
+                const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
+                if (rmtInfUstrd) {
+                    purposeParts.push(rmtInfUstrd);
+                }
+                
+                // Combine all parts with spaces, or use 'N/A' if nothing found
+                const remittanceInfo = purposeParts.length > 0 ? purposeParts.join(' ') : 'N/A';
 
                 // Extract reference
                 const reference = tx.Refs?.EndToEndId || 
