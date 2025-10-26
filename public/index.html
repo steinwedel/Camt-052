@@ -542,8 +542,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Auszug vom</th>
-                                    <th>Auszugnummer</th>
                                     <th>Typ</th>
                                     <th>Buchungsdatum</th>
                                     <th>Valutadatum</th>
@@ -708,8 +706,6 @@
                 const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
                 
                 row.innerHTML = `
-                    <td>${transaction.statementDate}</td>
-                    <td>${transaction.statementNumber}</td>
                     <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
                     <td>${transaction.bookingDate}</td>
                     <td>${transaction.valueDate}</td>
