@@ -522,6 +522,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>Prüfung</th>
                                     <th>Datum Eröffnungsaldo</th>
                                     <th>Eröffnungssaldo</th>
                                     <th>Datum Schlusssaldo</th>
@@ -684,10 +685,30 @@
                     return new Date(a.openingDate) - new Date(b.openingDate);
                 });
                 
-                // Create table rows in sorted order
-                balanceRows.forEach(balanceData => {
+                // Create table rows in sorted order with validation
+                balanceRows.forEach((balanceData, index) => {
                     const row = document.createElement('tr');
+                    
+                    // Validate opening balance against previous closing balance
+                    let validationSymbol = '';
+                    if (index > 0) {
+                        const prevClosingBalance = balanceRows[index - 1].closingBalance;
+                        const currentOpeningBalance = balanceData.openingBalance;
+                        
+                        if (prevClosingBalance && currentOpeningBalance) {
+                            const prevAmount = parseFloat(prevClosingBalance.amount);
+                            const currAmount = parseFloat(currentOpeningBalance.amount);
+                            const isValid = Math.abs(prevAmount - currAmount) < 0.01;
+                            
+                            const symbolClass = isValid ? 'validation-success' : 'validation-error';
+                            const symbol = isValid ? '✓' : '✗';
+                            const title = isValid ? 'Eröffnungssaldo stimmt mit vorherigem Schlusssaldo überein' : 'Eröffnungssaldo stimmt NICHT mit vorherigem Schlusssaldo überein';
+                            validationSymbol = `<span class="balance-validation ${symbolClass}" title="${title}">${symbol}</span>`;
+                        }
+                    }
+                    
                     row.innerHTML = `
+                        <td style="text-align: center;">${validationSymbol}</td>
                         <td>${balanceData.openingDate}</td>
                         <td>${balanceData.openingAmount}</td>
                         <td>${balanceData.closingDate}</td>
