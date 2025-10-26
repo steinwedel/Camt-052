@@ -635,23 +635,29 @@
                 const balanceGrid = document.getElementById('balanceGrid');
                 balanceGrid.innerHTML = '';
                 
+                // Check if transactions come from multiple files (ZIP with multiple XML files)
+                const uniqueFiles = [...new Set(data.transactions.map(t => t.fileName).filter(f => f))];
+                const isMultipleFiles = uniqueFiles.length > 1;
+                
                 // Find opening and closing balances for validation
                 const openingBalance = data.balances.find(b => b.type === 'OPBD');
                 const closingBalance = data.balances.find(b => b.type === 'CLBD');
                 
-                // Calculate transaction sum
-                let transactionSum = 0;
-                data.transactions.forEach(t => {
-                    if (t.creditDebit === 'CRDT') {
-                        transactionSum += t.rawAmount;
-                    } else if (t.creditDebit === 'DBIT') {
-                        transactionSum -= t.rawAmount;
-                    }
-                });
-                
-                // Validate balance
+                // Only validate balance for single file uploads
                 let isBalanceValid = false;
-                if (openingBalance && closingBalance) {
+                let shouldValidate = !isMultipleFiles && openingBalance && closingBalance;
+                
+                if (shouldValidate) {
+                    // Calculate transaction sum only for single file
+                    let transactionSum = 0;
+                    data.transactions.forEach(t => {
+                        if (t.creditDebit === 'CRDT') {
+                            transactionSum += t.rawAmount;
+                        } else if (t.creditDebit === 'DBIT') {
+                            transactionSum -= t.rawAmount;
+                        }
+                    });
+                    
                     const openingAmount = openingBalance.creditDebit === 'CRDT' 
                         ? parseFloat(openingBalance.amount) 
                         : -parseFloat(openingBalance.amount);
@@ -668,9 +674,9 @@
                     const balanceItem = document.createElement('div');
                     balanceItem.className = 'balance-item';
                     
-                    // Add validation symbol for closing balance
+                    // Add validation symbol for closing balance (only for single file uploads)
                     let validationSymbol = '';
-                    if (balance.type === 'CLBD' && openingBalance) {
+                    if (balance.type === 'CLBD' && shouldValidate) {
                         const symbolClass = isBalanceValid ? 'validation-success' : 'validation-error';
                         const symbol = isBalanceValid ? '✓' : '✗';
                         validationSymbol = `<span class="balance-validation ${symbolClass}" title="${isBalanceValid ? 'Saldo stimmt überein' : 'Saldo stimmt nicht überein'}">${symbol}</span>`;
