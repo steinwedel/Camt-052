@@ -146,15 +146,26 @@ function parseCamt052(xmlData) {
                 // Extract party information - handle multiple formats
                 const relatedParties = tx.RltdPties || {};
                 
-                // Try different party structures (Dbtr/Cdtr or Pty)
-                let debtor = relatedParties.Dbtr?.Nm || relatedParties.Pty?.Nm || 'N/A';
+                // Try different party structures
+                // Standard: Dbtr.Pty.Nm or Dbtr.Nm
+                // Alternative: Just Pty.Nm (when Dbtr/Cdtr not present)
+                let debtor = relatedParties.Dbtr?.Pty?.Nm || 
+                            relatedParties.Dbtr?.Nm || 
+                            relatedParties.Pty?.Nm || 
+                            'N/A';
                 let debtorAccount = getNestedValue(relatedParties, 'DbtrAcct.Id.IBAN') || 
-                                   getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
-                let creditor = relatedParties.Cdtr?.Nm || relatedParties.Pty?.Nm || 'N/A';
-                let creditorAccount = getNestedValue(relatedParties, 'CdtrAcct.Id.IBAN') || 
-                                     getNestedValue(relatedParties, 'Pty.Id.IBAN') || 'N/A';
+                                   getNestedValue(relatedParties, 'Pty.Id.IBAN') || 
+                                   'N/A';
                 
-                // If Pty is used, determine debtor/creditor based on transaction type
+                let creditor = relatedParties.Cdtr?.Pty?.Nm || 
+                              relatedParties.Cdtr?.Nm || 
+                              relatedParties.Pty?.Nm || 
+                              'N/A';
+                let creditorAccount = getNestedValue(relatedParties, 'CdtrAcct.Id.IBAN') || 
+                                     getNestedValue(relatedParties, 'Pty.Id.IBAN') || 
+                                     'N/A';
+                
+                // If only Pty is used (no Dbtr/Cdtr), determine based on transaction type
                 if (relatedParties.Pty && !relatedParties.Dbtr && !relatedParties.Cdtr) {
                     if (creditDebit === 'DBIT') {
                         // Debit: Pty is the creditor (receiver)
