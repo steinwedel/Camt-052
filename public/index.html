@@ -337,6 +337,123 @@
             font-weight: bold;
             color: #495057;
         }
+
+        .xml-btn {
+            padding: 6px 12px;
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .xml-btn:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 0;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .xml-content {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -417,6 +534,7 @@
                                     <th>Empfänger</th>
                                     <th>Betrag</th>
                                     <th>Verwendungszweck</th>
+                                    <th>Raw XML</th>
                                 </tr>
                             </thead>
                             <tbody id="transactionsBody">
@@ -424,6 +542,19 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Raw XML -->
+    <div id="xmlModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📄 Raw XML Daten</h3>
+                <button class="close-btn" onclick="closeXMLModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="xmlContent" class="xml-content"></div>
             </div>
         </div>
     </div>
@@ -535,6 +666,11 @@
                     </td>
                     <td class="${amountClass}">${transaction.amount}</td>
                     <td>${transaction.purpose}</td>
+                    <td>
+                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)})'>
+                            📋 XML anzeigen
+                        </button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -560,6 +696,33 @@
             };
             return types[type] || type;
         }
+
+        function showXMLModal(xmlData) {
+            const modal = document.getElementById('xmlModal');
+            const xmlContent = document.getElementById('xmlContent');
+            xmlContent.textContent = xmlData;
+            modal.classList.add('show');
+        }
+
+        function closeXMLModal() {
+            const modal = document.getElementById('xmlModal');
+            modal.classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('xmlModal');
+            if (event.target === modal) {
+                closeXMLModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeXMLModal();
+            }
+        });
     </script>
 </body>
 </html>
