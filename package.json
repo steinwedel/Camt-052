@@ -56,13 +56,28 @@
     ],
     "mac": {
       "category": "public.app-category.finance",
-      "target": "dmg"
+      "target": [
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ]
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
     },
     "linux": {
-      "target": "AppImage",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
+      ],
       "category": "Finance"
     }
   }
