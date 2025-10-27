@@ -5,13 +5,15 @@
  * Erstellt ausführbare Dateien für Windows, macOS und Linux
  * 
  * Verwendung:
- *   node build.js                    - Erstellt alle Plattformen (pkg)
- *   node build.js windows            - Nur Windows (pkg)
- *   node build.js macos              - Nur macOS (pkg)
- *   node build.js linux              - Nur Linux (pkg)
- *   node build.js electron           - Electron App für aktuelle Plattform
- *   node build.js electron:all       - Electron Apps für alle Plattformen
- *   node build.js all                - Erstellt pkg UND Electron für alle Plattformen
+ *   node build.js server              - Server-Executables für alle Plattformen
+ *   node build.js server:windows      - Server-Executable nur für Windows
+ *   node build.js server:macos        - Server-Executable nur für macOS
+ *   node build.js server:linux        - Server-Executable nur für Linux
+ *   node build.js desktop             - Desktop-App für aktuelle Plattform
+ *   node build.js desktop:all         - Desktop-Apps für alle Plattformen
+ *   node build.js desktop:windows     - Desktop-App nur für Windows
+ *   node build.js desktop:macos       - Desktop-App nur für macOS
+ *   node build.js desktop:linux       - Desktop-App nur für Linux
  */
 
 const { execSync } = require('child_process');
@@ -75,55 +77,45 @@ function installPkg() {
     }
 }
 
-// Erstelle dist Verzeichnis
-function createDistDirectory() {
-    const distPath = path.join(__dirname, 'dist');
-    if (!fs.existsSync(distPath)) {
-        fs.mkdirSync(distPath);
-        logSuccess('dist Verzeichnis erstellt');
+// Erstelle Verzeichnis
+function createDirectory(dirPath, dirName) {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath);
+        logSuccess(`${dirName} Verzeichnis erstellt`);
     }
 }
 
-// Erstelle dist-electron Verzeichnis
-function createElectronDistDirectory() {
-    const distPath = path.join(__dirname, 'dist-electron');
-    if (!fs.existsSync(distPath)) {
-        fs.mkdirSync(distPath);
-        logSuccess('dist-electron Verzeichnis erstellt');
-    }
-}
-
-// Build-Konfiguration für pkg
-const builds = {
+// Build-Konfiguration für Server (pkg)
+const serverBuilds = {
     windows: {
         name: 'Windows',
         target: 'node18-win-x64',
-        output: 'dist/camt52-viewer-windows.exe',
+        output: 'dist-server/camt52-viewer-windows.exe',
         icon: '🪟'
     },
     macos: {
         name: 'macOS',
         target: 'node18-macos-x64',
-        output: 'dist/camt52-viewer-macos',
+        output: 'dist-server/camt52-viewer-macos',
         icon: '🍎'
     },
     linux: {
         name: 'Linux',
         target: 'node18-linux-x64',
-        output: 'dist/camt52-viewer-linux',
+        output: 'dist-server/camt52-viewer-linux',
         icon: '🐧'
     }
 };
 
-// Führe pkg Build aus
-function buildPlatform(platform) {
-    const config = builds[platform];
+// Führe Server Build aus (pkg)
+function buildServerPlatform(platform) {
+    const config = serverBuilds[platform];
     if (!config) {
         logError(`Unbekannte Plattform: ${platform}`);
         return false;
     }
 
-    logInfo(`${config.icon} Erstelle ${config.name} Build (pkg)...`);
+    logInfo(`${config.icon} Erstelle ${config.name} Server-Build...`);
     
     try {
         const command = `npx pkg . --targets ${config.target} --output ${config.output} --compress GZip`;
@@ -133,46 +125,58 @@ function buildPlatform(platform) {
         if (fs.existsSync(config.output)) {
             const stats = fs.statSync(config.output);
             const sizeMB = (stats.size / (1024 * 1024)).toFixed(2);
-            logSuccess(`${config.name} Build erfolgreich erstellt (${sizeMB} MB)`);
+            logSuccess(`${config.name} Server-Build erfolgreich erstellt (${sizeMB} MB)`);
             return true;
         } else {
-            logError(`${config.name} Build fehlgeschlagen - Datei nicht gefunden`);
+            logError(`${config.name} Server-Build fehlgeschlagen - Datei nicht gefunden`);
             return false;
         }
     } catch (error) {
-        logError(`${config.name} Build fehlgeschlagen`);
+        logError(`${config.name} Server-Build fehlgeschlagen`);
         console.error(error.message);
         return false;
     }
 }
 
-// Führe Electron Build aus
-function buildElectron(platform = 'current') {
-    logHeader('Electron Desktop-App Build (Direkt ausführbare Dateien)');
+// Führe Desktop Build aus (Electron)
+function buildDesktop(platforms) {
+    logHeader('Desktop-App Build (Electron)');
     
-    createElectronDistDirectory();
+    createDirectory(path.join(__dirname, 'dist-desktop'), 'dist-desktop');
     
     try {
         let command;
         let platformName;
         
-        if (platform === 'all') {
-            command = 'npx electron-builder -mwl';
+        if (platforms === 'all') {
+            command = 'npx electron-builder -mwl --config.directories.output=dist-desktop';
             platformName = 'Alle Plattformen (Windows, macOS, Linux)';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
             logInfo('  • macOS: ZIP-Archiv mit .app Bundle (x64 + arm64)');
             logInfo('  • Windows: Portable .exe (keine Installation nötig)');
             logInfo('  • Linux: AppImage (direkt ausführbar)');
+        } else if (platforms === 'windows') {
+            command = 'npx electron-builder --win --config.directories.output=dist-desktop';
+            platformName = 'Windows';
+            log(`🪟 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'macos') {
+            command = 'npx electron-builder --mac --config.directories.output=dist-desktop';
+            platformName = 'macOS';
+            log(`🍎 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'linux') {
+            command = 'npx electron-builder --linux --config.directories.output=dist-desktop';
+            platformName = 'Linux';
+            log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
         } else {
-            command = 'npx electron-builder';
+            command = 'npx electron-builder --config.directories.output=dist-desktop';
             platformName = 'Aktuelle Plattform';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
         }
         
         execSync(command, { stdio: 'inherit' });
         
-        logSuccess(`Electron Build erfolgreich erstellt`);
-        logInfo('Die Electron Apps befinden sich im "dist-electron" Verzeichnis.');
+        logSuccess(`Desktop-Build erfolgreich erstellt`);
+        logInfo('Die Desktop-Apps befinden sich im "dist-desktop" Verzeichnis.');
         console.log('');
         logInfo('Verwendung der direkt ausführbaren Dateien:');
         logInfo('  • macOS: ZIP entpacken und .app Datei ausführen');
@@ -180,36 +184,55 @@ function buildElectron(platform = 'current') {
         logInfo('  • Linux: AppImage ausführbar machen (chmod +x) und starten');
         return true;
     } catch (error) {
-        logError('Electron Build fehlgeschlagen');
+        logError('Desktop-Build fehlgeschlagen');
         console.error(error.message);
         return false;
     }
 }
 
+// Zeige Hilfe an
+function showHelp() {
+    logHeader('CAMT.052 Viewer - Build Script');
+    logInfo('Verfügbare Optionen:');
+    console.log('');
+    log('Server-Executables (pkg):', colors.bright);
+    logInfo('  server              - Alle Plattformen');
+    logInfo('  server:windows      - Nur Windows');
+    logInfo('  server:macos        - Nur macOS');
+    logInfo('  server:linux        - Nur Linux');
+    console.log('');
+    log('Desktop-Apps (Electron):', colors.bright);
+    logInfo('  desktop             - Aktuelle Plattform');
+    logInfo('  desktop:all         - Alle Plattformen');
+    logInfo('  desktop:windows     - Nur Windows');
+    logInfo('  desktop:macos       - Nur macOS');
+    logInfo('  desktop:linux       - Nur Linux');
+    console.log('');
+    log('Ausgabeverzeichnisse:', colors.bright);
+    logInfo('  Server-Builds:  dist-server/');
+    logInfo('  Desktop-Builds: dist-desktop/');
+}
+
 // Hauptfunktion
 function main() {
-    logHeader('CAMT.052 Viewer - Build Script');
-    
     // Prüfe Kommandozeilenargumente
     const args = process.argv.slice(2);
-    const buildType = args[0]?.toLowerCase() || 'pkg';
+    const buildCommand = args[0]?.toLowerCase() || '';
     
-    // Electron Builds
-    if (buildType === 'electron') {
-        buildElectron('current');
+    // Keine Argumente oder Hilfe
+    if (!buildCommand || buildCommand === 'help' || buildCommand === '--help' || buildCommand === '-h') {
+        showHelp();
         return;
     }
     
-    if (buildType === 'electron:all') {
-        buildElectron('all');
-        return;
-    }
+    // Parse Kommando (z.B. "server:windows" -> type="server", platform="windows")
+    const [buildType, platform] = buildCommand.split(':');
     
-    if (buildType === 'all') {
-        // Erstelle sowohl pkg als auch Electron Builds
-        logInfo('Erstelle pkg Builds UND Electron Apps für alle Plattformen');
+    // Server Builds
+    if (buildType === 'server') {
+        logHeader('Server-Executables Build (pkg)');
         
-        // pkg Builds
+        // Prüfe und installiere pkg
         if (!checkPkgInstalled()) {
             if (!installPkg()) {
                 process.exit(1);
@@ -218,120 +241,68 @@ function main() {
             logSuccess('pkg ist bereits installiert');
         }
         
-        createDistDirectory();
+        // Erstelle dist-server Verzeichnis
+        createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
         
-        console.log('');
-        logHeader('PKG Standalone Executables');
-        const pkgResults = {};
-        for (const platform of ['windows', 'macos', 'linux']) {
-            pkgResults[platform] = buildPlatform(platform);
-            console.log('');
+        // Bestimme Plattformen
+        let platformsToBuild = ['windows', 'macos', 'linux'];
+        if (platform && serverBuilds[platform]) {
+            platformsToBuild = [platform];
+            logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
+        } else if (platform) {
+            logError(`Unbekannte Plattform: ${platform}`);
+            showHelp();
+            process.exit(1);
+        } else {
+            logInfo('Erstelle Server-Builds für alle Plattformen');
         }
         
-        // Electron Builds
+        // Führe Builds aus
         console.log('');
-        const electronSuccess = buildElectron('all');
+        const results = {};
+        for (const plt of platformsToBuild) {
+            results[plt] = buildServerPlatform(plt);
+            console.log('');
+        }
         
         // Zusammenfassung
         logHeader('Build Zusammenfassung');
         
-        log('PKG Executables:', colors.bright);
-        let pkgSuccessCount = 0;
-        for (const [platform, success] of Object.entries(pkgResults)) {
-            const config = builds[platform];
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const [plt, success] of Object.entries(results)) {
+            const config = serverBuilds[plt];
             if (success) {
                 logSuccess(`${config.icon} ${config.name}: ${config.output}`);
-                pkgSuccessCount++;
+                successCount++;
             } else {
                 logError(`${config.icon} ${config.name}: Fehlgeschlagen`);
+                failCount++;
             }
         }
         
         console.log('');
-        log('Electron Desktop Apps:', colors.bright);
-        if (electronSuccess) {
-            logSuccess('🖥️  Electron Apps: dist-electron/');
+        if (failCount === 0) {
+            logSuccess(`Alle ${successCount} Server-Builds erfolgreich erstellt!`);
+            console.log('');
+            logInfo('Die ausführbaren Dateien befinden sich im "dist-server" Verzeichnis.');
+            logInfo('Sie können direkt ausgeführt werden und benötigen keine Installation.');
         } else {
-            logError('🖥️  Electron Apps: Fehlgeschlagen');
-        }
-        
-        return;
-    }
-    
-    // Standard pkg Builds
-    let platformsToBuild = ['windows', 'macos', 'linux'];
-    
-    if (args.length > 0 && builds[buildType]) {
-        platformsToBuild = [buildType];
-        logInfo(`Erstelle nur ${builds[buildType].name} Build (pkg)`);
-    } else if (args.length > 0 && !builds[buildType]) {
-        logError(`Unbekannte Option: ${buildType}`);
-        console.log('');
-        logInfo('Verfügbare Optionen:');
-        logInfo('  windows          - Nur Windows (pkg)');
-        logInfo('  macos            - Nur macOS (pkg)');
-        logInfo('  linux            - Nur Linux (pkg)');
-        logInfo('  electron         - Electron App (aktuelle Plattform)');
-        logInfo('  electron:all     - Electron Apps (alle Plattformen)');
-        logInfo('  all              - pkg UND Electron für alle Plattformen');
-        logInfo('  (keine Angabe)   - Alle Plattformen (pkg)');
-        process.exit(1);
-    } else {
-        logInfo('Erstelle Builds für alle Plattformen (pkg)');
-    }
-    
-    // Prüfe und installiere pkg
-    if (!checkPkgInstalled()) {
-        if (!installPkg()) {
+            logError(`${failCount} Build(s) fehlgeschlagen, ${successCount} erfolgreich`);
             process.exit(1);
         }
-    } else {
-        logSuccess('pkg ist bereits installiert');
     }
-    
-    // Erstelle dist Verzeichnis
-    createDistDirectory();
-    
-    // Führe Builds aus
-    console.log('');
-    const results = {};
-    for (const platform of platformsToBuild) {
-        results[platform] = buildPlatform(platform);
-        console.log('');
+    // Desktop Builds
+    else if (buildType === 'desktop') {
+        const desktopPlatform = platform || 'current';
+        buildDesktop(desktopPlatform);
     }
-    
-    // Zusammenfassung
-    logHeader('Build Zusammenfassung');
-    
-    let successCount = 0;
-    let failCount = 0;
-    
-    for (const [platform, success] of Object.entries(results)) {
-        const config = builds[platform];
-        if (success) {
-            logSuccess(`${config.icon} ${config.name}: ${config.output}`);
-            successCount++;
-        } else {
-            logError(`${config.icon} ${config.name}: Fehlgeschlagen`);
-            failCount++;
-        }
-    }
-    
-    console.log('');
-    if (failCount === 0) {
-        logSuccess(`Alle ${successCount} Builds erfolgreich erstellt!`);
+    // Unbekanntes Kommando
+    else {
+        logError(`Unbekanntes Kommando: ${buildCommand}`);
         console.log('');
-        logInfo('Die ausführbaren Dateien befinden sich im "dist" Verzeichnis.');
-        logInfo('Sie können direkt ausgeführt werden und benötigen keine Installation.');
-        console.log('');
-        logInfo('Verwendung:');
-        logInfo('  Windows: Doppelklick auf camt52-viewer-windows.exe');
-        logInfo('  macOS:   ./camt52-viewer-macos im Terminal');
-        logInfo('  Linux:   ./camt52-viewer-linux im Terminal');
-        console.log('');
-        logInfo('Die Anwendung startet einen Webserver auf http://localhost:3001');
-    } else {
-        logError(`${failCount} Build(s) fehlgeschlagen, ${successCount} erfolgreich`);
+        showHelp();
         process.exit(1);
     }
 }
