@@ -138,14 +138,16 @@ function buildServerPlatform(platform) {
     }
 }
 
-// Lösche .blockmap Dateien aus einem Verzeichnis
-function deleteBlockmapFiles(directory) {
+// Lösche unnötige Build-Dateien (.blockmap und .yml)
+function cleanupBuildFiles(directory) {
     try {
         const files = fs.readdirSync(directory);
         let deletedCount = 0;
+        const extensionsToDelete = ['.blockmap', '.yml', '.yaml'];
         
         files.forEach(file => {
-            if (file.endsWith('.blockmap')) {
+            const shouldDelete = extensionsToDelete.some(ext => file.endsWith(ext));
+            if (shouldDelete) {
                 const filePath = path.join(directory, file);
                 fs.unlinkSync(filePath);
                 deletedCount++;
@@ -154,10 +156,12 @@ function deleteBlockmapFiles(directory) {
         });
         
         if (deletedCount > 0) {
-            logSuccess(`${deletedCount} .blockmap Datei(en) gelöscht`);
+            logSuccess(`${deletedCount} unnötige Datei(en) gelöscht (.blockmap, .yml)`);
+        } else {
+            logInfo('Keine unnötigen Dateien gefunden');
         }
     } catch (error) {
-        logError(`Fehler beim Löschen von .blockmap Dateien: ${error.message}`);
+        logError(`Fehler beim Bereinigen: ${error.message}`);
     }
 }
 
@@ -176,7 +180,7 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder -mwl --config.directories.output=dist-desktop';
             platformName = 'Alle Plattformen (Windows, macOS, Linux)';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
-            logInfo('  • macOS: Universal Binary (Intel + Apple Silicon)');
+            logInfo('  • macOS: Universal Binary ZIP + DMG Installer');
             logInfo('  • Windows: Portable .exe (keine Installation nötig)');
             logInfo('  • Linux: AppImage (direkt ausführbar)');
         } else if (platforms === 'windows') {
@@ -187,6 +191,8 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder --mac --config.directories.output=dist-desktop';
             platformName = 'macOS';
             log(`🍎 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+            logInfo('  • ZIP: Direkt ausführbar (entpacken und starten)');
+            logInfo('  • DMG: Installer (in Applications-Ordner ziehen)');
         } else if (platforms === 'linux') {
             command = 'npx electron-builder --linux --config.directories.output=dist-desktop';
             platformName = 'Linux';
@@ -201,10 +207,10 @@ function buildDesktop(platforms) {
         
         logSuccess(`Desktop-Build erfolgreich erstellt`);
         
-        // Lösche .blockmap Dateien
+        // Lösche unnötige Dateien (.blockmap und .yml)
         console.log('');
-        logInfo('Bereinige .blockmap Dateien...');
-        deleteBlockmapFiles(distDesktopPath);
+        logInfo('Bereinige unnötige Dateien (.blockmap, .yml)...');
+        cleanupBuildFiles(distDesktopPath);
         
         console.log('');
         logInfo('Die Desktop-Apps befinden sich im "dist-desktop" Verzeichnis.');
