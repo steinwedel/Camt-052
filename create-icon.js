@@ -32,8 +32,8 @@ async function createBankIcon() {
             <!-- Base -->
             <rect x="136" y="355" width="240" height="20" fill="#ffffff"/>
             
-            <!-- Euro symbol - deutlich größer -->
-            <text x="256" y="300" font-family="Arial" font-size="140" font-weight="bold" fill="#fbbf24" text-anchor="middle">€</text>
+            <!-- Euro symbol - sehr groß und dominant -->
+            <text x="256" y="310" font-family="Arial" font-size="240" font-weight="bold" fill="#fbbf24" text-anchor="middle">€</text>
         </g>
     </svg>
     `;
