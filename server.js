@@ -288,6 +288,7 @@ function parseCamt052(xmlData, fileName = '') {
 
                 // Extract detailed status
                 const statusCode = entry.Sts?.Cd || entry.Sts || 'N/A';
+                const statusTranslated = translateStatus(statusCode);
 
                 // Generate raw XML for this entry
                 const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
