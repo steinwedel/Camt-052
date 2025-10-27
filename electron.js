@@ -83,13 +83,12 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
     // Kill the server process
     if (serverProcess) {
-        serverProcess.kill();
+        serverProcess.kill('SIGTERM');
+        serverProcess = null;
     }
     
-    // On macOS, applications typically stay active until the user quits explicitly
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    // Always quit the app when window is closed (including macOS)
+    app.quit();
 });
 
 app.on('activate', () => {
@@ -100,9 +99,18 @@ app.on('activate', () => {
 });
 
 // Cleanup on app quit
-app.on('before-quit', () => {
+app.on('before-quit', (event) => {
     if (serverProcess) {
-        serverProcess.kill();
+        serverProcess.kill('SIGTERM');
+        serverProcess = null;
+    }
+});
+
+// Additional cleanup on window close
+app.on('will-quit', () => {
+    if (serverProcess) {
+        serverProcess.kill('SIGKILL');
+        serverProcess = null;
     }
 });
 
