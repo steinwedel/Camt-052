@@ -113,30 +113,30 @@ npm run build:desktop:linux    # Linux
 
 ### Erstellte Dateien
 
-**PKG Standalone Executables** (im `dist/` Verzeichnis):
+**Server-Executables** (im `dist-server/` Verzeichnis):
 
 ```
-dist/
+dist-server/
 ├── camt52-viewer-windows.exe    # Windows (ca. 50-70 MB)
 ├── camt52-viewer-macos          # macOS (ca. 50-70 MB)
 └── camt52-viewer-linux          # Linux (ca. 50-70 MB)
 ```
 
-**Electron Desktop-Apps** (im `dist-electron/` Verzeichnis):
+**Desktop-Apps** (im `dist-desktop/` Verzeichnis):
 
 ```
-dist-electron/
+dist-desktop/
 ├── CAMT.052 Viewer-1.0.0.exe           # Windows Portable (ca. 100-150 MB)
 ├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS .app Bundle (ca. 150-200 MB)
 ├── CAMT.052 Viewer-1.0.0-arm64-mac.zip # macOS .app Bundle für Apple Silicon
 └── CAMT.052 Viewer-1.0.0.AppImage      # Linux (ca. 150-200 MB)
 ```
 
-**Hinweis**: Die Electron-Apps sind größer als PKG-Executables, da sie eine vollständige Chromium-Engine enthalten, bieten aber eine native Desktop-Erfahrung.
+**Hinweis**: Die Desktop-Apps sind größer als Server-Executables, da sie eine vollständige Chromium-Engine enthalten, bieten aber eine native Desktop-Erfahrung.
 
 ### Executables ausführen
 
-#### PKG Standalone Executables
+#### Server-Executables
 
 **Windows:**
 ```bash
@@ -162,7 +162,7 @@ chmod +x camt52-viewer-linux
 ./camt52-viewer-linux
 ```
 
-#### Electron Desktop-Apps (Direkt ausführbar)
+#### Desktop-Apps (Direkt ausführbar)
 
 **Windows:**
 ```bash
