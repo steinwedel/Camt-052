@@ -148,7 +148,7 @@ function buildPlatform(platform) {
 
 // Führe Electron Build aus
 function buildElectron(platform = 'current') {
-    logHeader('Electron Desktop-App Build');
+    logHeader('Electron Desktop-App Build (Direkt ausführbare Dateien)');
     
     createElectronDistDirectory();
     
@@ -160,6 +160,9 @@ function buildElectron(platform = 'current') {
             command = 'npx electron-builder -mwl';
             platformName = 'Alle Plattformen (Windows, macOS, Linux)';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
+            logInfo('  • macOS: ZIP-Archiv mit .app Bundle (x64 + arm64)');
+            logInfo('  • Windows: Portable .exe (keine Installation nötig)');
+            logInfo('  • Linux: AppImage (direkt ausführbar)');
         } else {
             command = 'npx electron-builder';
             platformName = 'Aktuelle Plattform';
@@ -170,6 +173,11 @@ function buildElectron(platform = 'current') {
         
         logSuccess(`Electron Build erfolgreich erstellt`);
         logInfo('Die Electron Apps befinden sich im "dist-electron" Verzeichnis.');
+        console.log('');
+        logInfo('Verwendung der direkt ausführbaren Dateien:');
+        logInfo('  • macOS: ZIP entpacken und .app Datei ausführen');
+        logInfo('  • Windows: Portable .exe direkt starten (keine Installation)');
+        logInfo('  • Linux: AppImage ausführbar machen (chmod +x) und starten');
         return true;
     } catch (error) {
         logError('Electron Build fehlgeschlagen');
