@@ -56,6 +56,16 @@
             justify-content: center;
             gap: 15px;
             flex-wrap: wrap;
+            padding: 20px;
+            border: 2px dashed transparent;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .upload-container.drag-over {
+            background: #e7f3ff;
+            border-color: #667eea;
+            transform: scale(1.02);
         }
 
         .file-input-wrapper {
@@ -696,6 +706,7 @@
     <script>
         const fileInput = document.getElementById('xmlFile');
         const fileName = document.getElementById('fileName');
+        const uploadContainer = document.querySelector('.upload-container');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const results = document.getElementById('results');
@@ -704,40 +715,77 @@
         let allTransactionsData = [];
         let currentSelectedFileName = null;
 
+        // Reusable function to upload a file
+        async function uploadFile(file) {
+            if (!file) return;
+            
+            fileName.textContent = file.name;
+            
+            const formData = new FormData();
+            formData.append('xmlFile', file);
+
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            results.classList.add('hidden');
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Fehler beim Hochladen');
+                }
+
+                displayResults(data);
+            } catch (err) {
+                error.textContent = `Fehler: ${err.message}`;
+                error.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        // File input change handler
         fileInput.addEventListener('change', async (e) => {
             if (e.target.files.length > 0) {
-                const file = e.target.files[0];
-                fileName.textContent = file.name;
-                
-                // Auto-upload the file
-                const formData = new FormData();
-                formData.append('xmlFile', file);
-
-                loading.classList.remove('hidden');
-                error.classList.add('hidden');
-                results.classList.add('hidden');
-
-                try {
-                    const response = await fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(data.error || 'Fehler beim Hochladen');
-                    }
-
-                    displayResults(data);
-                } catch (err) {
-                    error.textContent = `Fehler: ${err.message}`;
-                    error.classList.remove('hidden');
-                } finally {
-                    loading.classList.add('hidden');
-                }
+                await uploadFile(e.target.files[0]);
             } else {
                 fileName.textContent = 'Keine Datei ausgewählt';
+            }
+        });
+
+        // Drag and drop handlers
+        uploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadContainer.classList.add('drag-over');
+        });
+
+        uploadContainer.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadContainer.classList.remove('drag-over');
+        });
+
+        uploadContainer.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadContainer.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                // Check if file is XML or ZIP
+                if (file.name.toLowerCase().endsWith('.xml') || file.name.toLowerCase().endsWith('.zip')) {
+                    await uploadFile(file);
+                } else {
+                    error.textContent = 'Fehler: Bitte laden Sie eine XML- oder ZIP-Datei hoch.';
+                    error.classList.remove('hidden');
+                }
             }
         });
 
