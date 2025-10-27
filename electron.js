@@ -1,10 +1,12 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
+const { fork } = require('child_process');
 
 let mainWindow;
 let serverProcess;
 const PORT = 3001;
+const isDev = process.argv.includes('--dev');
+const isPackaged = app.isPackaged;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -23,7 +25,7 @@ function createWindow() {
     mainWindow.loadURL(`http://localhost:${PORT}`);
 
     // Open DevTools in development mode
-    if (process.argv.includes('--dev')) {
+    if (isDev) {
         mainWindow.webContents.openDevTools();
     }
 
@@ -34,55 +36,120 @@ function createWindow() {
 
 function startServer() {
     return new Promise((resolve, reject) => {
-        // Start the Express server as a child process
-        serverProcess = spawn('node', ['server.js'], {
-            cwd: __dirname,
-            env: { ...process.env, ELECTRON_MODE: 'true' }
-        });
-
-        serverProcess.stdout.on('data', (data) => {
-            console.log(`Server: ${data}`);
-            // Check if server started successfully
-            if (data.toString().includes('läuft auf')) {
-                resolve();
+        // Determine the correct path to server.js
+        let serverPath;
+        if (isPackaged) {
+            // In packaged app, files are in app.asar or Resources
+            if (process.platform === 'darwin') {
+                // macOS: Check both asar and unpacked locations
+                const asarPath = path.join(process.resourcesPath, 'app.asar', 'server.js');
+                const unpackedPath = path.join(process.resourcesPath, 'app', 'server.js');
+                serverPath = require('fs').existsSync(asarPath) ? asarPath : unpackedPath;
+            } else {
+                serverPath = path.join(process.resourcesPath, 'app.asar', 'server.js');
             }
-        });
+        } else {
+            serverPath = path.join(__dirname, 'server.js');
+        }
 
-        serverProcess.stderr.on('data', (data) => {
-            console.error(`Server Error: ${data}`);
-        });
+        console.log('='.repeat(60));
+        console.log('Electron App Starting');
+        console.log('='.repeat(60));
+        console.log('Is packaged:', isPackaged);
+        console.log('Platform:', process.platform);
+        console.log('__dirname:', __dirname);
+        console.log('process.resourcesPath:', process.resourcesPath);
+        console.log('Server path:', serverPath);
+        console.log('Server exists:', require('fs').existsSync(serverPath));
+        console.log('='.repeat(60));
 
-        serverProcess.on('error', (error) => {
-            console.error('Failed to start server:', error);
+        try {
+            // Use fork to run server.js with Electron's Node.js
+            serverProcess = fork(serverPath, [], {
+                env: { ...process.env, ELECTRON_MODE: 'true' },
+                silent: false,
+                stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+            });
+
+            let serverStarted = false;
+
+            serverProcess.stdout.on('data', (data) => {
+                const output = data.toString();
+                console.log(`[Server] ${output}`);
+                // Check if server started successfully
+                if (output.includes('läuft auf') || output.includes('listening')) {
+                    if (!serverStarted) {
+                        serverStarted = true;
+                        console.log('✓ Server started successfully');
+                        resolve();
+                    }
+                }
+            });
+
+            serverProcess.stderr.on('data', (data) => {
+                console.error(`[Server Error] ${data}`);
+            });
+
+            serverProcess.on('error', (error) => {
+                console.error('Failed to start server:', error);
+                if (!serverStarted) {
+                    reject(error);
+                }
+            });
+
+            serverProcess.on('exit', (code, signal) => {
+                console.log(`Server process exited with code ${code}, signal ${signal}`);
+                if (!serverStarted && code !== 0) {
+                    reject(new Error(`Server exited with code ${code}`));
+                }
+            });
+
+            serverProcess.on('message', (msg) => {
+                console.log('[Server Message]', msg);
+            });
+
+            // Timeout fallback - assume success if no errors after 3 seconds
+            setTimeout(() => {
+                if (!serverStarted) {
+                    console.log('⚠ Server startup timeout - assuming success');
+                    serverStarted = true;
+                    resolve();
+                }
+            }, 3000);
+        } catch (error) {
+            console.error('Error forking server:', error);
             reject(error);
-        });
-
-        serverProcess.on('close', (code) => {
-            console.log(`Server process exited with code ${code}`);
-        });
-
-        // Timeout fallback
-        setTimeout(() => {
-            resolve();
-        }, 2000);
+        }
     });
 }
 
 // This method will be called when Electron has finished initialization
 app.whenReady().then(async () => {
     try {
+        console.log('App is ready, starting server...');
         await startServer();
+        console.log('Server started, creating window...');
         createWindow();
+        console.log('Window created successfully');
     } catch (error) {
         console.error('Error starting application:', error);
+        console.error('Stack:', error.stack);
+        // Show error dialog
+        const { dialog } = require('electron');
+        dialog.showErrorBox(
+            'Fehler beim Starten',
+            `Die Anwendung konnte nicht gestartet werden:\n\n${error.message}\n\nBitte überprüfen Sie die Konsole für weitere Details.`
+        );
         app.quit();
     }
 });
 
 // Quit when all windows are closed
 app.on('window-all-closed', () => {
+    console.log('All windows closed, cleaning up...');
     // Kill the server process
     if (serverProcess) {
+        console.log('Killing server process...');
         serverProcess.kill('SIGTERM');
         serverProcess = null;
     }
@@ -100,6 +167,7 @@ app.on('activate', () => {
 
 // Cleanup on app quit
 app.on('before-quit', (event) => {
+    console.log('App quitting, cleaning up...');
     if (serverProcess) {
         serverProcess.kill('SIGTERM');
         serverProcess = null;
@@ -117,4 +185,5 @@ app.on('will-quit', () => {
 // Handle any uncaught exceptions
 process.on('uncaughtException', (error) => {
     console.error('Uncaught exception:', error);
+    console.error('Stack:', error.stack);
 });
