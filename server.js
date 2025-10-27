@@ -198,25 +198,17 @@ function parseCamt052(xmlData, fileName = '') {
                     }
                 }
 
-                // Extract remittance information (purpose)
-                // Priority-based selection: Purp > RmtInf.Ustrd
-                let remittanceInfo = 'N/A';
+                // Extract purpose from Purp.Prtry
+                const purposePrtry = tx.Purp?.Prtry || 'N/A';
                 
-                // First priority: Purp.Prtry
-                const purpPrtry = tx.Purp?.Prtry;
-                if (purpPrtry) {
-                    remittanceInfo = purpPrtry;
-                }
-                // Second priority: RmtInf.Ustrd
-                else {
-                    const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
-                    if (rmtInfUstrd) {
-                        remittanceInfo = rmtInfUstrd;
-                    }
-                }
+                // Extract remittance information from RmtInf.Ustrd (separate from purpose)
+                const remittanceInfoUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref') || 'N/A';
                 
-                // Extract AddtlTxInf as separate field (not part of purpose priority)
+                // Extract AddtlTxInf as separate field
                 const additionalTxInfo = tx.AddtlTxInf || 'N/A';
+                
+                // For backward compatibility, use Purp.Prtry as primary purpose, fallback to RmtInf
+                let remittanceInfo = purposePrtry !== 'N/A' ? purposePrtry : remittanceInfoUstrd;
 
                 // Extract entry-level fields
                 const entryRef = entry.NtryRef || 'N/A';
@@ -306,6 +298,8 @@ function parseCamt052(xmlData, fileName = '') {
                     receiver: creditor,
                     receiverAccount: creditorAccount,
                     purpose: Array.isArray(remittanceInfo) ? remittanceInfo.join(' ') : remittanceInfo,
+                    purposeProprietary: purposePrtry,
+                    remittanceInfoUstrd: remittanceInfoUstrd,
                     additionalTxInfo: additionalTxInfo,
                     // Reference fields
                     endToEndId: endToEndId,
