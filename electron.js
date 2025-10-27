@@ -39,14 +39,18 @@ function startServer() {
         // Determine the correct path to server.js
         let serverPath;
         if (isPackaged) {
-            // In packaged app, files are in app.asar or Resources
-            if (process.platform === 'darwin') {
-                // macOS: Check both asar and unpacked locations
-                const asarPath = path.join(process.resourcesPath, 'app.asar', 'server.js');
-                const unpackedPath = path.join(process.resourcesPath, 'app', 'server.js');
-                serverPath = require('fs').existsSync(asarPath) ? asarPath : unpackedPath;
+            // In packaged app, check unpacked location first (due to asarUnpack config)
+            const unpackedPath = path.join(process.resourcesPath, 'app.asar.unpacked', 'server.js');
+            const asarPath = path.join(process.resourcesPath, 'app.asar', 'server.js');
+            
+            // Prefer unpacked version if it exists (due to asarUnpack configuration)
+            if (require('fs').existsSync(unpackedPath)) {
+                serverPath = unpackedPath;
+            } else if (require('fs').existsSync(asarPath)) {
+                serverPath = asarPath;
             } else {
-                serverPath = path.join(process.resourcesPath, 'app.asar', 'server.js');
+                // Fallback to default path
+                serverPath = path.join(process.resourcesPath, 'app', 'server.js');
             }
         } else {
             serverPath = path.join(__dirname, 'server.js');
