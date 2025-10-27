@@ -45,10 +45,11 @@ Sie können eigenständige ausführbare Dateien für Windows, macOS und Linux er
 
 #### Methode 1: Build-Script verwenden (Empfohlen)
 
-Das `build.js` Script bietet eine benutzerfreundliche Oberfläche:
+Das `build.js` Script bietet eine benutzerfreundliche Oberfläche für **beide Build-Typen**:
 
+**PKG Standalone Executables:**
 ```bash
-# Alle Plattformen erstellen
+# Alle Plattformen erstellen (pkg)
 node build.js
 
 # Nur Windows
@@ -61,11 +62,24 @@ node build.js macos
 node build.js linux
 ```
 
+**Electron Desktop-Apps:**
+```bash
+# Electron App für aktuelle Plattform
+node build.js electron
+
+# Electron Apps für alle Plattformen
+node build.js electron:all
+
+# PKG UND Electron für alle Plattformen
+node build.js all
+```
+
 Das Script:
 - ✅ Prüft automatisch ob `pkg` installiert ist
 - ✅ Installiert `pkg` falls nötig
-- ✅ Erstellt das `dist` Verzeichnis
+- ✅ Erstellt die `dist` und `dist-electron` Verzeichnisse
 - ✅ Komprimiert die Executables mit GZip
+- ✅ Unterstützt Electron-Builder für Desktop-Apps
 - ✅ Zeigt detaillierte Fortschrittsinformationen
 - ✅ Gibt eine Zusammenfassung mit Dateigrößen aus
 
