@@ -32,9 +32,149 @@ Die folgenden Pakete werden installiert:
 - `fast-xml-parser` - XML-Parser für CAMT.052 Dateien
 - `multer` - Datei-Upload Middleware
 
+## 📦 Standalone Executables erstellen
+
+Sie können eigenständige ausführbare Dateien für Windows, macOS und Linux erstellen, die keine Node.js-Installation benötigen.
+
+### Voraussetzungen
+
+- Node.js und npm müssen installiert sein (nur für den Build-Prozess)
+- Mindestens 500 MB freier Speicherplatz
+
+### Build-Methoden
+
+#### Methode 1: Build-Script verwenden (Empfohlen)
+
+Das `build.js` Script bietet eine benutzerfreundliche Oberfläche:
+
+```bash
+# Alle Plattformen erstellen
+node build.js
+
+# Nur Windows
+node build.js windows
+
+# Nur macOS
+node build.js macos
+
+# Nur Linux
+node build.js linux
+```
+
+Das Script:
+- ✅ Prüft automatisch ob `pkg` installiert ist
+- ✅ Installiert `pkg` falls nötig
+- ✅ Erstellt das `dist` Verzeichnis
+- ✅ Komprimiert die Executables mit GZip
+- ✅ Zeigt detaillierte Fortschrittsinformationen
+- ✅ Gibt eine Zusammenfassung mit Dateigrößen aus
+
+#### Methode 2: NPM Scripts verwenden
+
+```bash
+# Alle Plattformen
+npm run build
+
+# Einzelne Plattformen
+npm run build:win      # Windows
+npm run build:mac      # macOS
+npm run build:linux    # Linux
+```
+
+### Erstellte Dateien
+
+Nach dem Build-Prozess finden Sie im `dist/` Verzeichnis:
+
+```
+dist/
+├── camt52-viewer-windows.exe    # Windows (ca. 50-70 MB)
+├── camt52-viewer-macos          # macOS (ca. 50-70 MB)
+└── camt52-viewer-linux          # Linux (ca. 50-70 MB)
+```
+
+### Executables ausführen
+
+#### Windows
+```bash
+# Doppelklick auf die .exe Datei oder im Terminal:
+camt52-viewer-windows.exe
+```
+
+#### macOS
+```bash
+# Ausführbar machen (einmalig):
+chmod +x camt52-viewer-macos
+
+# Starten:
+./camt52-viewer-macos
+```
+
+#### Linux
+```bash
+# Ausführbar machen (einmalig):
+chmod +x camt52-viewer-linux
+
+# Starten:
+./camt52-viewer-linux
+```
+
+### Was ist enthalten?
+
+Die Executables enthalten:
+- ✅ Node.js Runtime
+- ✅ Alle npm-Abhängigkeiten (express, fast-xml-parser, multer, adm-zip)
+- ✅ Server-Code (server.js)
+- ✅ Web-Interface (public/index.html)
+- ✅ Alle benötigten Assets
+
+**Keine Installation erforderlich!** Die Dateien können direkt ausgeführt werden.
+
+### Optimierung
+
+Die Executables sind mit GZip komprimiert, um die Dateigröße zu minimieren:
+- **Ohne Kompression**: ~80-100 MB
+- **Mit GZip**: ~50-70 MB (ca. 30-40% kleiner)
+
+### Verteilung
+
+Die erstellten Executables können einfach verteilt werden:
+1. Kopieren Sie die entsprechende Datei auf den Zielrechner
+2. Keine Installation oder Abhängigkeiten erforderlich
+3. Einfach ausführen und im Browser öffnen (http://localhost:3001)
+
+### Technische Details
+
+- **pkg Version**: 5.8.1
+- **Node.js Version**: 18 (eingebettet)
+- **Kompression**: GZip
+- **Plattformen**: 
+  - Windows: x64
+  - macOS: x64
+  - Linux: x64
+
+### Fehlerbehebung
+
+**Problem**: "pkg: command not found"
+```bash
+npm install --save-dev pkg@5.8.1
+```
+
+**Problem**: Executable startet nicht auf macOS
+```bash
+# Sicherheitseinstellungen umgehen:
+xattr -d com.apple.quarantine camt52-viewer-macos
+chmod +x camt52-viewer-macos
+```
+
+**Problem**: Executable startet nicht auf Linux
+```bash
+# Ausführungsrechte setzen:
+chmod +x camt52-viewer-linux
+```
+
 ## 💻 Verwendung
 
-### Server starten
+### Server starten (Entwicklung)
 
 ```bash
 npm start
