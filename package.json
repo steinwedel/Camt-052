@@ -2,16 +2,20 @@
   "name": "camt52-viewer",
   "version": "1.0.0",
   "description": "CAMT.052 v8 XML transaction viewer",
-  "main": "server.js",
+  "main": "electron.js",
   "bin": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
+    "electron": "electron .",
+    "electron:dev": "electron . --dev",
     "build": "npm run build:all",
     "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
     "build:win": "pkg . --targets node18-win-x64 --output dist/camt52-viewer-windows.exe --compress GZip",
     "build:mac": "pkg . --targets node18-macos-x64 --output dist/camt52-viewer-macos --compress GZip",
-    "build:linux": "pkg . --targets node18-linux-x64 --output dist/camt52-viewer-linux --compress GZip"
+    "build:linux": "pkg . --targets node18-linux-x64 --output dist/camt52-viewer-linux --compress GZip",
+    "build:electron": "electron-builder",
+    "build:electron:all": "electron-builder -mwl"
   },
   "pkg": {
     "assets": [
@@ -34,6 +38,32 @@
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
     "pkg": "^5.8.1"
+  },
+  "build": {
+    "appId": "com.camt52viewer.app",
+    "productName": "CAMT.052 Viewer",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron.js",
+      "server.js",
+      "public/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.finance",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Finance"
+    }
   }
 }
