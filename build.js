@@ -5,10 +5,13 @@
  * Erstellt ausführbare Dateien für Windows, macOS und Linux
  * 
  * Verwendung:
- *   node build.js              - Erstellt alle Plattformen
- *   node build.js windows      - Nur Windows
- *   node build.js macos        - Nur macOS
- *   node build.js linux        - Nur Linux
+ *   node build.js                    - Erstellt alle Plattformen (pkg)
+ *   node build.js windows            - Nur Windows (pkg)
+ *   node build.js macos              - Nur macOS (pkg)
+ *   node build.js linux              - Nur Linux (pkg)
+ *   node build.js electron           - Electron App für aktuelle Plattform
+ *   node build.js electron:all       - Electron Apps für alle Plattformen
+ *   node build.js all                - Erstellt pkg UND Electron für alle Plattformen
  */
 
 const { execSync } = require('child_process');
@@ -22,7 +25,8 @@ const colors = {
     green: '\x1b[32m',
     yellow: '\x1b[33m',
     blue: '\x1b[34m',
-    red: '\x1b[31m'
+    red: '\x1b[31m',
+    cyan: '\x1b[36m'
 };
 
 function log(message, color = colors.reset) {
@@ -80,7 +84,16 @@ function createDistDirectory() {
     }
 }
 
-// Build-Konfiguration
+// Erstelle dist-electron Verzeichnis
+function createElectronDistDirectory() {
+    const distPath = path.join(__dirname, 'dist-electron');
+    if (!fs.existsSync(distPath)) {
+        fs.mkdirSync(distPath);
+        logSuccess('dist-electron Verzeichnis erstellt');
+    }
+}
+
+// Build-Konfiguration für pkg
 const builds = {
     windows: {
         name: 'Windows',
@@ -102,7 +115,7 @@ const builds = {
     }
 };
 
-// Führe Build aus
+// Führe pkg Build aus
 function buildPlatform(platform) {
     const config = builds[platform];
     if (!config) {
@@ -110,7 +123,7 @@ function buildPlatform(platform) {
         return false;
     }
 
-    logInfo(`${config.icon} Erstelle ${config.name} Build...`);
+    logInfo(`${config.icon} Erstelle ${config.name} Build (pkg)...`);
     
     try {
         const command = `npx pkg . --targets ${config.target} --output ${config.output} --compress GZip`;
@@ -133,26 +146,130 @@ function buildPlatform(platform) {
     }
 }
 
+// Führe Electron Build aus
+function buildElectron(platform = 'current') {
+    logHeader('Electron Desktop-App Build');
+    
+    createElectronDistDirectory();
+    
+    try {
+        let command;
+        let platformName;
+        
+        if (platform === 'all') {
+            command = 'npx electron-builder -mwl';
+            platformName = 'Alle Plattformen (Windows, macOS, Linux)';
+            log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
+        } else {
+            command = 'npx electron-builder';
+            platformName = 'Aktuelle Plattform';
+            log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
+        }
+        
+        execSync(command, { stdio: 'inherit' });
+        
+        logSuccess(`Electron Build erfolgreich erstellt`);
+        logInfo('Die Electron Apps befinden sich im "dist-electron" Verzeichnis.');
+        return true;
+    } catch (error) {
+        logError('Electron Build fehlgeschlagen');
+        console.error(error.message);
+        return false;
+    }
+}
+
 // Hauptfunktion
 function main() {
     logHeader('CAMT.052 Viewer - Build Script');
     
     // Prüfe Kommandozeilenargumente
     const args = process.argv.slice(2);
+    const buildType = args[0]?.toLowerCase() || 'pkg';
+    
+    // Electron Builds
+    if (buildType === 'electron') {
+        buildElectron('current');
+        return;
+    }
+    
+    if (buildType === 'electron:all') {
+        buildElectron('all');
+        return;
+    }
+    
+    if (buildType === 'all') {
+        // Erstelle sowohl pkg als auch Electron Builds
+        logInfo('Erstelle pkg Builds UND Electron Apps für alle Plattformen');
+        
+        // pkg Builds
+        if (!checkPkgInstalled()) {
+            if (!installPkg()) {
+                process.exit(1);
+            }
+        } else {
+            logSuccess('pkg ist bereits installiert');
+        }
+        
+        createDistDirectory();
+        
+        console.log('');
+        logHeader('PKG Standalone Executables');
+        const pkgResults = {};
+        for (const platform of ['windows', 'macos', 'linux']) {
+            pkgResults[platform] = buildPlatform(platform);
+            console.log('');
+        }
+        
+        // Electron Builds
+        console.log('');
+        const electronSuccess = buildElectron('all');
+        
+        // Zusammenfassung
+        logHeader('Build Zusammenfassung');
+        
+        log('PKG Executables:', colors.bright);
+        let pkgSuccessCount = 0;
+        for (const [platform, success] of Object.entries(pkgResults)) {
+            const config = builds[platform];
+            if (success) {
+                logSuccess(`${config.icon} ${config.name}: ${config.output}`);
+                pkgSuccessCount++;
+            } else {
+                logError(`${config.icon} ${config.name}: Fehlgeschlagen`);
+            }
+        }
+        
+        console.log('');
+        log('Electron Desktop Apps:', colors.bright);
+        if (electronSuccess) {
+            logSuccess('🖥️  Electron Apps: dist-electron/');
+        } else {
+            logError('🖥️  Electron Apps: Fehlgeschlagen');
+        }
+        
+        return;
+    }
+    
+    // Standard pkg Builds
     let platformsToBuild = ['windows', 'macos', 'linux'];
     
-    if (args.length > 0) {
-        const requestedPlatform = args[0].toLowerCase();
-        if (builds[requestedPlatform]) {
-            platformsToBuild = [requestedPlatform];
-            logInfo(`Erstelle nur ${builds[requestedPlatform].name} Build`);
-        } else {
-            logError(`Unbekannte Plattform: ${requestedPlatform}`);
-            logInfo('Verfügbare Plattformen: windows, macos, linux');
-            process.exit(1);
-        }
+    if (args.length > 0 && builds[buildType]) {
+        platformsToBuild = [buildType];
+        logInfo(`Erstelle nur ${builds[buildType].name} Build (pkg)`);
+    } else if (args.length > 0 && !builds[buildType]) {
+        logError(`Unbekannte Option: ${buildType}`);
+        console.log('');
+        logInfo('Verfügbare Optionen:');
+        logInfo('  windows          - Nur Windows (pkg)');
+        logInfo('  macos            - Nur macOS (pkg)');
+        logInfo('  linux            - Nur Linux (pkg)');
+        logInfo('  electron         - Electron App (aktuelle Plattform)');
+        logInfo('  electron:all     - Electron Apps (alle Plattformen)');
+        logInfo('  all              - pkg UND Electron für alle Plattformen');
+        logInfo('  (keine Angabe)   - Alle Plattformen (pkg)');
+        process.exit(1);
     } else {
-        logInfo('Erstelle Builds für alle Plattformen');
+        logInfo('Erstelle Builds für alle Plattformen (pkg)');
     }
     
     // Prüfe und installiere pkg
