@@ -222,6 +222,9 @@ function parseCamt052(xmlData, fileName = '') {
                     }
                 }
 
+                // Extract AcctSvcrRef from entry level
+                const acctSvcrRef = entry.AcctSvcrRef || 'N/A';
+
                 // Extract reference
                 const reference = tx.Refs?.EndToEndId || 
                                 tx.Refs?.TxId || 
@@ -232,6 +235,7 @@ function parseCamt052(xmlData, fileName = '') {
                 const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
                 
                 const transaction = {
+                    acctSvcrRef: acctSvcrRef,
                     statementDate: formatDate(statementDate),
                     statementNumber: statementId,
                     bookingDate: formatDate(entry.BookgDt?.Dt || entry.BookgDt),
