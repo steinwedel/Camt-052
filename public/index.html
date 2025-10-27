@@ -684,6 +684,12 @@
             </div>
             <div class="modal-body">
                 <div id="xmlContent" class="xml-content"></div>
+                <div class="xml-button-container">
+                    <button class="xml-btn" onclick="copyXMLToClipboard()">
+                        📋 In Zwischenablage kopieren
+                    </button>
+                    <span id="copyFeedback" style="margin-left: 10px; color: #28a745; font-weight: 600; display: none;">✓ Kopiert!</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1225,9 +1231,26 @@
             modal.classList.add('show');
         }
 
+        function copyXMLToClipboard() {
+            const xmlContent = document.getElementById('xmlContent').textContent;
+            const copyFeedback = document.getElementById('copyFeedback');
+            
+            navigator.clipboard.writeText(xmlContent).then(() => {
+                // Show success feedback
+                copyFeedback.style.display = 'inline';
+                setTimeout(() => {
+                    copyFeedback.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                alert('Fehler beim Kopieren: ' + err);
+            });
+        }
+
         function closeXMLModal() {
             const modal = document.getElementById('xmlModal');
             modal.classList.remove('show');
+            // Hide copy feedback when closing
+            document.getElementById('copyFeedback').style.display = 'none';
         }
 
         // Close modal when clicking outside
