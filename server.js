@@ -199,7 +199,7 @@ function parseCamt052(xmlData, fileName = '') {
                 }
 
                 // Extract remittance information (purpose)
-                // Priority-based selection: Purp > AddtlTxInf > RmtInf.Ustrd
+                // Priority-based selection: Purp > RmtInf.Ustrd
                 let remittanceInfo = 'N/A';
                 
                 // First priority: Purp.Prtry
@@ -207,20 +207,16 @@ function parseCamt052(xmlData, fileName = '') {
                 if (purpPrtry) {
                     remittanceInfo = purpPrtry;
                 }
-                // Second priority: AddtlTxInf (only if Purp doesn't exist)
+                // Second priority: RmtInf.Ustrd
                 else {
-                    const addtlTxInf = tx.AddtlTxInf;
-                    if (addtlTxInf) {
-                        remittanceInfo = addtlTxInf;
-                    }
-                    // Third priority: RmtInf.Ustrd (only if neither Purp nor AddtlTxInf exist)
-                    else {
-                        const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
-                        if (rmtInfUstrd) {
-                            remittanceInfo = rmtInfUstrd;
-                        }
+                    const rmtInfUstrd = tx.RmtInf?.Ustrd || getNestedValue(tx, 'RmtInf.Strd.CdtrRefInf.Ref');
+                    if (rmtInfUstrd) {
+                        remittanceInfo = rmtInfUstrd;
                     }
                 }
+                
+                // Extract AddtlTxInf as separate field (not part of purpose priority)
+                const additionalTxInfo = tx.AddtlTxInf || 'N/A';
 
                 // Extract entry-level fields
                 const entryRef = entry.NtryRef || 'N/A';
@@ -308,6 +304,7 @@ function parseCamt052(xmlData, fileName = '') {
                     receiver: creditor,
                     receiverAccount: creditorAccount,
                     purpose: Array.isArray(remittanceInfo) ? remittanceInfo.join(' ') : remittanceInfo,
+                    additionalTxInfo: additionalTxInfo,
                     // Reference fields
                     endToEndId: endToEndId,
                     mandateId: mandateId,
