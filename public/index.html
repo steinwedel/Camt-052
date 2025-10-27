@@ -34,6 +34,19 @@
             text-align: center;
         }
 
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
         .header h1 {
             font-size: 1.6em;
             margin-bottom: 8px;
@@ -571,7 +584,10 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 CAMT.052 Kontoauszug Viewer</h1>
+            <div class="header-content">
+                <img src="icon.png" alt="Bank Icon" class="header-icon">
+                <h1>CAMT.052 Kontoauszug Viewer</h1>
+            </div>
             <p>Laden Sie Ihre CAMT.052 v8 XML-Datei oder ZIP-Datei mit mehreren XML-Dateien hoch</p>
         </div>
 
