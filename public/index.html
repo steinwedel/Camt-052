@@ -968,6 +968,10 @@
                         <h4>📊 Grundinformationen</h4>
                         <div class="detail-grid">
                             <div class="detail-item">
+                                <span class="detail-label">Entry Referenz (NtryRef)</span>
+                                <span class="detail-value highlight">${transaction.entryRef || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
                                 <span class="detail-label">Referenznummer (AcctSvcrRef)</span>
                                 <span class="detail-value highlight">${transaction.acctSvcrRef}</span>
                             </div>
@@ -978,6 +982,10 @@
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
                                 <span class="detail-value">${transaction.status}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Stornierung (RvslInd)</span>
+                                <span class="detail-value">${transaction.reversalIndicator || 'N/A'}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Quelldatei</span>
@@ -999,8 +1007,20 @@
                                 <span class="detail-value">${transaction.currency}</span>
                             </div>
                             <div class="detail-item">
+                                <span class="detail-label">Angewiesener Betrag (InstdAmt)</span>
+                                <span class="detail-value">${transaction.instructedAmount || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Transaktionsbetrag (TxAmt)</span>
+                                <span class="detail-value">${transaction.transactionAmount || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
                                 <span class="detail-label">Buchungsdatum</span>
                                 <span class="detail-value">${transaction.bookingDate}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Buchungszeitpunkt (DtTm)</span>
+                                <span class="detail-value">${transaction.bookingDateTime || 'N/A'}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Valutadatum</span>
@@ -1029,6 +1049,14 @@
                                 <span class="detail-label">IBAN</span>
                                 <span class="detail-value">${transaction.debtorAccount}</span>
                             </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Konto-ID (Andere)</span>
+                                <span class="detail-value">${transaction.debtorAcctOtherId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Kontowährung</span>
+                                <span class="detail-value">${transaction.debtorAcctCcy || 'N/A'}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1043,6 +1071,14 @@
                             <div class="detail-item">
                                 <span class="detail-label">IBAN</span>
                                 <span class="detail-value">${transaction.creditorAccount}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Konto-ID (Andere)</span>
+                                <span class="detail-value">${transaction.creditorAcctOtherId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Kontowährung</span>
+                                <span class="detail-value">${transaction.creditorAcctCcy || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -1077,6 +1113,14 @@
                             <div class="detail-item">
                                 <span class="detail-label">Nachrichten-ID</span>
                                 <span class="detail-value">${transaction.messageId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Clearing System Referenz</span>
+                                <span class="detail-value">${transaction.clearingSystemRef || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">AcctSvcrRef (aus Refs)</span>
+                                <span class="detail-value">${transaction.acctSvcrRefTx || 'N/A'}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Proprietäre Referenz (Typ)</span>
