@@ -1098,6 +1098,14 @@
                                 <span class="detail-value">${transaction.purpose}</span>
                             </div>
                             <div class="detail-item">
+                                <span class="detail-label">Zweck Proprietär (Purp.Prtry)</span>
+                                <span class="detail-value">${transaction.purposeProprietary || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Verwendungszweck Unstrukturiert (RmtInf.Ustrd)</span>
+                                <span class="detail-value">${transaction.remittanceInfoUstrd || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
                                 <span class="detail-label">End-to-End ID</span>
                                 <span class="detail-value">${transaction.endToEndId || 'N/A'}</span>
                             </div>
