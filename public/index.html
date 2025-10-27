@@ -1056,8 +1056,103 @@
                                 <span class="detail-value">${transaction.purpose}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Referenz (End-to-End ID)</span>
-                                <span class="detail-value">${transaction.reference}</span>
+                                <span class="detail-label">End-to-End ID</span>
+                                <span class="detail-value">${transaction.endToEndId || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Erweiterte Referenzen -->
+                    <div class="detail-section">
+                        <h4>🔗 Erweiterte Referenzen</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Mandatsreferenz (MndtId)</span>
+                                <span class="detail-value">${transaction.mandateId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Transaktions-ID</span>
+                                <span class="detail-value">${transaction.transactionId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Nachrichten-ID</span>
+                                <span class="detail-value">${transaction.messageId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Proprietäre Referenz (Typ)</span>
+                                <span class="detail-value">${transaction.proprietaryRefType || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Proprietäre Referenz (Wert)</span>
+                                <span class="detail-value">${transaction.proprietaryRefValue || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank-Transaktionscode -->
+                    <div class="detail-section">
+                        <h4>🏦 Bank-Transaktionscode (BkTxCd)</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Domain Code</span>
+                                <span class="detail-value">${transaction.bkTxCdDomain || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Family Code</span>
+                                <span class="detail-value">${transaction.bkTxCdFamily || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Sub-Family Code</span>
+                                <span class="detail-value">${transaction.bkTxCdSubFamily || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Proprietärer Code</span>
+                                <span class="detail-value">${transaction.bkTxCdProprietary || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Aussteller</span>
+                                <span class="detail-value">${transaction.bkTxCdIssuer || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Partei-IDs -->
+                    <div class="detail-section">
+                        <h4>🆔 Partei-Identifikationen</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Schuldner-ID (Debtor ID)</span>
+                                <span class="detail-value">${transaction.debtorId || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Gläubiger-ID (Creditor ID)</span>
+                                <span class="detail-value">${transaction.creditorId || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Finanzinstitute -->
+                    <div class="detail-section">
+                        <h4>🏛️ Finanzinstitute (BIC-Codes)</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Schuldner-Bank BIC</span>
+                                <span class="detail-value">${transaction.debtorAgentBIC || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Gläubiger-Bank BIC</span>
+                                <span class="detail-value">${transaction.creditorAgentBIC || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zusätzliche Informationen -->
+                    <div class="detail-section">
+                        <h4>ℹ️ Zusätzliche Informationen</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Zusatzinformationen</span>
+                                <span class="detail-value">${transaction.additionalInfo || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
