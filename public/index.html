@@ -1010,8 +1010,219 @@
             
             const amountClass = transaction.creditDebit === 'CRDT' ? 'credit' : 'debit';
             
+            // Helper function to check if value should be displayed
+            function shouldDisplay(value) {
+                return value !== 'N/A' && value !== null && value !== undefined && value !== '';
+            }
+            
+            // Helper function to create detail item HTML
+            function createDetailItem(label, value, valueClass = '') {
+                if (!shouldDisplay(value)) return '';
+                return `
+                    <div class="detail-item">
+                        <span class="detail-label">${label}</span>
+                        <span class="detail-value ${valueClass}">${value}</span>
+                    </div>
+                `;
+            }
+            
+            // Build sections conditionally
+            let sectionsHTML = '';
+            
+            // Grundinformationen
+            let grundInfoHTML = '';
+            grundInfoHTML += createDetailItem('Entry Referenz (NtryRef)', transaction.entryRef, 'highlight');
+            grundInfoHTML += createDetailItem('Referenznummer (AcctSvcrRef)', transaction.acctSvcrRef, 'highlight');
+            grundInfoHTML += createDetailItem('Transaktionstyp', transaction.type, 'highlight');
+            grundInfoHTML += createDetailItem('Status', transaction.status);
+            grundInfoHTML += createDetailItem('Stornierung (RvslInd)', transaction.reversalIndicator);
+            grundInfoHTML += createDetailItem('Quelldatei', transaction.fileName);
+            
+            if (grundInfoHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>📊 Grundinformationen</h4>
+                        <div class="detail-grid">
+                            ${grundInfoHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Beträge und Daten
+            let betraegeHTML = '';
+            betraegeHTML += createDetailItem('Betrag', transaction.amount, `${amountClass} highlight`);
+            betraegeHTML += createDetailItem('Währung', transaction.currency);
+            betraegeHTML += createDetailItem('Angewiesener Betrag (InstdAmt)', transaction.instructedAmount);
+            betraegeHTML += createDetailItem('Transaktionsbetrag (TxAmt)', transaction.transactionAmount);
+            betraegeHTML += createDetailItem('Buchungsdatum', transaction.bookingDate);
+            betraegeHTML += createDetailItem('Buchungszeitpunkt (DtTm)', transaction.bookingDateTime);
+            betraegeHTML += createDetailItem('Valutadatum', transaction.valueDate);
+            betraegeHTML += createDetailItem('Auszugsdatum', transaction.statementDate);
+            betraegeHTML += createDetailItem('Auszugsnummer', transaction.statementNumber);
+            
+            if (betraegeHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>💰 Beträge und Daten</h4>
+                        <div class="detail-grid">
+                            ${betraegeHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Absender (Debtor)
+            let absenderHTML = '';
+            absenderHTML += createDetailItem('Name', transaction.debtor);
+            absenderHTML += createDetailItem('IBAN', transaction.debtorAccount);
+            absenderHTML += createDetailItem('Konto-ID (Andere)', transaction.debtorAcctOtherId);
+            absenderHTML += createDetailItem('Kontowährung', transaction.debtorAcctCcy);
+            
+            if (absenderHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>📤 Absender / Schuldner (Debtor)</h4>
+                        <div class="detail-grid">
+                            ${absenderHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Empfänger (Creditor)
+            let empfaengerHTML = '';
+            empfaengerHTML += createDetailItem('Name', transaction.creditor);
+            empfaengerHTML += createDetailItem('IBAN', transaction.creditorAccount);
+            empfaengerHTML += createDetailItem('Konto-ID (Andere)', transaction.creditorAcctOtherId);
+            empfaengerHTML += createDetailItem('Kontowährung', transaction.creditorAcctCcy);
+            
+            if (empfaengerHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>📥 Empfänger / Gläubiger (Creditor)</h4>
+                        <div class="detail-grid">
+                            ${empfaengerHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Verwendungszweck und Referenz
+            let verwendungHTML = '';
+            verwendungHTML += createDetailItem('Verwendungszweck', transaction.purpose);
+            verwendungHTML += createDetailItem('Zweck Proprietär (Purp.Prtry)', transaction.purposeProprietary);
+            verwendungHTML += createDetailItem('Verwendungszweck Unstrukturiert (RmtInf.Ustrd)', transaction.remittanceInfoUstrd);
+            verwendungHTML += createDetailItem('End-to-End ID', transaction.endToEndId);
+            
+            if (verwendungHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>📝 Verwendungszweck und Referenz</h4>
+                        <div class="detail-grid">
+                            ${verwendungHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Erweiterte Referenzen
+            let referenzenHTML = '';
+            referenzenHTML += createDetailItem('Mandatsreferenz (MndtId)', transaction.mandateId);
+            referenzenHTML += createDetailItem('Transaktions-ID', transaction.transactionId);
+            referenzenHTML += createDetailItem('Nachrichten-ID', transaction.messageId);
+            referenzenHTML += createDetailItem('Clearing System Referenz', transaction.clearingSystemRef);
+            referenzenHTML += createDetailItem('AcctSvcrRef (aus Refs)', transaction.acctSvcrRefTx);
+            referenzenHTML += createDetailItem('Anweisungs-ID (InstrId)', transaction.instructionId);
+            referenzenHTML += createDetailItem('Schecknummer (ChqNb)', transaction.chequeNumber);
+            referenzenHTML += createDetailItem('Proprietäre Referenz (Typ)', transaction.proprietaryRefType);
+            referenzenHTML += createDetailItem('Proprietäre Referenz (Wert)', transaction.proprietaryRefValue);
+            
+            if (referenzenHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>🔗 Erweiterte Referenzen</h4>
+                        <div class="detail-grid">
+                            ${referenzenHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Bank-Transaktionscode
+            let bkTxCdHTML = '';
+            bkTxCdHTML += createDetailItem('Domain Code', getBkTxCdDomainName(transaction.bkTxCdDomain || 'N/A'));
+            bkTxCdHTML += createDetailItem('Family Code', getBkTxCdFamilyName(transaction.bkTxCdFamily || 'N/A'));
+            bkTxCdHTML += createDetailItem('Sub-Family Code', getBkTxCdSubFamilyName(transaction.bkTxCdSubFamily || 'N/A'));
+            bkTxCdHTML += createDetailItem('Proprietärer Code', transaction.bkTxCdProprietary);
+            bkTxCdHTML += createDetailItem('Aussteller', transaction.bkTxCdIssuer);
+            
+            if (bkTxCdHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>🏦 Bank-Transaktionscode (BkTxCd)</h4>
+                        <div class="detail-grid">
+                            ${bkTxCdHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Partei-IDs
+            let parteiIDsHTML = '';
+            parteiIDsHTML += createDetailItem('Schuldner-ID (Debtor ID)', transaction.debtorId);
+            parteiIDsHTML += createDetailItem('Gläubiger-ID (Creditor ID)', transaction.creditorId);
+            
+            if (parteiIDsHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>🆔 Partei-Identifikationen</h4>
+                        <div class="detail-grid">
+                            ${parteiIDsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Finanzinstitute
+            let finanzHTML = '';
+            finanzHTML += createDetailItem('Schuldner-Bank BIC', transaction.debtorAgentBIC);
+            finanzHTML += createDetailItem('Schuldner-Bank Clearing System', transaction.debtorAgentClrSysId);
+            finanzHTML += createDetailItem('Schuldner-Bank Member ID', transaction.debtorAgentMmbId);
+            finanzHTML += createDetailItem('Gläubiger-Bank BIC', transaction.creditorAgentBIC);
+            finanzHTML += createDetailItem('Gläubiger-Bank Clearing System', transaction.creditorAgentClrSysId);
+            finanzHTML += createDetailItem('Gläubiger-Bank Member ID', transaction.creditorAgentMmbId);
+            
+            if (finanzHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>🏛️ Finanzinstitute (BIC-Codes)</h4>
+                        <div class="detail-grid">
+                            ${finanzHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Zusätzliche Informationen
+            let zusatzHTML = '';
+            zusatzHTML += createDetailItem('Zusatzinformationen (AddtlNtryInf)', transaction.additionalInfo);
+            zusatzHTML += createDetailItem('Zusätzliche Transaktionsinfo (AddtlTxInf)', transaction.additionalTxInfo);
+            
+            if (zusatzHTML) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>ℹ️ Zusätzliche Informationen</h4>
+                        <div class="detail-grid">
+                            ${zusatzHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
             detailsContainer.innerHTML = `
                 <div class="transaction-details">
+                    ${sectionsHTML}
                     <!-- Grundinformationen -->
                     <div class="detail-section">
                         <h4>📊 Grundinformationen</h4>
