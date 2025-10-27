@@ -363,7 +363,7 @@ function parseCamt052(xmlData, fileName = '') {
                     // Additional info
                     additionalInfo: additionalInfo,
                     statusCode: statusCode,
-                    status: statusCode,
+                    status: statusTranslated,
                     rawXML: rawXML,
                     fileName: fileName
                 };
