@@ -174,21 +174,53 @@ chmod +x camt52-viewer-linux
 
 ## 💻 Verwendung
 
-### Server starten (Entwicklung)
+Die Anwendung kann auf **zwei Arten** verwendet werden:
+
+### Modus 1: Desktop-Anwendung (Electron) 🖥️
+
+**Empfohlen für die tägliche Nutzung**
+
+```bash
+npm run electron
+```
+
+Dies öffnet die Anwendung in einem nativen Desktop-Fenster mit eingebettetem Browser. Vorteile:
+- ✅ Eigenständiges Fenster (kein Browser erforderlich)
+- ✅ Native Desktop-Integration
+- ✅ Automatischer Start des Servers im Hintergrund
+- ✅ Einfaches Schließen über das Fenster
+
+**Entwicklungsmodus mit DevTools:**
+```bash
+npm run electron:dev
+```
+
+### Modus 2: Web-Browser 🌐
+
+**Für Entwicklung oder wenn kein Electron installiert ist**
 
 ```bash
 npm start
 ```
 
-Der Server läuft standardmäßig auf **http://localhost:3001**
+Der Server läuft auf **http://localhost:3001**
+
+Öffnen Sie dann Ihren Browser und navigieren Sie zu `http://localhost:3001`
 
 ### Anwendung verwenden
 
-1. Öffnen Sie Ihren Browser und navigieren Sie zu `http://localhost:3001`
-2. Klicken Sie auf "📁 Datei auswählen"
-3. Wählen Sie eine CAMT.052 v8 XML-Datei aus
-4. Klicken Sie auf "🚀 Hochladen & Analysieren"
-5. Die Buchungen werden automatisch geparst und angezeigt
+**Datei-Upload (2 Methoden):**
+
+1. **Methode 1 - Datei auswählen:**
+   - Klicken Sie auf "📁 Datei auswählen"
+   - Wählen Sie eine CAMT.052/053 XML- oder ZIP-Datei aus
+   - Die Datei wird automatisch hochgeladen und analysiert
+
+2. **Methode 2 - Drag & Drop:**
+   - Ziehen Sie eine XML- oder ZIP-Datei auf den Upload-Bereich
+   - Die Datei wird automatisch hochgeladen und analysiert
+
+Die Buchungen werden sofort geparst und angezeigt - kein zusätzlicher Button-Klick erforderlich!
 
 ### Beispieldatei testen
 
@@ -201,11 +233,12 @@ Eine Beispiel-CAMT.052-Datei ist im Projekt enthalten:
 
 ```
 camt52/
+├── electron.js            # Electron Hauptprozess (Desktop-Modus)
 ├── server.js              # Express-Server mit XML-Parsing-Logik
 ├── package.json           # Projekt-Konfiguration und Abhängigkeiten
 ├── public/
 │   └── index.html        # Web-Interface (Frontend)
-├── sample-camt052.xml    # Beispiel-XML-Datei zum Testen
+├── testdaten/            # Beispiel-XML-Dateien zum Testen
 ├── uploads/              # Temporärer Ordner für hochgeladene Dateien
 └── README.md             # Diese Datei
 ```
