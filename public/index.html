@@ -961,6 +961,49 @@
             return types[type] || type;
         }
 
+        function getBkTxCdDomainName(code) {
+            const domains = {
+                'PMNT': 'Zahlung (Payment)',
+                'CASH': 'Bargeld (Cash)',
+                'SECU': 'Wertpapiere (Securities)',
+                'ACMT': 'Kontoverwaltung (Account Management)',
+                'XTND': 'Erweitert (Extended)'
+            };
+            return domains[code] || code;
+        }
+
+        function getBkTxCdFamilyName(code) {
+            const families = {
+                'RCDT': 'Gutschrift (Received Credit Transfer)',
+                'RDDT': 'Lastschrift (Received Direct Debit)',
+                'ICDT': 'Ausgehende Überweisung (Issued Credit Transfer)',
+                'IDDT': 'Ausgehende Lastschrift (Issued Direct Debit)',
+                'CNTR': 'Schaltergeschäft (Counter Transaction)',
+                'MCOP': 'Mehrfachoperation (Multiple Operation)',
+                'CAJT': 'Kassenanpassung (Cash Adjustment)'
+            };
+            return families[code] || code;
+        }
+
+        function getBkTxCdSubFamilyName(code) {
+            const subFamilies = {
+                'SDVA': 'Gleichtägige Valuta (Same Day Value)',
+                'DMCT': 'Inlandsüberweisung (Domestic Credit Transfer)',
+                'ESDD': 'SEPA-Lastschrift (SEPA Direct Debit)',
+                'CDPT': 'Bareinzahlung (Cash Deposit)',
+                'CWDL': 'Barauszahlung (Cash Withdrawal)',
+                'BOOK': 'Buchung (Booking)',
+                'XBCT': 'Grenzüberschreitende Überweisung (Cross-Border Credit Transfer)',
+                'RRTN': 'Rückgabe (Return)',
+                'FEES': 'Gebühren (Fees)',
+                'COMM': 'Provision (Commission)',
+                'INTC': 'Zinsgutschrift (Interest Credit)',
+                'STDO': 'Dauerauftrag (Standing Order)',
+                'AUTT': 'Automatische Überweisung (Automatic Transfer)'
+            };
+            return subFamilies[code] || code;
+        }
+
         function showTransactionDetails(transaction) {
             const modal = document.getElementById('transactionModal');
             const detailsContainer = document.getElementById('transactionDetails');
@@ -1161,15 +1204,15 @@
                         <div class="detail-grid">
                             <div class="detail-item">
                                 <span class="detail-label">Domain Code</span>
-                                <span class="detail-value">${transaction.bkTxCdDomain || 'N/A'}</span>
+                                <span class="detail-value">${getBkTxCdDomainName(transaction.bkTxCdDomain || 'N/A')}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Family Code</span>
-                                <span class="detail-value">${transaction.bkTxCdFamily || 'N/A'}</span>
+                                <span class="detail-value">${getBkTxCdFamilyName(transaction.bkTxCdFamily || 'N/A')}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Sub-Family Code</span>
-                                <span class="detail-value">${transaction.bkTxCdSubFamily || 'N/A'}</span>
+                                <span class="detail-value">${getBkTxCdSubFamilyName(transaction.bkTxCdSubFamily || 'N/A')}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Proprietärer Code</span>
