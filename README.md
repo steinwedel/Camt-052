@@ -81,7 +81,7 @@ node build.js desktop:linux
 ```
 
 Die Desktop-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
-- **macOS**: Universal Binary (läuft auf Intel und Apple Silicon)
+- **macOS**: Universal Binary ZIP (portabel) + DMG Installer
 - **Windows**: Portable .exe (keine Installation nötig)
 - **Linux**: AppImage (direkt ausführbar)
 
@@ -127,13 +127,15 @@ dist-server/
 ```
 dist-desktop/
 ├── CAMT.052 Viewer-1.0.0.exe           # Windows Portable (ca. 100-150 MB)
-├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS Universal Binary (ca. 200-250 MB)
+├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS Universal Binary ZIP (ca. 200-250 MB)
+├── CAMT.052 Viewer-1.0.0.dmg           # macOS Universal Binary DMG Installer (ca. 200-250 MB)
 └── CAMT.052 Viewer-1.0.0.AppImage      # Linux (ca. 150-200 MB)
 ```
 
 **Hinweis**: 
 - Die Desktop-Apps sind größer als Server-Executables, da sie eine vollständige Chromium-Engine enthalten
-- Die macOS Universal Binary enthält beide Architekturen (Intel + Apple Silicon) und ist daher größer
+- Die macOS Universal Binary enthält beide Architekturen (Intel + Apple Silicon)
+- Für macOS werden zwei Dateien erstellt: ZIP (portabel) und DMG (Installer)
 
 ### Executables ausführen
 
@@ -172,14 +174,25 @@ chmod +x camt52-viewer-linux
 # Oder per Doppelklick - keine Installation erforderlich!
 ```
 
-**macOS:**
+**macOS (2 Optionen):**
+
+*Option 1 - ZIP (Portabel):*
 ```bash
 # ZIP-Archiv entpacken und .app Datei ausführen:
 unzip "CAMT.052 Viewer-1.0.0-mac.zip"
 open "CAMT.052 Viewer.app"
 # Oder per Doppelklick auf die .app Datei
-# Läuft automatisch nativ auf Intel und Apple Silicon Macs
 ```
+
+*Option 2 - DMG (Installer):*
+```bash
+# DMG öffnen und App in Applications-Ordner ziehen:
+open "CAMT.052 Viewer-1.0.0.dmg"
+# Dann .app aus Applications-Ordner starten
+# Oder per Doppelklick auf die DMG-Datei
+```
+
+**Beide Varianten** sind Universal Binaries und laufen automatisch nativ auf Intel und Apple Silicon Macs.
 
 **Linux:**
 ```bash
