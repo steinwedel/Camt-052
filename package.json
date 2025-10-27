@@ -9,19 +9,22 @@
     "dev": "node server.js",
     "electron": "electron .",
     "electron:dev": "electron . --dev",
-    "build": "npm run build:all",
-    "build:all": "npm run build:win && npm run build:mac && npm run build:linux",
-    "build:win": "pkg . --targets node18-win-x64 --output dist/camt52-viewer-windows.exe --compress GZip",
-    "build:mac": "pkg . --targets node18-macos-x64 --output dist/camt52-viewer-macos --compress GZip",
-    "build:linux": "pkg . --targets node18-linux-x64 --output dist/camt52-viewer-linux --compress GZip",
-    "build:electron": "electron-builder",
-    "build:electron:all": "electron-builder -mwl"
+    "build": "node build.js",
+    "build:server": "node build.js server",
+    "build:server:win": "node build.js server:windows",
+    "build:server:mac": "node build.js server:macos",
+    "build:server:linux": "node build.js server:linux",
+    "build:desktop": "node build.js desktop",
+    "build:desktop:all": "node build.js desktop:all",
+    "build:desktop:win": "node build.js desktop:windows",
+    "build:desktop:mac": "node build.js desktop:macos",
+    "build:desktop:linux": "node build.js desktop:linux"
   },
   "pkg": {
     "assets": [
       "public/**/*"
     ],
-    "outputPath": "dist"
+    "outputPath": "dist-server"
   },
   "keywords": [
     "camt052",
@@ -46,7 +49,7 @@
     "appId": "com.camt52viewer.app",
     "productName": "CAMT.052 Viewer",
     "directories": {
-      "output": "dist-electron"
+      "output": "dist-desktop"
     },
     "files": [
       "electron.js",
