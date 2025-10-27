@@ -67,7 +67,7 @@
       "target": [
         {
           "target": "zip",
-          "arch": ["x64", "arm64"]
+          "arch": "universal"
         }
       ]
     },
