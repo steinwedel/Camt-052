@@ -138,12 +138,12 @@ function buildServerPlatform(platform) {
     }
 }
 
-// Lösche unnötige Build-Dateien (.blockmap und .yml)
+// Lösche unnötige Build-Dateien (.blockmap, .yml, .zip)
 function cleanupBuildFiles(directory) {
     try {
         const files = fs.readdirSync(directory);
         let deletedCount = 0;
-        const extensionsToDelete = ['.blockmap', '.yml', '.yaml'];
+        const extensionsToDelete = ['.blockmap', '.yml', '.yaml', '.zip'];
         
         files.forEach(file => {
             const shouldDelete = extensionsToDelete.some(ext => file.endsWith(ext));
@@ -156,7 +156,7 @@ function cleanupBuildFiles(directory) {
         });
         
         if (deletedCount > 0) {
-            logSuccess(`${deletedCount} unnötige Datei(en) gelöscht (.blockmap, .yml)`);
+            logSuccess(`${deletedCount} unnötige Datei(en) gelöscht (.blockmap, .yml, .zip)`);
         } else {
             logInfo('Keine unnötigen Dateien gefunden');
         }
@@ -180,7 +180,7 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder -mwl --config.directories.output=dist-desktop';
             platformName = 'Alle Plattformen (Windows, macOS, Linux)';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
-            logInfo('  • macOS: Universal Binary ZIP + DMG Installer');
+            logInfo('  • macOS: DMG Installer (Universal Binary)');
             logInfo('  • Windows: Portable .exe (keine Installation nötig)');
             logInfo('  • Linux: AppImage (direkt ausführbar)');
         } else if (platforms === 'windows') {
@@ -191,8 +191,7 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder --mac --config.directories.output=dist-desktop';
             platformName = 'macOS';
             log(`🍎 Erstelle ${platformName} Desktop-App...`, colors.cyan);
-            logInfo('  • ZIP: Direkt ausführbar (entpacken und starten)');
-            logInfo('  • DMG: Installer (in Applications-Ordner ziehen)');
+            logInfo('  • DMG Installer (Universal Binary für Intel + Apple Silicon)');
         } else if (platforms === 'linux') {
             command = 'npx electron-builder --linux --config.directories.output=dist-desktop';
             platformName = 'Linux';
@@ -207,16 +206,16 @@ function buildDesktop(platforms) {
         
         logSuccess(`Desktop-Build erfolgreich erstellt`);
         
-        // Lösche unnötige Dateien (.blockmap und .yml)
+        // Lösche unnötige Dateien (.blockmap, .yml, .zip)
         console.log('');
-        logInfo('Bereinige unnötige Dateien (.blockmap, .yml)...');
+        logInfo('Bereinige unnötige Dateien (.blockmap, .yml, .zip)...');
         cleanupBuildFiles(distDesktopPath);
         
         console.log('');
         logInfo('Die Desktop-Apps befinden sich im "dist-desktop" Verzeichnis.');
         console.log('');
-        logInfo('Verwendung der direkt ausführbaren Dateien:');
-        logInfo('  • macOS: ZIP entpacken und .app ausführen (läuft auf Intel & Apple Silicon)');
+        logInfo('Verwendung der Dateien:');
+        logInfo('  • macOS: DMG öffnen und App in Applications ziehen');
         logInfo('  • Windows: Portable .exe direkt starten (keine Installation)');
         logInfo('  • Linux: AppImage ausführbar machen (chmod +x) und starten');
         return true;
