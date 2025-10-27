@@ -572,7 +572,6 @@
                     <label for="xmlFile" class="file-input-label">📁 Datei auswählen</label>
                 </div>
                 <div class="file-name" id="fileName">Keine Datei ausgewählt</div>
-                <button class="upload-btn" id="uploadBtn" disabled>🚀 Hochladen & Analysieren</button>
             </div>
         </div>
 
@@ -697,7 +696,6 @@
     <script>
         const fileInput = document.getElementById('xmlFile');
         const fileName = document.getElementById('fileName');
-        const uploadBtn = document.getElementById('uploadBtn');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const results = document.getElementById('results');
@@ -706,45 +704,40 @@
         let allTransactionsData = [];
         let currentSelectedFileName = null;
 
-        fileInput.addEventListener('change', (e) => {
+        fileInput.addEventListener('change', async (e) => {
             if (e.target.files.length > 0) {
-                fileName.textContent = e.target.files[0].name;
-                uploadBtn.disabled = false;
+                const file = e.target.files[0];
+                fileName.textContent = file.name;
+                
+                // Auto-upload the file
+                const formData = new FormData();
+                formData.append('xmlFile', file);
+
+                loading.classList.remove('hidden');
+                error.classList.add('hidden');
+                results.classList.add('hidden');
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Fehler beim Hochladen');
+                    }
+
+                    displayResults(data);
+                } catch (err) {
+                    error.textContent = `Fehler: ${err.message}`;
+                    error.classList.remove('hidden');
+                } finally {
+                    loading.classList.add('hidden');
+                }
             } else {
                 fileName.textContent = 'Keine Datei ausgewählt';
-                uploadBtn.disabled = true;
-            }
-        });
-
-        uploadBtn.addEventListener('click', async () => {
-            const file = fileInput.files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('xmlFile', file);
-
-            loading.classList.remove('hidden');
-            error.classList.add('hidden');
-            results.classList.add('hidden');
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Fehler beim Hochladen');
-                }
-
-                displayResults(data);
-            } catch (err) {
-                error.textContent = `Fehler: ${err.message}`;
-                error.classList.remove('hidden');
-            } finally {
-                loading.classList.add('hidden');
             }
         });
 
