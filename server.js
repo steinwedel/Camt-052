@@ -225,11 +225,38 @@ function parseCamt052(xmlData, fileName = '') {
                 // Extract AcctSvcrRef from entry level
                 const acctSvcrRef = entry.AcctSvcrRef || 'N/A';
 
-                // Extract reference
-                const reference = tx.Refs?.EndToEndId || 
-                                tx.Refs?.TxId || 
-                                tx.Refs?.MsgId || 
-                                'N/A';
+                // Extract all reference fields
+                const endToEndId = tx.Refs?.EndToEndId || 'N/A';
+                const mandateId = tx.Refs?.MndtId || 'N/A';
+                const txId = tx.Refs?.TxId || 'N/A';
+                const msgId = tx.Refs?.MsgId || 'N/A';
+                
+                // Extract proprietary reference
+                const prtryRefType = getNestedValue(tx, 'Refs.Prtry.Tp') || 'N/A';
+                const prtryRefValue = getNestedValue(tx, 'Refs.Prtry.Ref') || 'N/A';
+
+                // Extract Bank Transaction Code
+                const bkTxCdDomain = getNestedValue(tx, 'BkTxCd.Domn.Cd') || 'N/A';
+                const bkTxCdFamily = getNestedValue(tx, 'BkTxCd.Domn.Fmly.Cd') || 'N/A';
+                const bkTxCdSubFamily = getNestedValue(tx, 'BkTxCd.Domn.Fmly.SubFmlyCd') || 'N/A';
+                const bkTxCdPrtry = getNestedValue(tx, 'BkTxCd.Prtry.Cd') || 'N/A';
+                const bkTxCdIssr = getNestedValue(tx, 'BkTxCd.Prtry.Issr') || 'N/A';
+
+                // Extract party IDs
+                const debtorId = getNestedValue(relatedParties, 'Dbtr.Pty.Id.PrvtId.Othr.Id') || 
+                                getNestedValue(relatedParties, 'Dbtr.Pty.Id.OrgId.Othr.Id') || 'N/A';
+                const creditorId = getNestedValue(relatedParties, 'Cdtr.Pty.Id.PrvtId.Othr.Id') || 
+                                  getNestedValue(relatedParties, 'Cdtr.Pty.Id.OrgId.Othr.Id') || 'N/A';
+
+                // Extract Related Agents (BIC codes)
+                const debtorAgentBIC = getNestedValue(tx, 'RltdAgts.DbtrAgt.FinInstnId.BICFI') || 'N/A';
+                const creditorAgentBIC = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.BICFI') || 'N/A';
+
+                // Extract additional entry information
+                const additionalInfo = entry.AddtlNtryInf || 'N/A';
+
+                // Extract detailed status
+                const statusCode = entry.Sts?.Cd || entry.Sts || 'N/A';
 
                 // Generate raw XML for this entry
                 const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
@@ -254,8 +281,29 @@ function parseCamt052(xmlData, fileName = '') {
                     receiver: creditor,
                     receiverAccount: creditorAccount,
                     purpose: Array.isArray(remittanceInfo) ? remittanceInfo.join(' ') : remittanceInfo,
-                    reference: reference,
-                    status: entry.Sts || 'BOOK',
+                    // Reference fields
+                    endToEndId: endToEndId,
+                    mandateId: mandateId,
+                    transactionId: txId,
+                    messageId: msgId,
+                    proprietaryRefType: prtryRefType,
+                    proprietaryRefValue: prtryRefValue,
+                    // Bank Transaction Code
+                    bkTxCdDomain: bkTxCdDomain,
+                    bkTxCdFamily: bkTxCdFamily,
+                    bkTxCdSubFamily: bkTxCdSubFamily,
+                    bkTxCdProprietary: bkTxCdPrtry,
+                    bkTxCdIssuer: bkTxCdIssr,
+                    // Party IDs
+                    debtorId: debtorId,
+                    creditorId: creditorId,
+                    // Agent BICs
+                    debtorAgentBIC: debtorAgentBIC,
+                    creditorAgentBIC: creditorAgentBIC,
+                    // Additional info
+                    additionalInfo: additionalInfo,
+                    statusCode: statusCode,
+                    status: statusCode,
                     rawXML: rawXML,
                     fileName: fileName
                 };
