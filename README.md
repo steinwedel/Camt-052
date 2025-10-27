@@ -81,7 +81,7 @@ node build.js desktop:linux
 ```
 
 Die Desktop-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
-- **macOS**: ZIP-Archiv mit .app Bundle (x64 + arm64)
+- **macOS**: Universal Binary (läuft auf Intel und Apple Silicon)
 - **Windows**: Portable .exe (keine Installation nötig)
 - **Linux**: AppImage (direkt ausführbar)
 
@@ -127,12 +127,13 @@ dist-server/
 ```
 dist-desktop/
 ├── CAMT.052 Viewer-1.0.0.exe           # Windows Portable (ca. 100-150 MB)
-├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS .app Bundle (ca. 150-200 MB)
-├── CAMT.052 Viewer-1.0.0-arm64-mac.zip # macOS .app Bundle für Apple Silicon
+├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS Universal Binary (ca. 200-250 MB)
 └── CAMT.052 Viewer-1.0.0.AppImage      # Linux (ca. 150-200 MB)
 ```
 
-**Hinweis**: Die Desktop-Apps sind größer als Server-Executables, da sie eine vollständige Chromium-Engine enthalten, bieten aber eine native Desktop-Erfahrung.
+**Hinweis**: 
+- Die Desktop-Apps sind größer als Server-Executables, da sie eine vollständige Chromium-Engine enthalten
+- Die macOS Universal Binary enthält beide Architekturen (Intel + Apple Silicon) und ist daher größer
 
 ### Executables ausführen
 
@@ -177,6 +178,7 @@ chmod +x camt52-viewer-linux
 unzip "CAMT.052 Viewer-1.0.0-mac.zip"
 open "CAMT.052 Viewer.app"
 # Oder per Doppelklick auf die .app Datei
+# Läuft automatisch nativ auf Intel und Apple Silicon Macs
 ```
 
 **Linux:**
