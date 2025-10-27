@@ -274,6 +274,10 @@
             border-bottom: none;
         }
 
+        tbody tr.transaction-row {
+            cursor: pointer;
+        }
+
         .balance-row {
             cursor: pointer;
             transition: background-color 0.2s;
@@ -460,6 +464,83 @@
             line-height: 1.5;
         }
 
+        .transaction-details {
+            display: grid;
+            gap: 20px;
+        }
+
+        .detail-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-section h4 {
+            color: #495057;
+            margin-bottom: 12px;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #212529;
+            font-size: 1em;
+            word-wrap: break-word;
+        }
+
+        .detail-value.highlight {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .detail-value.credit {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .detail-value.debit {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .transaction-row {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .transaction-row:hover {
+            background: #e7f3ff !important;
+        }
+
+        .xml-button-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .xml-button-container .xml-btn {
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -581,6 +662,19 @@
         </div>
     </div>
 
+    <!-- Modal for Transaction Details -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 Buchungsdetails</h3>
+                <button class="close-btn" onclick="closeTransactionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="transactionDetails"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for Raw XML -->
     <div id="xmlModal" class="modal">
         <div class="modal-content">
@@ -670,9 +764,18 @@
             const tbody = document.getElementById('transactionsBody');
             tbody.innerHTML = '';
 
-            transactions.forEach(transaction => {
+            transactions.forEach((transaction, index) => {
                 const row = document.createElement('tr');
+                row.className = 'transaction-row';
                 const amountClass = transaction.creditDebit === 'CRDT' ? 'amount-credit' : 'amount-debit';
+                
+                // Add click handler to show transaction details
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if clicking the XML button
+                    if (!e.target.closest('.xml-btn')) {
+                        showTransactionDetails(transaction);
+                    }
+                });
                 
                 row.innerHTML = `
                     <td>${transaction.acctSvcrRef}</td>
@@ -689,7 +792,7 @@
                     <td class="${amountClass}">${transaction.amount}</td>
                     <td>${transaction.purpose}</td>
                     <td>
-                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)})'>
+                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)}); event.stopPropagation();'>
                             📋 XML anzeigen
                         </button>
                     </td>
@@ -852,6 +955,130 @@
             return types[type] || type;
         }
 
+        function showTransactionDetails(transaction) {
+            const modal = document.getElementById('transactionModal');
+            const detailsContainer = document.getElementById('transactionDetails');
+            
+            const amountClass = transaction.creditDebit === 'CRDT' ? 'credit' : 'debit';
+            
+            detailsContainer.innerHTML = `
+                <div class="transaction-details">
+                    <!-- Grundinformationen -->
+                    <div class="detail-section">
+                        <h4>📊 Grundinformationen</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Referenznummer (AcctSvcrRef)</span>
+                                <span class="detail-value highlight">${transaction.acctSvcrRef}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Transaktionstyp</span>
+                                <span class="detail-value highlight">${transaction.type}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value">${transaction.status}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Quelldatei</span>
+                                <span class="detail-value">${transaction.fileName || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Beträge und Daten -->
+                    <div class="detail-section">
+                        <h4>💰 Beträge und Daten</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Betrag</span>
+                                <span class="detail-value ${amountClass} highlight">${transaction.amount}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Währung</span>
+                                <span class="detail-value">${transaction.currency}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Buchungsdatum</span>
+                                <span class="detail-value">${transaction.bookingDate}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Valutadatum</span>
+                                <span class="detail-value">${transaction.valueDate}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Auszugsdatum</span>
+                                <span class="detail-value">${transaction.statementDate || 'N/A'}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Auszugsnummer</span>
+                                <span class="detail-value">${transaction.statementNumber || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Absender (Debtor) -->
+                    <div class="detail-section">
+                        <h4>📤 Absender / Schuldner (Debtor)</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Name</span>
+                                <span class="detail-value">${transaction.debtor}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">IBAN</span>
+                                <span class="detail-value">${transaction.debtorAccount}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empfänger (Creditor) -->
+                    <div class="detail-section">
+                        <h4>📥 Empfänger / Gläubiger (Creditor)</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Name</span>
+                                <span class="detail-value">${transaction.creditor}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">IBAN</span>
+                                <span class="detail-value">${transaction.creditorAccount}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verwendungszweck und Referenz -->
+                    <div class="detail-section">
+                        <h4>📝 Verwendungszweck und Referenz</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Verwendungszweck</span>
+                                <span class="detail-value">${transaction.purpose}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Referenz (End-to-End ID)</span>
+                                <span class="detail-value">${transaction.reference}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Raw XML Button -->
+                    <div class="xml-button-container">
+                        <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)}); closeTransactionModal();'>
+                            📋 Raw XML anzeigen
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        function closeTransactionModal() {
+            const modal = document.getElementById('transactionModal');
+            modal.classList.remove('show');
+        }
+
         function showXMLModal(xmlData) {
             const modal = document.getElementById('xmlModal');
             const xmlContent = document.getElementById('xmlContent');
@@ -866,8 +1093,12 @@
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('xmlModal');
-            if (event.target === modal) {
+            const transactionModal = document.getElementById('transactionModal');
+            const xmlModal = document.getElementById('xmlModal');
+            if (event.target === transactionModal) {
+                closeTransactionModal();
+            }
+            if (event.target === xmlModal) {
                 closeXMLModal();
             }
         }
@@ -875,6 +1106,7 @@
         // Close modal with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
+                closeTransactionModal();
                 closeXMLModal();
             }
         });
