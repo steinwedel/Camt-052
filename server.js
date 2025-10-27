@@ -87,6 +87,18 @@ function formatDate(dateStr) {
     });
 }
 
+// Helper function to translate status codes to German
+function translateStatus(statusCode) {
+    const statusTranslations = {
+        'BOOK': 'Gebucht',
+        'PDNG': 'Ausstehend',
+        'INFO': 'Information',
+        'FUTR': 'Zukünftig',
+        'CANC': 'Storniert'
+    };
+    return statusTranslations[statusCode] || statusCode;
+}
+
 // Parse CAMT.052 XML file
 function parseCamt052(xmlData, fileName = '') {
     const result = parser.parse(xmlData);
