@@ -138,11 +138,35 @@ function buildServerPlatform(platform) {
     }
 }
 
+// Lösche .blockmap Dateien aus einem Verzeichnis
+function deleteBlockmapFiles(directory) {
+    try {
+        const files = fs.readdirSync(directory);
+        let deletedCount = 0;
+        
+        files.forEach(file => {
+            if (file.endsWith('.blockmap')) {
+                const filePath = path.join(directory, file);
+                fs.unlinkSync(filePath);
+                deletedCount++;
+                logInfo(`  Gelöscht: ${file}`);
+            }
+        });
+        
+        if (deletedCount > 0) {
+            logSuccess(`${deletedCount} .blockmap Datei(en) gelöscht`);
+        }
+    } catch (error) {
+        logError(`Fehler beim Löschen von .blockmap Dateien: ${error.message}`);
+    }
+}
+
 // Führe Desktop Build aus (Electron)
 function buildDesktop(platforms) {
     logHeader('Desktop-App Build (Electron)');
     
-    createDirectory(path.join(__dirname, 'dist-desktop'), 'dist-desktop');
+    const distDesktopPath = path.join(__dirname, 'dist-desktop');
+    createDirectory(distDesktopPath, 'dist-desktop');
     
     try {
         let command;
@@ -176,6 +200,13 @@ function buildDesktop(platforms) {
         execSync(command, { stdio: 'inherit' });
         
         logSuccess(`Desktop-Build erfolgreich erstellt`);
+        
+        // Lösche .blockmap Dateien
+        console.log('');
+        logInfo('Bereinige .blockmap Dateien...');
+        deleteBlockmapFiles(distDesktopPath);
+        
+        console.log('');
         logInfo('Die Desktop-Apps befinden sich im "dist-desktop" Verzeichnis.');
         console.log('');
         logInfo('Verwendung der direkt ausführbaren Dateien:');
