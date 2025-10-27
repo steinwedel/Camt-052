@@ -57,6 +57,10 @@
       "public/**/*",
       "node_modules/**/*"
     ],
+    "asarUnpack": [
+      "server.js",
+      "public/**/*"
+    ],
     "mac": {
       "category": "public.app-category.finance",
       "target": [
