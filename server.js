@@ -261,9 +261,15 @@ function parseCamt052(xmlData, fileName = '') {
                 const debtorAcctCcy = getNestedValue(relatedParties, 'DbtrAcct.Ccy') || 'N/A';
                 const creditorAcctCcy = getNestedValue(relatedParties, 'CdtrAcct.Ccy') || 'N/A';
 
-                // Extract Related Agents (BIC codes)
+                // Extract Related Agents (BIC codes and Clearing System Member IDs)
                 const debtorAgentBIC = getNestedValue(tx, 'RltdAgts.DbtrAgt.FinInstnId.BICFI') || 'N/A';
                 const creditorAgentBIC = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.BICFI') || 'N/A';
+                
+                // Extract Clearing System Member IDs
+                const debtorAgentClrSysId = getNestedValue(tx, 'RltdAgts.DbtrAgt.FinInstnId.ClrSysMmbId.ClrSysId.Cd') || 'N/A';
+                const debtorAgentMmbId = getNestedValue(tx, 'RltdAgts.DbtrAgt.FinInstnId.ClrSysMmbId.MmbId') || 'N/A';
+                const creditorAgentClrSysId = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.ClrSysMmbId.ClrSysId.Cd') || 'N/A';
+                const creditorAgentMmbId = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.ClrSysMmbId.MmbId') || 'N/A';
 
                 // Extract additional entry information
                 const additionalInfo = entry.AddtlNtryInf || 'N/A';
@@ -299,7 +305,7 @@ function parseCamt052(xmlData, fileName = '') {
                     receiverAccount: creditorAccount,
                     purpose: Array.isArray(remittanceInfo) ? remittanceInfo.join(' ') : remittanceInfo,
                     purposeProprietary: purposePrtry,
-                    remittanceInfoUstrd: remittanceInfoUstrd,
+                    remittanceInfoUstrd: Array.isArray(remittanceInfoUstrd) ? remittanceInfoUstrd.join(' / ') : remittanceInfoUstrd,
                     additionalTxInfo: additionalTxInfo,
                     // Reference fields
                     endToEndId: endToEndId,
@@ -336,6 +342,11 @@ function parseCamt052(xmlData, fileName = '') {
                     // Agent BICs
                     debtorAgentBIC: debtorAgentBIC,
                     creditorAgentBIC: creditorAgentBIC,
+                    // Agent Clearing System Member IDs
+                    debtorAgentClrSysId: debtorAgentClrSysId,
+                    debtorAgentMmbId: debtorAgentMmbId,
+                    creditorAgentClrSysId: creditorAgentClrSysId,
+                    creditorAgentMmbId: creditorAgentMmbId,
                     // Additional info
                     additionalInfo: additionalInfo,
                     statusCode: statusCode,
