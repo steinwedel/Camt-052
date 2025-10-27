@@ -47,34 +47,40 @@ Sie können eigenständige ausführbare Dateien für Windows, macOS und Linux er
 
 Das `build.js` Script bietet eine benutzerfreundliche Oberfläche für **beide Build-Typen**:
 
-**PKG Standalone Executables:**
+**Server-Executables (Standalone):**
 ```bash
-# Alle Plattformen erstellen (pkg)
-node build.js
+# Alle Plattformen erstellen
+node build.js server
 
 # Nur Windows
-node build.js windows
+node build.js server:windows
 
 # Nur macOS
-node build.js macos
+node build.js server:macos
 
 # Nur Linux
-node build.js linux
+node build.js server:linux
 ```
 
-**Electron Desktop-Apps (Direkt ausführbare Dateien):**
+**Desktop-Apps (Electron - Direkt ausführbare Dateien):**
 ```bash
-# Electron App für aktuelle Plattform
-node build.js electron
+# Desktop-App für aktuelle Plattform
+node build.js desktop
 
-# Electron Apps für alle Plattformen (empfohlen)
-node build.js electron:all
+# Desktop-Apps für alle Plattformen (empfohlen)
+node build.js desktop:all
 
-# PKG UND Electron für alle Plattformen
-node build.js all
+# Nur Windows
+node build.js desktop:windows
+
+# Nur macOS
+node build.js desktop:macos
+
+# Nur Linux
+node build.js desktop:linux
 ```
 
-Die Electron-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
+Die Desktop-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
 - **macOS**: ZIP-Archiv mit .app Bundle (x64 + arm64)
 - **Windows**: Portable .exe (keine Installation nötig)
 - **Linux**: AppImage (direkt ausführbar)
@@ -82,8 +88,8 @@ Die Electron-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
 Das Script:
 - ✅ Prüft automatisch ob `pkg` installiert ist
 - ✅ Installiert `pkg` falls nötig
-- ✅ Erstellt die `dist` und `dist-electron` Verzeichnisse
-- ✅ Komprimiert die Executables mit GZip
+- ✅ Erstellt die `dist-server` und `dist-desktop` Verzeichnisse
+- ✅ Komprimiert die Server-Executables mit GZip
 - ✅ Unterstützt Electron-Builder für Desktop-Apps
 - ✅ Zeigt detaillierte Fortschrittsinformationen
 - ✅ Gibt eine Zusammenfassung mit Dateigrößen aus
@@ -91,13 +97,18 @@ Das Script:
 #### Methode 2: NPM Scripts verwenden
 
 ```bash
-# Alle Plattformen
-npm run build
+# Server-Executables
+npm run build:server           # Alle Plattformen
+npm run build:server:win       # Windows
+npm run build:server:mac       # macOS
+npm run build:server:linux     # Linux
 
-# Einzelne Plattformen
-npm run build:win      # Windows
-npm run build:mac      # macOS
-npm run build:linux    # Linux
+# Desktop-Apps
+npm run build:desktop          # Aktuelle Plattform
+npm run build:desktop:all      # Alle Plattformen
+npm run build:desktop:win      # Windows
+npm run build:desktop:mac      # macOS
+npm run build:desktop:linux    # Linux
 ```
 
 ### Erstellte Dateien
