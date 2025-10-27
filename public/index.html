@@ -580,6 +580,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Typ</th>
                                     <th>Buchungsdatum</th>
                                     <th>Valutadatum</th>
@@ -694,6 +695,7 @@
                 const typeClass = transaction.type === 'Eingang' ? 'type-eingang' : 'type-ausgang';
                 
                 row.innerHTML = `
+                    <td>${transaction.acctSvcrRef}</td>
                     <td><span class="type-badge ${typeClass}">${transaction.type}</span></td>
                     <td>${transaction.bookingDate}</td>
                     <td>${transaction.valueDate}</td>
