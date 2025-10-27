@@ -67,9 +67,21 @@ function startServer() {
         console.log('Server exists:', require('fs').existsSync(serverPath));
         console.log('='.repeat(60));
 
+        // Determine the correct working directory
+        let workingDir;
+        if (isPackaged) {
+            // In packaged app, use the directory containing the unpacked files
+            workingDir = path.dirname(serverPath);
+        } else {
+            workingDir = __dirname;
+        }
+
+        console.log('Working directory:', workingDir);
+
         try {
             // Use fork to run server.js with Electron's Node.js
             serverProcess = fork(serverPath, [], {
+                cwd: workingDir,
                 env: { ...process.env, ELECTRON_MODE: 'true' },
                 silent: false,
                 stdio: ['pipe', 'pipe', 'pipe', 'ipc']
