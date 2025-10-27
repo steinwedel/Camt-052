@@ -176,7 +176,7 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder -mwl --config.directories.output=dist-desktop';
             platformName = 'Alle Plattformen (Windows, macOS, Linux)';
             log(`🖥️  Erstelle ${platformName}...`, colors.cyan);
-            logInfo('  • macOS: ZIP-Archiv mit .app Bundle (x64 + arm64)');
+            logInfo('  • macOS: Universal Binary (Intel + Apple Silicon)');
             logInfo('  • Windows: Portable .exe (keine Installation nötig)');
             logInfo('  • Linux: AppImage (direkt ausführbar)');
         } else if (platforms === 'windows') {
@@ -210,7 +210,7 @@ function buildDesktop(platforms) {
         logInfo('Die Desktop-Apps befinden sich im "dist-desktop" Verzeichnis.');
         console.log('');
         logInfo('Verwendung der direkt ausführbaren Dateien:');
-        logInfo('  • macOS: ZIP entpacken und .app Datei ausführen');
+        logInfo('  • macOS: ZIP entpacken und .app ausführen (läuft auf Intel & Apple Silicon)');
         logInfo('  • Windows: Portable .exe direkt starten (keine Installation)');
         logInfo('  • Linux: AppImage ausführbar machen (chmod +x) und starten');
         return true;
