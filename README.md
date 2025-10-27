@@ -62,17 +62,22 @@ node build.js macos
 node build.js linux
 ```
 
-**Electron Desktop-Apps:**
+**Electron Desktop-Apps (Direkt ausführbare Dateien):**
 ```bash
 # Electron App für aktuelle Plattform
 node build.js electron
 
-# Electron Apps für alle Plattformen
+# Electron Apps für alle Plattformen (empfohlen)
 node build.js electron:all
 
 # PKG UND Electron für alle Plattformen
 node build.js all
 ```
+
+Die Electron-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
+- **macOS**: ZIP-Archiv mit .app Bundle (x64 + arm64)
+- **Windows**: Portable .exe (keine Installation nötig)
+- **Linux**: AppImage (direkt ausführbar)
 
 Das Script:
 - ✅ Prüft automatisch ob `pkg` installiert ist
@@ -97,7 +102,7 @@ npm run build:linux    # Linux
 
 ### Erstellte Dateien
 
-Nach dem Build-Prozess finden Sie im `dist/` Verzeichnis:
+**PKG Standalone Executables** (im `dist/` Verzeichnis):
 
 ```
 dist/
@@ -106,15 +111,29 @@ dist/
 └── camt52-viewer-linux          # Linux (ca. 50-70 MB)
 ```
 
+**Electron Desktop-Apps** (im `dist-electron/` Verzeichnis):
+
+```
+dist-electron/
+├── CAMT.052 Viewer-1.0.0.exe           # Windows Portable (ca. 100-150 MB)
+├── CAMT.052 Viewer-1.0.0-mac.zip       # macOS .app Bundle (ca. 150-200 MB)
+├── CAMT.052 Viewer-1.0.0-arm64-mac.zip # macOS .app Bundle für Apple Silicon
+└── CAMT.052 Viewer-1.0.0.AppImage      # Linux (ca. 150-200 MB)
+```
+
+**Hinweis**: Die Electron-Apps sind größer als PKG-Executables, da sie eine vollständige Chromium-Engine enthalten, bieten aber eine native Desktop-Erfahrung.
+
 ### Executables ausführen
 
-#### Windows
+#### PKG Standalone Executables
+
+**Windows:**
 ```bash
 # Doppelklick auf die .exe Datei oder im Terminal:
 camt52-viewer-windows.exe
 ```
 
-#### macOS
+**macOS:**
 ```bash
 # Ausführbar machen (einmalig):
 chmod +x camt52-viewer-macos
@@ -123,13 +142,38 @@ chmod +x camt52-viewer-macos
 ./camt52-viewer-macos
 ```
 
-#### Linux
+**Linux:**
 ```bash
 # Ausführbar machen (einmalig):
 chmod +x camt52-viewer-linux
 
 # Starten:
 ./camt52-viewer-linux
+```
+
+#### Electron Desktop-Apps (Direkt ausführbar)
+
+**Windows:**
+```bash
+# Einfach die portable .exe Datei starten:
+"CAMT.052 Viewer-1.0.0.exe"
+# Oder per Doppelklick - keine Installation erforderlich!
+```
+
+**macOS:**
+```bash
+# ZIP-Archiv entpacken und .app Datei ausführen:
+unzip "CAMT.052 Viewer-1.0.0-mac.zip"
+open "CAMT.052 Viewer.app"
+# Oder per Doppelklick auf die .app Datei
+```
+
+**Linux:**
+```bash
+# AppImage ausführbar machen und starten:
+chmod +x "CAMT.052 Viewer-1.0.0.AppImage"
+./"CAMT.052 Viewer-1.0.0.AppImage"
+# Oder per Doppelklick
 ```
 
 ### Was ist enthalten?
