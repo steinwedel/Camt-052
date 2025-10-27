@@ -99,17 +99,21 @@ function translateStatus(statusCode) {
     return statusTranslations[statusCode] || statusCode;
 }
 
-// Parse CAMT.052 XML file
+// Parse CAMT.052 or CAMT.053 XML file
 function parseCamt052(xmlData, fileName = '') {
     const result = parser.parse(xmlData);
     
-    // Navigate through the CAMT.052 structure
+    // Navigate through the CAMT.052 or CAMT.053 structure
     const document = result.Document || result;
+    
+    // Support both CAMT.052 (BkToCstmrAcctRpt) and CAMT.053 (BkToCstmrStmt)
     const report = getNestedValue(document, 'BkToCstmrAcctRpt.Rpt') || 
-                   getNestedValue(document, 'BkToCstmrAcctRpt.GrpHdr');
+                   getNestedValue(document, 'BkToCstmrStmt.Stmt') ||
+                   getNestedValue(document, 'BkToCstmrAcctRpt.GrpHdr') ||
+                   getNestedValue(document, 'BkToCstmrStmt.GrpHdr');
     
     if (!report) {
-        throw new Error('Invalid CAMT.052 format: Could not find report structure');
+        throw new Error('Invalid CAMT.052/053 format: Could not find report or statement structure');
     }
 
     // Handle both single report and array of reports
