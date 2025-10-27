@@ -233,6 +233,8 @@ function parseCamt052(xmlData, fileName = '') {
                 const msgId = tx.Refs?.MsgId || 'N/A';
                 const clrSysRef = tx.Refs?.ClrSysRef || 'N/A';
                 const acctSvcrRefTx = tx.Refs?.AcctSvcrRef || 'N/A';
+                const instrId = tx.Refs?.InstrId || 'N/A';
+                const chqNb = tx.Refs?.ChqNb || 'N/A';
                 
                 // Extract proprietary reference
                 const prtryRefType = getNestedValue(tx, 'Refs.Prtry.Tp') || 'N/A';
@@ -312,6 +314,8 @@ function parseCamt052(xmlData, fileName = '') {
                     messageId: msgId,
                     clearingSystemRef: clrSysRef,
                     acctSvcrRefTx: acctSvcrRefTx,
+                    instructionId: instrId,
+                    chequeNumber: chqNb,
                     proprietaryRefType: prtryRefType,
                     proprietaryRefValue: prtryRefValue,
                     // Amount details
