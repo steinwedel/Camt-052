@@ -222,18 +222,33 @@ function parseCamt052(xmlData, fileName = '') {
                     }
                 }
 
-                // Extract AcctSvcrRef from entry level
+                // Extract entry-level fields
+                const entryRef = entry.NtryRef || 'N/A';
+                const reversalIndicator = entry.RvslInd !== undefined ? String(entry.RvslInd) : 'N/A';
                 const acctSvcrRef = entry.AcctSvcrRef || 'N/A';
+                
+                // Extract booking datetime (with time if available)
+                const bookingDateTime = entry.BookgDt?.DtTm || entry.BookgDt?.Dt || entry.BookgDt || 'N/A';
 
                 // Extract all reference fields
                 const endToEndId = tx.Refs?.EndToEndId || 'N/A';
                 const mandateId = tx.Refs?.MndtId || 'N/A';
                 const txId = tx.Refs?.TxId || 'N/A';
                 const msgId = tx.Refs?.MsgId || 'N/A';
+                const clrSysRef = tx.Refs?.ClrSysRef || 'N/A';
+                const acctSvcrRefTx = tx.Refs?.AcctSvcrRef || 'N/A';
                 
                 // Extract proprietary reference
                 const prtryRefType = getNestedValue(tx, 'Refs.Prtry.Tp') || 'N/A';
                 const prtryRefValue = getNestedValue(tx, 'Refs.Prtry.Ref') || 'N/A';
+
+                // Extract amount details
+                const instdAmt = getNestedValue(tx, 'AmtDtls.InstdAmt.Amt.#text') || 
+                                getNestedValue(tx, 'AmtDtls.InstdAmt.Amt') || 'N/A';
+                const instdAmtCcy = getNestedValue(tx, 'AmtDtls.InstdAmt.Amt.@_Ccy') || currency;
+                const txAmt = getNestedValue(tx, 'AmtDtls.TxAmt.Amt.#text') || 
+                             getNestedValue(tx, 'AmtDtls.TxAmt.Amt') || 'N/A';
+                const txAmtCcy = getNestedValue(tx, 'AmtDtls.TxAmt.Amt.@_Ccy') || currency;
 
                 // Extract Bank Transaction Code
                 const bkTxCdDomain = getNestedValue(tx, 'BkTxCd.Domn.Cd') || 'N/A';
@@ -247,6 +262,14 @@ function parseCamt052(xmlData, fileName = '') {
                                 getNestedValue(relatedParties, 'Dbtr.Pty.Id.OrgId.Othr.Id') || 'N/A';
                 const creditorId = getNestedValue(relatedParties, 'Cdtr.Pty.Id.PrvtId.Othr.Id') || 
                                   getNestedValue(relatedParties, 'Cdtr.Pty.Id.OrgId.Othr.Id') || 'N/A';
+
+                // Extract account other IDs (when not IBAN)
+                const debtorAcctOtherId = getNestedValue(relatedParties, 'DbtrAcct.Id.Othr.Id') || 'N/A';
+                const creditorAcctOtherId = getNestedValue(relatedParties, 'CdtrAcct.Id.Othr.Id') || 'N/A';
+                
+                // Extract account currencies
+                const debtorAcctCcy = getNestedValue(relatedParties, 'DbtrAcct.Ccy') || 'N/A';
+                const creditorAcctCcy = getNestedValue(relatedParties, 'CdtrAcct.Ccy') || 'N/A';
 
                 // Extract Related Agents (BIC codes)
                 const debtorAgentBIC = getNestedValue(tx, 'RltdAgts.DbtrAgt.FinInstnId.BICFI') || 'N/A';
@@ -262,10 +285,14 @@ function parseCamt052(xmlData, fileName = '') {
                 const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
                 
                 const transaction = {
+                    // Entry-level fields
+                    entryRef: entryRef,
+                    reversalIndicator: reversalIndicator,
                     acctSvcrRef: acctSvcrRef,
                     statementDate: formatDate(statementDate),
                     statementNumber: statementId,
                     bookingDate: formatDate(entry.BookgDt?.Dt || entry.BookgDt),
+                    bookingDateTime: bookingDateTime,
                     valueDate: formatDate(entry.ValDt?.Dt || entry.ValDt),
                     amount: formatAmount(amount, currency),
                     rawAmount: parseFloat(amount),
@@ -286,8 +313,17 @@ function parseCamt052(xmlData, fileName = '') {
                     mandateId: mandateId,
                     transactionId: txId,
                     messageId: msgId,
+                    clearingSystemRef: clrSysRef,
+                    acctSvcrRefTx: acctSvcrRefTx,
                     proprietaryRefType: prtryRefType,
                     proprietaryRefValue: prtryRefValue,
+                    // Amount details
+                    instructedAmount: instdAmt !== 'N/A' ? formatAmount(instdAmt, instdAmtCcy) : 'N/A',
+                    instructedAmountRaw: instdAmt !== 'N/A' ? parseFloat(instdAmt) : null,
+                    instructedAmountCcy: instdAmtCcy,
+                    transactionAmount: txAmt !== 'N/A' ? formatAmount(txAmt, txAmtCcy) : 'N/A',
+                    transactionAmountRaw: txAmt !== 'N/A' ? parseFloat(txAmt) : null,
+                    transactionAmountCcy: txAmtCcy,
                     // Bank Transaction Code
                     bkTxCdDomain: bkTxCdDomain,
                     bkTxCdFamily: bkTxCdFamily,
@@ -297,6 +333,11 @@ function parseCamt052(xmlData, fileName = '') {
                     // Party IDs
                     debtorId: debtorId,
                     creditorId: creditorId,
+                    // Account other IDs and currencies
+                    debtorAcctOtherId: debtorAcctOtherId,
+                    creditorAcctOtherId: creditorAcctOtherId,
+                    debtorAcctCcy: debtorAcctCcy,
+                    creditorAcctCcy: creditorAcctCcy,
                     // Agent BICs
                     debtorAgentBIC: debtorAgentBIC,
                     creditorAgentBIC: creditorAgentBIC,
