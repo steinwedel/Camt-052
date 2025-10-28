@@ -1349,6 +1349,54 @@
                 closeXMLModal();
             }
         });
+
+        // ========== i18n Integration ==========
+        
+        // Helper function to get translation
+        function t(key, params = {}) {
+            return i18n.t(key, params);
+        }
+
+        // Update all UI text with translations
+        function updateUITranslations() {
+            // Update document
+            document.getElementById('html-root').lang = i18n.getLanguage();
+            document.title = t('app.title');
+            
+            // Header
+            document.getElementById('app-title').textContent = t('app.title');
+            document.getElementById('app-subtitle').textContent = t('app.subtitle');
+            
+            // Upload section
+            document.getElementById('upload-select-file').innerHTML = t('upload.selectFile');
+            document.getElementById('fileName').textContent = t('upload.noFileSelected');
+            document.getElementById('upload-drag-hint').textContent = t('upload.dragDropHint');
+            document.getElementById('upload-processing').textContent = t('upload.processing');
+        }
+
+        // Initialize i18n and update UI
+        async function initializeApp() {
+            try {
+                await i18n.init();
+                updateUITranslations();
+                console.log('App initialized with language:', i18n.getLanguage());
+            } catch (error) {
+                console.error('Failed to initialize i18n:', error);
+            }
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+
+        // Listen for language changes
+        window.addEventListener('languageChanged', function(event) {
+            updateUITranslations();
+            console.log('Language changed to:', event.detail.language);
+        });
     </script>
 </body>
 </html>
