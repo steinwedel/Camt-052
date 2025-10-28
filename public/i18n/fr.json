@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "Visualiseur de relevé CAMT.052",
+    "subtitle": "Téléchargez votre fichier XML CAMT.052 v8 ou fichier ZIP contenant plusieurs fichiers XML"
+  },
+  "upload": {
+    "selectFile": "📁 Sélectionner un fichier",
+    "noFileSelected": "Aucun fichier sélectionné",
+    "dragDropHint": "ou glissez-déposez un fichier ici",
+    "processing": "Traitement du fichier...",
+    "errorPrefix": "Erreur : ",
+    "invalidFormat": "Format de fichier invalide. Veuillez télécharger un fichier XML ou ZIP.",
+    "noXmlInZip": "Aucun fichier XML trouvé dans le fichier ZIP",
+    "parsingError": "Erreur lors de l'analyse du fichier"
+  },
+  "account": {
+    "title": "📋 Informations du compte",
+    "iban": "IBAN",
+    "owner": "Titulaire du compte",
+    "currency": "Devise"
+  },
+  "balance": {
+    "title": "💰 Soldes du compte",
+    "openingDate": "Date du solde d'ouverture",
+    "openingBalance": "Solde d'ouverture",
+    "closingDate": "Date du solde de clôture",
+    "closingBalance": "Solde de clôture",
+    "transactionCount": "Nombre de transactions",
+    "validationSuccess": "Le solde d'ouverture correspond au solde de clôture précédent",
+    "validationError": "Le solde d'ouverture ne correspond PAS au solde de clôture précédent",
+    "calculationSuccess": "Calcul correct : {opening} + {sum} = {calculated}",
+    "calculationError": "Calcul INCORRECT : {opening} + {sum} = {calculated} ≠ {closing}",
+    "types": {
+      "OPBD": "Solde d'ouverture",
+      "CLBD": "Solde de clôture",
+      "ITBD": "Solde intermédiaire",
+      "PRCD": "Solde précédent",
+      "FWAV": "Solde disponible"
+    }
+  },
+  "stats": {
+    "totalTransactions": "Nombre de transactions",
+    "totalCredits": "Crédits",
+    "totalDebits": "Débits"
+  },
+  "transactions": {
+    "title": "💳 Transactions",
+    "id": "ID",
+    "bookingDate": "Date de comptabilisation",
+    "valueDate": "Date de valeur",
+    "sender": "Émetteur",
+    "receiver": "Bénéficiaire",
+    "amount": "Montant",
+    "purpose": "Objet",
+    "rawXml": "XML brut",
+    "showXml": "📋 Afficher XML",
+    "type": {
+      "credit": "Crédit",
+      "debit": "Débit"
+    }
+  },
+  "transactionDetails": {
+    "title": "📋 Détails de la transaction",
+    "close": "×",
+    "showRawXml": "📋 Afficher XML brut",
+    "sections": {
+      "basic": "📊 Informations de base",
+      "amounts": "💰 Montants et dates",
+      "debtor": "📤 Émetteur / Débiteur",
+      "creditor": "📥 Bénéficiaire / Créancier",
+      "purpose": "📝 Objet et référence",
+      "references": "🔗 Références étendues",
+      "bankCode": "🏦 Code de transaction bancaire (BkTxCd)",
+      "partyIds": "🆔 Identifications des parties",
+      "agents": "🏛️ Institutions financières (codes BIC)",
+      "additional": "ℹ️ Informations supplémentaires"
+    },
+    "fields": {
+      "entryRef": "Référence d'entrée (NtryRef)",
+      "acctSvcrRef": "Numéro de référence (AcctSvcrRef)",
+      "transactionType": "Type de transaction",
+      "status": "Statut",
+      "reversalIndicator": "Annulation (RvslInd)",
+      "fileName": "Fichier source",
+      "amount": "Montant",
+      "currency": "Devise",
+      "instructedAmount": "Montant ordonné (InstdAmt)",
+      "transactionAmount": "Montant de transaction (TxAmt)",
+      "bookingDate": "Date de comptabilisation",
+      "bookingDateTime": "Date/heure de comptabilisation (DtTm)",
+      "valueDate": "Date de valeur",
+      "statementDate": "Date du relevé",
+      "statementNumber": "Numéro de relevé",
+      "name": "Nom",
+      "iban": "IBAN",
+      "accountIdOther": "ID de compte (Autre)",
+      "accountCurrency": "Devise du compte",
+      "purpose": "Objet",
+      "purposeProprietary": "Objet propriétaire (Purp.Prtry)",
+      "remittanceInfo": "Info de remise non structurée (RmtInf.Ustrd)",
+      "endToEndId": "ID de bout en bout",
+      "mandateId": "Référence de mandat (MndtId)",
+      "transactionId": "ID de transaction",
+      "messageId": "ID de message",
+      "clearingSystemRef": "Référence du système de compensation",
+      "acctSvcrRefTx": "AcctSvcrRef (de Refs)",
+      "instructionId": "ID d'instruction (InstrId)",
+      "chequeNumber": "Numéro de chèque (ChqNb)",
+      "proprietaryRefType": "Référence propriétaire (Type)",
+      "proprietaryRefValue": "Référence propriétaire (Valeur)",
+      "domainCode": "Code de domaine",
+      "familyCode": "Code de famille",
+      "subFamilyCode": "Code de sous-famille",
+      "proprietaryCode": "Code propriétaire",
+      "issuer": "Émetteur",
+      "debtorId": "ID du débiteur",
+      "creditorId": "ID du créancier",
+      "debtorBic": "BIC de la banque du débiteur",
+      "debtorClearing": "Système de compensation de la banque du débiteur",
+      "debtorMemberId": "ID de membre de la banque du débiteur",
+      "creditorBic": "BIC de la banque du créancier",
+      "creditorClearing": "Système de compensation de la banque du créancier",
+      "creditorMemberId": "ID de membre de la banque du créancier",
+      "additionalInfo": "Informations supplémentaires (AddtlNtryInf)",
+      "additionalTxInfo": "Info de transaction supplémentaire (AddtlTxInf)"
+    }
+  },
+  "xmlModal": {
+    "title": "📄 Données XML brutes",
+    "close": "×",
+    "copyToClipboard": "📋 Copier dans le presse-papiers",
+    "copied": "✓ Copié !",
+    "copyError": "Erreur de copie : "
+  },
+  "status": {
+    "BOOK": "Comptabilisé",
+    "PDNG": "En attente",
+    "INFO": "Information",
+    "FUTR": "Futur",
+    "CANC": "Annulé"
+  },
+  "bankTransactionCode": {
+    "domain": {
+      "PMNT": "Paiement",
+      "CASH": "Espèces",
+      "SECU": "Titres",
+      "ACMT": "Gestion de compte",
+      "XTND": "Étendu"
+    },
+    "family": {
+      "RCDT": "Virement reçu",
+      "RDDT": "Prélèvement reçu",
+      "ICDT": "Virement émis",
+      "IDDT": "Prélèvement émis",
+      "CNTR": "Transaction au guichet",
+      "MCOP": "Opération multiple",
+      "CAJT": "Ajustement de caisse"
+    },
+    "subFamily": {
+      "SDVA": "Valeur même jour",
+      "DMCT": "Virement domestique",
+      "ESDD": "Prélèvement SEPA",
+      "CDPT": "Dépôt d'espèces",
+      "CWDL": "Retrait d'espèces",
+      "BOOK": "Comptabilisation",
+      "XBCT": "Virement transfrontalier",
+      "RRTN": "Retour",
+      "FEES": "Frais",
+      "COMM": "Commission",
+      "INTC": "Crédit d'intérêts",
+      "STDO": "Ordre permanent",
+      "AUTT": "Virement automatique"
+    }
+  }
+}
