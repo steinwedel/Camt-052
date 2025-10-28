@@ -8,6 +8,58 @@ const AdmZip = require('adm-zip');
 const app = express();
 const PORT = 3001;
 
+// Load translation files for server-side i18n
+const translations = {};
+const supportedLanguages = ['en', 'de', 'fr', 'es', 'it'];
+
+// Load all translation files
+supportedLanguages.forEach(lang => {
+    try {
+        const translationPath = path.join(__dirname, 'public', 'i18n', `${lang}.json`);
+        translations[lang] = JSON.parse(fs.readFileSync(translationPath, 'utf8'));
+    } catch (error) {
+        console.error(`Failed to load ${lang} translations:`, error.message);
+    }
+});
+
+// Helper function to detect language from Accept-Language header
+function detectLanguage(req) {
+    const acceptLanguage = req.headers['accept-language'];
+    if (!acceptLanguage) return 'en';
+    
+    // Parse Accept-Language header (e.g., "de-DE,de;q=0.9,en;q=0.8")
+    const languages = acceptLanguage.split(',').map(lang => {
+        const parts = lang.trim().split(';');
+        const code = parts[0].split('-')[0].toLowerCase();
+        return code;
+    });
+    
+    // Find first supported language
+    for (const lang of languages) {
+        if (supportedLanguages.includes(lang)) {
+            return lang;
+        }
+    }
+    
+    return 'en'; // Default to English
+}
+
+// Helper function to get translation
+function getTranslation(lang, key) {
+    const keys = key.split('.');
+    let value = translations[lang] || translations['en'];
+    
+    for (const k of keys) {
+        if (value && typeof value === 'object' && k in value) {
+            value = value[k];
+        } else {
+            return key; // Return key if translation not found
+        }
+    }
+    
+    return typeof value === 'string' ? value : key;
+}
+
 // Configure multer for file uploads
 const upload = multer({ dest: 'uploads/' });
 
@@ -386,9 +438,11 @@ function parseCamt052(xmlData, fileName = '') {
 
 // Route to upload and parse XML or ZIP file
 app.post('/upload', upload.single('xmlFile'), (req, res) => {
+    const lang = detectLanguage(req);
+    
     try {
         if (!req.file) {
-            return res.status(400).json({ error: 'Keine Datei hochgeladen' });
+            return res.status(400).json({ error: getTranslation(lang, 'upload.errorPrefix') + 'No file uploaded' });
         }
 
         const fileExtension = path.extname(req.file.originalname).toLowerCase();
@@ -408,7 +462,7 @@ app.post('/upload', upload.single('xmlFile'), (req, res) => {
 
             if (xmlEntries.length === 0) {
                 fs.unlinkSync(req.file.path);
-                return res.status(400).json({ error: 'Keine XML-Dateien in der ZIP-Datei gefunden' });
+                return res.status(400).json({ error: getTranslation(lang, 'upload.noXmlInZip') });
             }
 
             // Parse each XML file
@@ -463,7 +517,7 @@ app.post('/upload', upload.single('xmlFile'), (req, res) => {
             });
         } else {
             fs.unlinkSync(req.file.path);
-            return res.status(400).json({ error: 'Ungültiges Dateiformat. Bitte laden Sie eine XML- oder ZIP-Datei hoch.' });
+            return res.status(400).json({ error: getTranslation(lang, 'upload.invalidFormat') });
         }
 
     } catch (error) {
@@ -472,7 +526,7 @@ app.post('/upload', upload.single('xmlFile'), (req, res) => {
             fs.unlinkSync(req.file.path);
         }
         res.status(500).json({ 
-            error: 'Fehler beim Parsen der Datei', 
+            error: getTranslation(lang, 'upload.parsingError'), 
             details: error.message 
         });
     }
