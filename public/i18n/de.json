@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "CAMT.052 Kontoauszug Viewer",
+    "subtitle": "Laden Sie Ihre CAMT.052 v8 XML-Datei oder ZIP-Datei mit mehreren XML-Dateien hoch"
+  },
+  "upload": {
+    "selectFile": "📁 Datei auswählen",
+    "noFileSelected": "Keine Datei ausgewählt",
+    "dragDropHint": "oder ziehen Sie eine Datei hierher",
+    "processing": "Datei wird verarbeitet...",
+    "errorPrefix": "Fehler: ",
+    "invalidFormat": "Ungültiges Dateiformat. Bitte laden Sie eine XML- oder ZIP-Datei hoch.",
+    "noXmlInZip": "Keine XML-Dateien in der ZIP-Datei gefunden",
+    "parsingError": "Fehler beim Parsen der Datei"
+  },
+  "account": {
+    "title": "📋 Kontoinformationen",
+    "iban": "IBAN",
+    "owner": "Kontoinhaber",
+    "currency": "Währung"
+  },
+  "balance": {
+    "title": "💰 Kontostände",
+    "openingDate": "Datum Eröffnungsaldo",
+    "openingBalance": "Eröffnungssaldo",
+    "closingDate": "Datum Schlusssaldo",
+    "closingBalance": "Schlusssaldo",
+    "transactionCount": "Anzahl Buchungen",
+    "validationSuccess": "Eröffnungssaldo stimmt mit vorherigem Schlusssaldo überein",
+    "validationError": "Eröffnungssaldo stimmt NICHT mit vorherigem Schlusssaldo überein",
+    "calculationSuccess": "Berechnung korrekt: {opening} + {sum} = {calculated}",
+    "calculationError": "Berechnung NICHT korrekt: {opening} + {sum} = {calculated} ≠ {closing}",
+    "types": {
+      "OPBD": "Eröffnungssaldo",
+      "CLBD": "Schlusssaldo",
+      "ITBD": "Zwischensaldo",
+      "PRCD": "Vorheriger Saldo",
+      "FWAV": "Verfügbarer Saldo"
+    }
+  },
+  "stats": {
+    "totalTransactions": "Anzahl Buchungen",
+    "totalCredits": "Eingänge",
+    "totalDebits": "Ausgänge"
+  },
+  "transactions": {
+    "title": "💳 Buchungen",
+    "id": "ID",
+    "bookingDate": "Buchungsdatum",
+    "valueDate": "Valutadatum",
+    "sender": "Absender",
+    "receiver": "Empfänger",
+    "amount": "Betrag",
+    "purpose": "Verwendungszweck",
+    "rawXml": "Raw XML",
+    "showXml": "📋 XML anzeigen",
+    "type": {
+      "credit": "Eingang",
+      "debit": "Ausgang"
+    }
+  },
+  "transactionDetails": {
+    "title": "📋 Buchungsdetails",
+    "close": "×",
+    "showRawXml": "📋 Raw XML anzeigen",
+    "sections": {
+      "basic": "📊 Grundinformationen",
+      "amounts": "💰 Beträge und Daten",
+      "debtor": "📤 Absender / Schuldner (Debtor)",
+      "creditor": "📥 Empfänger / Gläubiger (Creditor)",
+      "purpose": "📝 Verwendungszweck und Referenz",
+      "references": "🔗 Erweiterte Referenzen",
+      "bankCode": "🏦 Bank-Transaktionscode (BkTxCd)",
+      "partyIds": "🆔 Partei-Identifikationen",
+      "agents": "🏛️ Finanzinstitute (BIC-Codes)",
+      "additional": "ℹ️ Zusätzliche Informationen"
+    },
+    "fields": {
+      "entryRef": "Entry Referenz (NtryRef)",
+      "acctSvcrRef": "Referenznummer (AcctSvcrRef)",
+      "transactionType": "Transaktionstyp",
+      "status": "Status",
+      "reversalIndicator": "Stornierung (RvslInd)",
+      "fileName": "Quelldatei",
+      "amount": "Betrag",
+      "currency": "Währung",
+      "instructedAmount": "Angewiesener Betrag (InstdAmt)",
+      "transactionAmount": "Transaktionsbetrag (TxAmt)",
+      "bookingDate": "Buchungsdatum",
+      "bookingDateTime": "Buchungszeitpunkt (DtTm)",
+      "valueDate": "Valutadatum",
+      "statementDate": "Auszugsdatum",
+      "statementNumber": "Auszugsnummer",
+      "name": "Name",
+      "iban": "IBAN",
+      "accountIdOther": "Konto-ID (Andere)",
+      "accountCurrency": "Kontowährung",
+      "purpose": "Verwendungszweck",
+      "purposeProprietary": "Zweck Proprietär (Purp.Prtry)",
+      "remittanceInfo": "Verwendungszweck Unstrukturiert (RmtInf.Ustrd)",
+      "endToEndId": "End-to-End ID",
+      "mandateId": "Mandatsreferenz (MndtId)",
+      "transactionId": "Transaktions-ID",
+      "messageId": "Nachrichten-ID",
+      "clearingSystemRef": "Clearing System Referenz",
+      "acctSvcrRefTx": "AcctSvcrRef (aus Refs)",
+      "instructionId": "Anweisungs-ID (InstrId)",
+      "chequeNumber": "Schecknummer (ChqNb)",
+      "proprietaryRefType": "Proprietäre Referenz (Typ)",
+      "proprietaryRefValue": "Proprietäre Referenz (Wert)",
+      "domainCode": "Domain Code",
+      "familyCode": "Family Code",
+      "subFamilyCode": "Sub-Family Code",
+      "proprietaryCode": "Proprietärer Code",
+      "issuer": "Aussteller",
+      "debtorId": "Schuldner-ID (Debtor ID)",
+      "creditorId": "Gläubiger-ID (Creditor ID)",
+      "debtorBic": "Schuldner-Bank BIC",
+      "debtorClearing": "Schuldner-Bank Clearing System",
+      "debtorMemberId": "Schuldner-Bank Member ID",
+      "creditorBic": "Gläubiger-Bank BIC",
+      "creditorClearing": "Gläubiger-Bank Clearing System",
+      "creditorMemberId": "Gläubiger-Bank Member ID",
+      "additionalInfo": "Zusatzinformationen (AddtlNtryInf)",
+      "additionalTxInfo": "Zusätzliche Transaktionsinfo (AddtlTxInf)"
+    }
+  },
+  "xmlModal": {
+    "title": "📄 Raw XML Daten",
+    "close": "×",
+    "copyToClipboard": "📋 In Zwischenablage kopieren",
+    "copied": "✓ Kopiert!",
+    "copyError": "Fehler beim Kopieren: "
+  },
+  "status": {
+    "BOOK": "Gebucht",
+    "PDNG": "Ausstehend",
+    "INFO": "Information",
+    "FUTR": "Zukünftig",
+    "CANC": "Storniert"
+  },
+  "bankTransactionCode": {
+    "domain": {
+      "PMNT": "Zahlung (Payment)",
+      "CASH": "Bargeld (Cash)",
+      "SECU": "Wertpapiere (Securities)",
+      "ACMT": "Kontoverwaltung (Account Management)",
+      "XTND": "Erweitert (Extended)"
+    },
+    "family": {
+      "RCDT": "Gutschrift (Received Credit Transfer)",
+      "RDDT": "Lastschrift (Received Direct Debit)",
+      "ICDT": "Ausgehende Überweisung (Issued Credit Transfer)",
+      "IDDT": "Ausgehende Lastschrift (Issued Direct Debit)",
+      "CNTR": "Schaltergeschäft (Counter Transaction)",
+      "MCOP": "Mehrfachoperation (Multiple Operation)",
+      "CAJT": "Kassenanpassung (Cash Adjustment)"
+    },
+    "subFamily": {
+      "SDVA": "Gleichtägige Valuta (Same Day Value)",
+      "DMCT": "Inlandsüberweisung (Domestic Credit Transfer)",
+      "ESDD": "SEPA-Lastschrift (SEPA Direct Debit)",
+      "CDPT": "Bareinzahlung (Cash Deposit)",
+      "CWDL": "Barauszahlung (Cash Withdrawal)",
+      "BOOK": "Buchung (Booking)",
+      "XBCT": "Grenzüberschreitende Überweisung (Cross-Border Credit Transfer)",
+      "RRTN": "Rückgabe (Return)",
+      "FEES": "Gebühren (Fees)",
+      "COMM": "Provision (Commission)",
+      "INTC": "Zinsgutschrift (Interest Credit)",
+      "STDO": "Dauerauftrag (Standing Order)",
+      "AUTT": "Automatische Überweisung (Automatic Transfer)"
+    }
+  }
+}
