@@ -8,6 +8,7 @@ dist-server/
 
 # Test data (excluded as requested)
 testdaten/
+internal/
 
 # Temporary files
 uploads/

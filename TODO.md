@@ -1,63 +1,6 @@
 # TODO: Vorbereitung für GitHub-Veröffentlichung
 
-## 🔴 Kritisch (Muss gemacht werden)
 
-### 1. .gitignore Datei erstellen
-- [ ] .gitignore Datei im Root-Verzeichnis erstellen
-- [ ] Folgende Einträge hinzufügen:
-  ```
-  # Dependencies
-  node_modules/
-  
-  # Build outputs
-  dist-desktop/
-  dist-server/
-  
-  # Temporary files
-  uploads/
-  *.log
-  
-  # OS files
-  .DS_Store
-  Thumbs.db
-  
-  # Screenshots/Test files
-  *.jpeg
-  *.jpg
-  *.png
-  !public/icon.png
-  !build/**/*.png
-  
-  # IDE
-  .vscode/
-  .idea/
-  *.swp
-  *.swo
-  ```
-
-### 2. LICENSE Datei hinzufügen
-- [ ] MIT LICENSE Datei erstellen
-- [ ] Copyright-Jahr und Namen eintragen
-
-### 3. Unerwünschte Dateien entfernen
-- [ ] `.DS_Store` löschen
-- [ ] Screenshot-Dateien löschen:
-  - [ ] `http___localhost_3001-1761651270628.jpeg`
-  - [ ] `http___localhost_3001_lang_en-1761651289346.jpeg`
-  - [ ] `http___localhost_3001_lang_es-1761651344944.jpeg`
-  - [ ] `http___localhost_3001_lang_fr-1761651307150.jpeg`
-  - [ ] `http___localhost_3001_lang_it-1761651360840.jpeg`
-- [ ] Sicherstellen, dass `node_modules/`, `dist-desktop/`, `dist-server/` nicht committed werden
-
-### 4. package.json vervollständigen
-- [ ] **author** Feld ausfüllen (aktuell leer)
-- [ ] **repository** Feld hinzufügen:
-  ```json
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DEIN-USERNAME/camt52-viewer.git"
-  }
-  ```
 - [ ] Optional: **bugs** und **homepage** Felder hinzufügen
 
 ---
@@ -68,11 +11,6 @@
 - [ ] `git add package-lock.json` ausführen
 - [ ] Für reproduzierbare Builds
 
-### 6. testdaten/ Verzeichnis überprüfen
-- [ ] Alle Dateien im `testdaten/` Ordner durchgehen
-- [ ] Sicherstellen, dass KEINE echten/sensiblen Bankdaten enthalten sind
-- [ ] Daten anonymisieren falls nötig
-- [ ] Prüfen, ob Beispiele repräsentativ und hilfreich sind
 
 ### 7. README.md erweitern
 - [ ] Screenshots der Anwendung hinzufügen
@@ -81,12 +19,6 @@
 - [ ] Known Issues / Roadmap Abschnitt hinzufügen
 - [ ] Installation-Anleitung überprüfen und testen
 
-### 8. Sicherheitsüberprüfung durchführen
-- [ ] Code nach API-Keys durchsuchen
-- [ ] Code nach Passwörtern durchsuchen
-- [ ] Testdateien auf echte Bankdaten prüfen
-- [ ] Persönliche Informationen entfernen
-- [ ] `.env` Dateien prüfen (falls vorhanden)
 
 ---
 
@@ -114,14 +46,6 @@
 - [ ] Tests schreiben (aktuell keine vorhanden)
 - [ ] Code-Coverage einrichten
 
----
-
-## 📋 Finale Checkliste vor dem ersten Push
-
-### Vorbereitung
-- [ ] Alle kritischen Punkte (🔴) abgeschlossen
-- [ ] Alle empfohlenen Punkte (🟡) überprüft
-- [ ] Lokale Tests durchgeführt
 
 ### Git-Befehle
 ```bash
@@ -158,29 +82,3 @@ git push -u origin main
 - [ ] Repository-Beschreibung hinzufügen
 - [ ] GitHub Pages aktivieren (falls gewünscht)
 - [ ] Erstes Release erstellen
-
----
-
-## ⚠️ Wichtigste Punkte (Nicht vergessen!)
-
-1. **✅ .gitignore** - Verhindert Upload von 100+ MB node_modules
-2. **✅ LICENSE** - Rechtliche Klarheit für Open Source
-3. **✅ Testdaten prüfen** - KEINE echten Bankdaten!
-4. **✅ package.json** - Author und Repository-URL eintragen
-5. **✅ Screenshots löschen** - Nicht für GitHub gedacht
-
----
-
-## 📝 Notizen
-
-- Das Projekt ist bereits gut dokumentiert
-- Die Struktur ist sauber und professionell
-- Mit den oben genannten Änderungen ist es GitHub-ready
-- Geschätzte Zeit für kritische Punkte: 30-45 Minuten
-- Geschätzte Zeit für alle empfohlenen Punkte: 2-3 Stunden
-
----
-
-**Erstellt am:** 2025-10-28  
-**Status:** In Bearbeitung  
-**Ziel:** Projekt auf GitHub veröffentlichen
