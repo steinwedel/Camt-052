@@ -139,17 +139,8 @@ function formatDate(dateStr) {
     });
 }
 
-// Helper function to translate status codes to German
-function translateStatus(statusCode) {
-    const statusTranslations = {
-        'BOOK': 'Gebucht',
-        'PDNG': 'Ausstehend',
-        'INFO': 'Information',
-        'FUTR': 'Zukünftig',
-        'CANC': 'Storniert'
-    };
-    return statusTranslations[statusCode] || statusCode;
-}
+// Note: Status translation moved to client-side for i18n support
+// Server now sends raw status codes for client-side translation
 
 // Parse CAMT.052 or CAMT.053 XML file
 function parseCamt052(xmlData, fileName = '') {
@@ -342,9 +333,8 @@ function parseCamt052(xmlData, fileName = '') {
                 // Extract additional entry information
                 const additionalInfo = entry.AddtlNtryInf || 'N/A';
 
-                // Extract detailed status
+                // Extract detailed status (send raw code for client-side translation)
                 const statusCode = entry.Sts?.Cd || entry.Sts || 'N/A';
-                const statusTranslated = translateStatus(statusCode);
 
                 // Generate raw XML for this entry
                 const rawXML = `<Ntry>\n${objectToXML(entry, 1)}</Ntry>`;
@@ -363,7 +353,7 @@ function parseCamt052(xmlData, fileName = '') {
                     rawAmount: parseFloat(amount),
                     currency: currency,
                     creditDebit: creditDebit,
-                    type: creditDebit === 'CRDT' ? 'Eingang' : 'Ausgang',
+                    type: creditDebit, // Send raw code for client-side translation
                     debtor: debtor,
                     debtorAccount: debtorAccount,
                     creditor: creditor,
@@ -419,7 +409,7 @@ function parseCamt052(xmlData, fileName = '') {
                     // Additional info
                     additionalInfo: additionalInfo,
                     statusCode: statusCode,
-                    status: statusTranslated,
+                    status: statusCode, // Send raw code for client-side translation
                     rawXML: rawXML,
                     fileName: fileName
                 };
