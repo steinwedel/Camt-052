@@ -861,7 +861,7 @@
                     <td>${transaction.purpose}</td>
                     <td>
                         <button class="xml-btn" onclick='showXMLModal(${JSON.stringify(transaction.rawXML)}); event.stopPropagation();'>
-                            📋 XML anzeigen
+                            ${t('transactions.showXml')}
                         </button>
                     </td>
                 `;
@@ -954,7 +954,7 @@
                             
                             const symbolClass = isValid ? 'validation-success' : 'validation-error';
                             const symbol = isValid ? '✓' : '✗';
-                            const title = isValid ? 'Eröffnungssaldo stimmt mit vorherigem Schlusssaldo überein' : 'Eröffnungssaldo stimmt NICHT mit vorherigem Schlusssaldo überein';
+                            const title = isValid ? t('balance.validationSuccess') : t('balance.validationError');
                             validationSymbol = `<span class="balance-validation ${symbolClass}" title="${title}">${symbol}</span>`;
                         }
                     }
@@ -979,9 +979,13 @@
                         
                         const balanceSymbolClass = isBalanceValid ? 'validation-success' : 'validation-error';
                         const balanceSymbol = isBalanceValid ? '✓' : '✗';
+                        const openingFormatted = formatAmount(openingAmount, 'EUR');
+                        const sumFormatted = formatAmount(transactionSum, 'EUR');
+                        const calculatedFormatted = formatAmount(calculatedClosing, 'EUR');
+                        const closingFormatted = formatAmount(closingAmount, 'EUR');
                         const balanceTitle = isBalanceValid 
-                            ? `Berechnung korrekt: ${formatAmount(openingAmount, 'EUR')} + ${formatAmount(transactionSum, 'EUR')} = ${formatAmount(calculatedClosing, 'EUR')}`
-                            : `Berechnung NICHT korrekt: ${formatAmount(openingAmount, 'EUR')} + ${formatAmount(transactionSum, 'EUR')} = ${formatAmount(calculatedClosing, 'EUR')} ≠ ${formatAmount(closingAmount, 'EUR')}`;
+                            ? t('balance.calculationSuccess', { opening: openingFormatted, sum: sumFormatted, calculated: calculatedFormatted })
+                            : t('balance.calculationError', { opening: openingFormatted, sum: sumFormatted, calculated: calculatedFormatted, closing: closingFormatted });
                         balanceValidation = `<span class="balance-validation ${balanceSymbolClass}" title="${balanceTitle}">${balanceSymbol}</span>`;
                     }
                     
