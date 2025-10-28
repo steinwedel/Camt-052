@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "Visualizzatore estratto conto CAMT.052",
+    "subtitle": "Carica il tuo file XML CAMT.052 v8 o file ZIP con più file XML"
+  },
+  "upload": {
+    "selectFile": "📁 Seleziona file",
+    "noFileSelected": "Nessun file selezionato",
+    "dragDropHint": "oppure trascina e rilascia un file qui",
+    "processing": "Elaborazione file...",
+    "errorPrefix": "Errore: ",
+    "invalidFormat": "Formato file non valido. Si prega di caricare un file XML o ZIP.",
+    "noXmlInZip": "Nessun file XML trovato nel file ZIP",
+    "parsingError": "Errore durante l'analisi del file"
+  },
+  "account": {
+    "title": "📋 Informazioni sul conto",
+    "iban": "IBAN",
+    "owner": "Titolare del conto",
+    "currency": "Valuta"
+  },
+  "balance": {
+    "title": "💰 Saldi del conto",
+    "openingDate": "Data saldo di apertura",
+    "openingBalance": "Saldo di apertura",
+    "closingDate": "Data saldo di chiusura",
+    "closingBalance": "Saldo di chiusura",
+    "transactionCount": "Numero di transazioni",
+    "validationSuccess": "Il saldo di apertura corrisponde al saldo di chiusura precedente",
+    "validationError": "Il saldo di apertura NON corrisponde al saldo di chiusura precedente",
+    "calculationSuccess": "Calcolo corretto: {opening} + {sum} = {calculated}",
+    "calculationError": "Calcolo NON corretto: {opening} + {sum} = {calculated} ≠ {closing}",
+    "types": {
+      "OPBD": "Saldo di apertura",
+      "CLBD": "Saldo di chiusura",
+      "ITBD": "Saldo intermedio",
+      "PRCD": "Saldo precedente",
+      "FWAV": "Saldo disponibile"
+    }
+  },
+  "stats": {
+    "totalTransactions": "Numero di transazioni",
+    "totalCredits": "Accrediti",
+    "totalDebits": "Addebiti"
+  },
+  "transactions": {
+    "title": "💳 Transazioni",
+    "id": "ID",
+    "bookingDate": "Data di contabilizzazione",
+    "valueDate": "Data valuta",
+    "sender": "Mittente",
+    "receiver": "Beneficiario",
+    "amount": "Importo",
+    "purpose": "Causale",
+    "rawXml": "XML grezzo",
+    "showXml": "📋 Mostra XML",
+    "type": {
+      "credit": "Accredito",
+      "debit": "Addebito"
+    }
+  },
+  "transactionDetails": {
+    "title": "📋 Dettagli della transazione",
+    "close": "×",
+    "showRawXml": "📋 Mostra XML grezzo",
+    "sections": {
+      "basic": "📊 Informazioni di base",
+      "amounts": "💰 Importi e date",
+      "debtor": "📤 Mittente / Debitore",
+      "creditor": "📥 Beneficiario / Creditore",
+      "purpose": "📝 Causale e riferimento",
+      "references": "🔗 Riferimenti estesi",
+      "bankCode": "🏦 Codice transazione bancaria (BkTxCd)",
+      "partyIds": "🆔 Identificazioni delle parti",
+      "agents": "🏛️ Istituzioni finanziarie (codici BIC)",
+      "additional": "ℹ️ Informazioni aggiuntive"
+    },
+    "fields": {
+      "entryRef": "Riferimento voce (NtryRef)",
+      "acctSvcrRef": "Numero di riferimento (AcctSvcrRef)",
+      "transactionType": "Tipo di transazione",
+      "status": "Stato",
+      "reversalIndicator": "Storno (RvslInd)",
+      "fileName": "File di origine",
+      "amount": "Importo",
+      "currency": "Valuta",
+      "instructedAmount": "Importo ordinato (InstdAmt)",
+      "transactionAmount": "Importo transazione (TxAmt)",
+      "bookingDate": "Data di contabilizzazione",
+      "bookingDateTime": "Data/ora di contabilizzazione (DtTm)",
+      "valueDate": "Data valuta",
+      "statementDate": "Data estratto conto",
+      "statementNumber": "Numero estratto conto",
+      "name": "Nome",
+      "iban": "IBAN",
+      "accountIdOther": "ID conto (Altro)",
+      "accountCurrency": "Valuta del conto",
+      "purpose": "Causale",
+      "purposeProprietary": "Causale proprietaria (Purp.Prtry)",
+      "remittanceInfo": "Info rimessa non strutturata (RmtInf.Ustrd)",
+      "endToEndId": "ID end-to-end",
+      "mandateId": "Riferimento mandato (MndtId)",
+      "transactionId": "ID transazione",
+      "messageId": "ID messaggio",
+      "clearingSystemRef": "Riferimento sistema di compensazione",
+      "acctSvcrRefTx": "AcctSvcrRef (da Refs)",
+      "instructionId": "ID istruzione (InstrId)",
+      "chequeNumber": "Numero assegno (ChqNb)",
+      "proprietaryRefType": "Riferimento proprietario (Tipo)",
+      "proprietaryRefValue": "Riferimento proprietario (Valore)",
+      "domainCode": "Codice dominio",
+      "familyCode": "Codice famiglia",
+      "subFamilyCode": "Codice sottofamiglia",
+      "proprietaryCode": "Codice proprietario",
+      "issuer": "Emittente",
+      "debtorId": "ID del debitore",
+      "creditorId": "ID del creditore",
+      "debtorBic": "BIC della banca del debitore",
+      "debtorClearing": "Sistema di compensazione della banca del debitore",
+      "debtorMemberId": "ID membro della banca del debitore",
+      "creditorBic": "BIC della banca del creditore",
+      "creditorClearing": "Sistema di compensazione della banca del creditore",
+      "creditorMemberId": "ID membro della banca del creditore",
+      "additionalInfo": "Informazioni aggiuntive (AddtlNtryInf)",
+      "additionalTxInfo": "Info transazione aggiuntiva (AddtlTxInf)"
+    }
+  },
+  "xmlModal": {
+    "title": "📄 Dati XML grezzi",
+    "close": "×",
+    "copyToClipboard": "📋 Copia negli appunti",
+    "copied": "✓ Copiato!",
+    "copyError": "Errore durante la copia: "
+  },
+  "status": {
+    "BOOK": "Contabilizzato",
+    "PDNG": "In sospeso",
+    "INFO": "Informazione",
+    "FUTR": "Futuro",
+    "CANC": "Annullato"
+  },
+  "bankTransactionCode": {
+    "domain": {
+      "PMNT": "Pagamento",
+      "CASH": "Contanti",
+      "SECU": "Titoli",
+      "ACMT": "Gestione conto",
+      "XTND": "Esteso"
+    },
+    "family": {
+      "RCDT": "Bonifico ricevuto",
+      "RDDT": "Addebito diretto ricevuto",
+      "ICDT": "Bonifico emesso",
+      "IDDT": "Addebito diretto emesso",
+      "CNTR": "Transazione allo sportello",
+      "MCOP": "Operazione multipla",
+      "CAJT": "Rettifica di cassa"
+    },
+    "subFamily": {
+      "SDVA": "Valuta stesso giorno",
+      "DMCT": "Bonifico domestico",
+      "ESDD": "Addebito diretto SEPA",
+      "CDPT": "Deposito contanti",
+      "CWDL": "Prelievo contanti",
+      "BOOK": "Contabilizzazione",
+      "XBCT": "Bonifico transfrontaliero",
+      "RRTN": "Restituzione",
+      "FEES": "Commissioni",
+      "COMM": "Commissione",
+      "INTC": "Accredito interessi",
+      "STDO": "Ordine permanente",
+      "AUTT": "Bonifico automatico"
+    }
+  }
+}
