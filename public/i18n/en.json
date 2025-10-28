@@ -1,0 +1,175 @@
+{
+  "app": {
+    "title": "CAMT.052 Account Statement Viewer",
+    "subtitle": "Upload your CAMT.052 v8 XML file or ZIP file with multiple XML files"
+  },
+  "upload": {
+    "selectFile": "📁 Select File",
+    "noFileSelected": "No file selected",
+    "dragDropHint": "or drag and drop a file here",
+    "processing": "Processing file...",
+    "errorPrefix": "Error: ",
+    "invalidFormat": "Invalid file format. Please upload an XML or ZIP file.",
+    "noXmlInZip": "No XML files found in the ZIP file",
+    "parsingError": "Error parsing file"
+  },
+  "account": {
+    "title": "📋 Account Information",
+    "iban": "IBAN",
+    "owner": "Account Holder",
+    "currency": "Currency"
+  },
+  "balance": {
+    "title": "💰 Account Balances",
+    "openingDate": "Opening Balance Date",
+    "openingBalance": "Opening Balance",
+    "closingDate": "Closing Balance Date",
+    "closingBalance": "Closing Balance",
+    "transactionCount": "Number of Transactions",
+    "validationSuccess": "Opening balance matches previous closing balance",
+    "validationError": "Opening balance does NOT match previous closing balance",
+    "calculationSuccess": "Calculation correct: {opening} + {sum} = {calculated}",
+    "calculationError": "Calculation NOT correct: {opening} + {sum} = {calculated} ≠ {closing}",
+    "types": {
+      "OPBD": "Opening Balance",
+      "CLBD": "Closing Balance",
+      "ITBD": "Interim Balance",
+      "PRCD": "Previous Balance",
+      "FWAV": "Available Balance"
+    }
+  },
+  "stats": {
+    "totalTransactions": "Number of Transactions",
+    "totalCredits": "Credits",
+    "totalDebits": "Debits"
+  },
+  "transactions": {
+    "title": "💳 Transactions",
+    "id": "ID",
+    "bookingDate": "Booking Date",
+    "valueDate": "Value Date",
+    "sender": "Sender",
+    "receiver": "Receiver",
+    "amount": "Amount",
+    "purpose": "Purpose",
+    "rawXml": "Raw XML",
+    "showXml": "📋 Show XML",
+    "type": {
+      "credit": "Credit",
+      "debit": "Debit"
+    }
+  },
+  "transactionDetails": {
+    "title": "📋 Transaction Details",
+    "close": "×",
+    "showRawXml": "📋 Show Raw XML",
+    "sections": {
+      "basic": "📊 Basic Information",
+      "amounts": "💰 Amounts and Dates",
+      "debtor": "📤 Sender / Debtor",
+      "creditor": "📥 Receiver / Creditor",
+      "purpose": "📝 Purpose and Reference",
+      "references": "🔗 Extended References",
+      "bankCode": "🏦 Bank Transaction Code (BkTxCd)",
+      "partyIds": "🆔 Party Identifications",
+      "agents": "🏛️ Financial Institutions (BIC Codes)",
+      "additional": "ℹ️ Additional Information"
+    },
+    "fields": {
+      "entryRef": "Entry Reference (NtryRef)",
+      "acctSvcrRef": "Reference Number (AcctSvcrRef)",
+      "transactionType": "Transaction Type",
+      "status": "Status",
+      "reversalIndicator": "Reversal (RvslInd)",
+      "fileName": "Source File",
+      "amount": "Amount",
+      "currency": "Currency",
+      "instructedAmount": "Instructed Amount (InstdAmt)",
+      "transactionAmount": "Transaction Amount (TxAmt)",
+      "bookingDate": "Booking Date",
+      "bookingDateTime": "Booking Date/Time (DtTm)",
+      "valueDate": "Value Date",
+      "statementDate": "Statement Date",
+      "statementNumber": "Statement Number",
+      "name": "Name",
+      "iban": "IBAN",
+      "accountIdOther": "Account ID (Other)",
+      "accountCurrency": "Account Currency",
+      "purpose": "Purpose",
+      "purposeProprietary": "Purpose Proprietary (Purp.Prtry)",
+      "remittanceInfo": "Remittance Info Unstructured (RmtInf.Ustrd)",
+      "endToEndId": "End-to-End ID",
+      "mandateId": "Mandate Reference (MndtId)",
+      "transactionId": "Transaction ID",
+      "messageId": "Message ID",
+      "clearingSystemRef": "Clearing System Reference",
+      "acctSvcrRefTx": "AcctSvcrRef (from Refs)",
+      "instructionId": "Instruction ID (InstrId)",
+      "chequeNumber": "Cheque Number (ChqNb)",
+      "proprietaryRefType": "Proprietary Reference (Type)",
+      "proprietaryRefValue": "Proprietary Reference (Value)",
+      "domainCode": "Domain Code",
+      "familyCode": "Family Code",
+      "subFamilyCode": "Sub-Family Code",
+      "proprietaryCode": "Proprietary Code",
+      "issuer": "Issuer",
+      "debtorId": "Debtor ID",
+      "creditorId": "Creditor ID",
+      "debtorBic": "Debtor Bank BIC",
+      "debtorClearing": "Debtor Bank Clearing System",
+      "debtorMemberId": "Debtor Bank Member ID",
+      "creditorBic": "Creditor Bank BIC",
+      "creditorClearing": "Creditor Bank Clearing System",
+      "creditorMemberId": "Creditor Bank Member ID",
+      "additionalInfo": "Additional Information (AddtlNtryInf)",
+      "additionalTxInfo": "Additional Transaction Info (AddtlTxInf)"
+    }
+  },
+  "xmlModal": {
+    "title": "📄 Raw XML Data",
+    "close": "×",
+    "copyToClipboard": "📋 Copy to Clipboard",
+    "copied": "✓ Copied!",
+    "copyError": "Error copying: "
+  },
+  "status": {
+    "BOOK": "Booked",
+    "PDNG": "Pending",
+    "INFO": "Information",
+    "FUTR": "Future",
+    "CANC": "Cancelled"
+  },
+  "bankTransactionCode": {
+    "domain": {
+      "PMNT": "Payment",
+      "CASH": "Cash",
+      "SECU": "Securities",
+      "ACMT": "Account Management",
+      "XTND": "Extended"
+    },
+    "family": {
+      "RCDT": "Received Credit Transfer",
+      "RDDT": "Received Direct Debit",
+      "ICDT": "Issued Credit Transfer",
+      "IDDT": "Issued Direct Debit",
+      "CNTR": "Counter Transaction",
+      "MCOP": "Multiple Operation",
+      "CAJT": "Cash Adjustment"
+    },
+    "subFamily": {
+      "SDVA": "Same Day Value",
+      "DMCT": "Domestic Credit Transfer",
+      "ESDD": "SEPA Direct Debit",
+      "CDPT": "Cash Deposit",
+      "CWDL": "Cash Withdrawal",
+      "BOOK": "Booking",
+      "XBCT": "Cross-Border Credit Transfer",
+      "RRTN": "Return",
+      "FEES": "Fees",
+      "COMM": "Commission",
+      "INTC": "Interest Credit",
+      "STDO": "Standing Order",
+      "AUTT": "Automatic Transfer"
+    }
+  }
+}
