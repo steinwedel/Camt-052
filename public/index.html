@@ -1373,6 +1373,68 @@
             document.getElementById('fileName').textContent = t('upload.noFileSelected');
             document.getElementById('upload-drag-hint').textContent = t('upload.dragDropHint');
             document.getElementById('upload-processing').textContent = t('upload.processing');
+            
+            // Account section
+            const accountTitle = document.getElementById('account-title');
+            if (accountTitle) accountTitle.textContent = t('account.title');
+            const accountIbanLabel = document.getElementById('account-iban-label');
+            if (accountIbanLabel) accountIbanLabel.textContent = t('account.iban');
+            const accountOwnerLabel = document.getElementById('account-owner-label');
+            if (accountOwnerLabel) accountOwnerLabel.textContent = t('account.owner');
+            const accountCurrencyLabel = document.getElementById('account-currency-label');
+            if (accountCurrencyLabel) accountCurrencyLabel.textContent = t('account.currency');
+            
+            // Balance section
+            const balanceTitle = document.getElementById('balance-title');
+            if (balanceTitle) balanceTitle.textContent = t('balance.title');
+            const balanceOpeningDate = document.getElementById('balance-opening-date');
+            if (balanceOpeningDate) balanceOpeningDate.textContent = t('balance.openingDate');
+            const balanceOpeningBalance = document.getElementById('balance-opening-balance');
+            if (balanceOpeningBalance) balanceOpeningBalance.textContent = t('balance.openingBalance');
+            const balanceClosingDate = document.getElementById('balance-closing-date');
+            if (balanceClosingDate) balanceClosingDate.textContent = t('balance.closingDate');
+            const balanceClosingBalance = document.getElementById('balance-closing-balance');
+            if (balanceClosingBalance) balanceClosingBalance.textContent = t('balance.closingBalance');
+            const balanceTransactionCount = document.getElementById('balance-transaction-count');
+            if (balanceTransactionCount) balanceTransactionCount.textContent = t('balance.transactionCount');
+            
+            // Stats section
+            const statsTotalLabel = document.getElementById('stats-total-label');
+            if (statsTotalLabel) statsTotalLabel.textContent = t('stats.totalTransactions');
+            const statsCreditsLabel = document.getElementById('stats-credits-label');
+            if (statsCreditsLabel) statsCreditsLabel.textContent = t('stats.totalCredits');
+            const statsDebitsLabel = document.getElementById('stats-debits-label');
+            if (statsDebitsLabel) statsDebitsLabel.textContent = t('stats.totalDebits');
+            
+            // Transactions section
+            const transactionsTitle = document.getElementById('transactions-title');
+            if (transactionsTitle) transactionsTitle.textContent = t('transactions.title');
+            const transactionsId = document.getElementById('transactions-id');
+            if (transactionsId) transactionsId.textContent = t('transactions.id');
+            const transactionsBookingDate = document.getElementById('transactions-booking-date');
+            if (transactionsBookingDate) transactionsBookingDate.textContent = t('transactions.bookingDate');
+            const transactionsValueDate = document.getElementById('transactions-value-date');
+            if (transactionsValueDate) transactionsValueDate.textContent = t('transactions.valueDate');
+            const transactionsSender = document.getElementById('transactions-sender');
+            if (transactionsSender) transactionsSender.textContent = t('transactions.sender');
+            const transactionsReceiver = document.getElementById('transactions-receiver');
+            if (transactionsReceiver) transactionsReceiver.textContent = t('transactions.receiver');
+            const transactionsAmount = document.getElementById('transactions-amount');
+            if (transactionsAmount) transactionsAmount.textContent = t('transactions.amount');
+            const transactionsPurpose = document.getElementById('transactions-purpose');
+            if (transactionsPurpose) transactionsPurpose.textContent = t('transactions.purpose');
+            const transactionsRawXml = document.getElementById('transactions-raw-xml');
+            if (transactionsRawXml) transactionsRawXml.textContent = t('transactions.rawXml');
+            
+            // Modals
+            const transactionModalTitle = document.getElementById('transaction-modal-title');
+            if (transactionModalTitle) transactionModalTitle.textContent = t('transactionDetails.title');
+            const xmlModalTitle = document.getElementById('xml-modal-title');
+            if (xmlModalTitle) xmlModalTitle.textContent = t('xmlModal.title');
+            const xmlCopyBtn = document.getElementById('xml-copy-btn');
+            if (xmlCopyBtn) xmlCopyBtn.innerHTML = t('xmlModal.copyToClipboard');
+            const copyFeedback = document.getElementById('copyFeedback');
+            if (copyFeedback) copyFeedback.textContent = t('xmlModal.copied');
         }
 
         // Initialize i18n and update UI
