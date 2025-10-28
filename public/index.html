@@ -758,12 +758,12 @@
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Fehler beim Hochladen');
+                    throw new Error(data.error || t('upload.errorPrefix'));
                 }
 
                 displayResults(data);
             } catch (err) {
-                error.textContent = `Fehler: ${err.message}`;
+                error.textContent = `${t('upload.errorPrefix')}${err.message}`;
                 error.classList.remove('hidden');
             } finally {
                 loading.classList.add('hidden');
@@ -775,7 +775,7 @@
             if (e.target.files.length > 0) {
                 await uploadFile(e.target.files[0]);
             } else {
-                fileName.textContent = 'Keine Datei ausgewählt';
+                fileName.textContent = t('upload.noFileSelected');
             }
         });
 
@@ -804,7 +804,7 @@
                 if (file.name.toLowerCase().endsWith('.xml') || file.name.toLowerCase().endsWith('.zip')) {
                     await uploadFile(file);
                 } else {
-                    error.textContent = 'Fehler: Bitte laden Sie eine XML- oder ZIP-Datei hoch.';
+                    error.textContent = t('upload.invalidFormat');
                     error.classList.remove('hidden');
                 }
             }
@@ -1005,65 +1005,28 @@
         }
 
         function formatAmount(amount, currency) {
-            const num = parseFloat(amount);
-            return new Intl.NumberFormat('de-DE', {
-                style: 'currency',
-                currency: currency || 'EUR'
-            }).format(num);
+            // Use localized formatting from i18n-helpers
+            return formatAmountLocalized(amount, currency);
         }
 
         function getBalanceTypeName(type) {
-            const types = {
-                'OPBD': 'Eröffnungssaldo',
-                'CLBD': 'Schlusssaldo',
-                'ITBD': 'Zwischensaldo',
-                'PRCD': 'Vorheriger Saldo',
-                'FWAV': 'Verfügbarer Saldo'
-            };
-            return types[type] || type;
+            // Use translation helper
+            return translateBalanceType(type);
         }
 
         function getBkTxCdDomainName(code) {
-            const domains = {
-                'PMNT': 'Zahlung (Payment)',
-                'CASH': 'Bargeld (Cash)',
-                'SECU': 'Wertpapiere (Securities)',
-                'ACMT': 'Kontoverwaltung (Account Management)',
-                'XTND': 'Erweitert (Extended)'
-            };
-            return domains[code] || code;
+            // Use translation helper
+            return translateBkTxCdDomain(code);
         }
 
         function getBkTxCdFamilyName(code) {
-            const families = {
-                'RCDT': 'Gutschrift (Received Credit Transfer)',
-                'RDDT': 'Lastschrift (Received Direct Debit)',
-                'ICDT': 'Ausgehende Überweisung (Issued Credit Transfer)',
-                'IDDT': 'Ausgehende Lastschrift (Issued Direct Debit)',
-                'CNTR': 'Schaltergeschäft (Counter Transaction)',
-                'MCOP': 'Mehrfachoperation (Multiple Operation)',
-                'CAJT': 'Kassenanpassung (Cash Adjustment)'
-            };
-            return families[code] || code;
+            // Use translation helper
+            return translateBkTxCdFamily(code);
         }
 
         function getBkTxCdSubFamilyName(code) {
-            const subFamilies = {
-                'SDVA': 'Gleichtägige Valuta (Same Day Value)',
-                'DMCT': 'Inlandsüberweisung (Domestic Credit Transfer)',
-                'ESDD': 'SEPA-Lastschrift (SEPA Direct Debit)',
-                'CDPT': 'Bareinzahlung (Cash Deposit)',
-                'CWDL': 'Barauszahlung (Cash Withdrawal)',
-                'BOOK': 'Buchung (Booking)',
-                'XBCT': 'Grenzüberschreitende Überweisung (Cross-Border Credit Transfer)',
-                'RRTN': 'Rückgabe (Return)',
-                'FEES': 'Gebühren (Fees)',
-                'COMM': 'Provision (Commission)',
-                'INTC': 'Zinsgutschrift (Interest Credit)',
-                'STDO': 'Dauerauftrag (Standing Order)',
-                'AUTT': 'Automatische Überweisung (Automatic Transfer)'
-            };
-            return subFamilies[code] || code;
+            // Use translation helper
+            return translateBkTxCdSubFamily(code);
         }
 
         function showTransactionDetails(transaction) {
@@ -1320,7 +1283,7 @@
                     copyFeedback.style.display = 'none';
                 }, 2000);
             }).catch(err => {
-                alert('Fehler beim Kopieren: ' + err);
+                alert(t('xmlModal.copyError') + err);
             });
         }
 
