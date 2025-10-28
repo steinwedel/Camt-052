@@ -616,34 +616,34 @@
 
             <div id="results" class="hidden">
                 <div class="account-info">
-                    <h2>📋 Kontoinformationen</h2>
+                    <h2 id="account-title">📋 Account Information</h2>
                     <div class="info-grid">
                         <div class="info-item">
-                            <span class="info-label">IBAN</span>
+                            <span class="info-label" id="account-iban-label">IBAN</span>
                             <span class="info-value" id="accountIban">-</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Kontoinhaber</span>
+                            <span class="info-label" id="account-owner-label">Account Holder</span>
                             <span class="info-value" id="accountOwner">-</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">Währung</span>
+                            <span class="info-label" id="account-currency-label">Currency</span>
                             <span class="info-value" id="accountCurrency">-</span>
                         </div>
                     </div>
                 </div>
 
                 <div id="balanceSection" class="balance-section hidden">
-                    <h2>💰 Kontostände</h2>
+                    <h2 id="balance-title">💰 Account Balances</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Datum Eröffnungsaldo</th>
-                                    <th>Eröffnungssaldo</th>
-                                    <th>Datum Schlusssaldo</th>
-                                    <th>Schlusssaldo</th>
-                                    <th>Anzahl Buchungen</th>
+                                    <th id="balance-opening-date">Opening Balance Date</th>
+                                    <th id="balance-opening-balance">Opening Balance</th>
+                                    <th id="balance-closing-date">Closing Balance Date</th>
+                                    <th id="balance-closing-balance">Closing Balance</th>
+                                    <th id="balance-transaction-count">Number of Transactions</th>
                                 </tr>
                             </thead>
                             <tbody id="balanceTableBody">
@@ -654,33 +654,33 @@
 
                 <div class="stats" id="statsSection">
                     <div class="stat-card">
-                        <div class="stat-label">Anzahl Buchungen</div>
+                        <div class="stat-label" id="stats-total-label">Number of Transactions</div>
                         <div class="stat-value" id="totalTransactions">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Eingänge</div>
+                        <div class="stat-label" id="stats-credits-label">Credits</div>
                         <div class="stat-value amount-credit" id="totalCredits">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Ausgänge</div>
+                        <div class="stat-label" id="stats-debits-label">Debits</div>
                         <div class="stat-value amount-debit" id="totalDebits">0</div>
                     </div>
                 </div>
 
                 <div class="transactions-section">
-                    <h2>💳 Buchungen</h2>
+                    <h2 id="transactions-title">💳 Transactions</h2>
                     <div class="table-wrapper">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Buchungsdatum</th>
-                                    <th>Valutadatum</th>
-                                    <th>Absender</th>
-                                    <th>Empfänger</th>
-                                    <th>Betrag</th>
-                                    <th>Verwendungszweck</th>
-                                    <th>Raw XML</th>
+                                    <th id="transactions-id">ID</th>
+                                    <th id="transactions-booking-date">Booking Date</th>
+                                    <th id="transactions-value-date">Value Date</th>
+                                    <th id="transactions-sender">Sender</th>
+                                    <th id="transactions-receiver">Receiver</th>
+                                    <th id="transactions-amount">Amount</th>
+                                    <th id="transactions-purpose">Purpose</th>
+                                    <th id="transactions-raw-xml">Raw XML</th>
                                 </tr>
                             </thead>
                             <tbody id="transactionsBody">
@@ -696,8 +696,8 @@
     <div id="transactionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>📋 Buchungsdetails</h3>
-                <button class="close-btn" onclick="closeTransactionModal()">&times;</button>
+                <h3 id="transaction-modal-title">📋 Transaction Details</h3>
+                <button class="close-btn" onclick="closeTransactionModal()" id="transaction-modal-close">&times;</button>
             </div>
             <div class="modal-body">
                 <div id="transactionDetails"></div>
@@ -709,16 +709,16 @@
     <div id="xmlModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>📄 Raw XML Daten</h3>
-                <button class="close-btn" onclick="closeXMLModal()">&times;</button>
+                <h3 id="xml-modal-title">📄 Raw XML Data</h3>
+                <button class="close-btn" onclick="closeXMLModal()" id="xml-modal-close">&times;</button>
             </div>
             <div class="modal-body">
                 <div id="xmlContent" class="xml-content"></div>
                 <div class="xml-button-container">
-                    <button class="xml-btn" onclick="copyXMLToClipboard()">
-                        📋 In Zwischenablage kopieren
+                    <button class="xml-btn" onclick="copyXMLToClipboard()" id="xml-copy-btn">
+                        📋 Copy to Clipboard
                     </button>
-                    <span id="copyFeedback" style="margin-left: 10px; color: #28a745; font-weight: 600; display: none;">✓ Kopiert!</span>
+                    <span id="copyFeedback" style="margin-left: 10px; color: #28a745; font-weight: 600; display: none;">✓ Copied!</span>
                 </div>
             </div>
         </div>
