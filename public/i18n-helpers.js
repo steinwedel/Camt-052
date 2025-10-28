@@ -39,7 +39,7 @@ function translateBkTxCdSubFamily(code) {
     return translated === key ? code : translated;
 }
 
-// Translation helper for transaction type
+// Translation helper for transaction type (CRDT/DBIT)
 function translateTransactionType(creditDebit) {
     if (creditDebit === 'CRDT') {
         return i18n.t('transactions.type.credit');
