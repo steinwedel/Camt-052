@@ -3,12 +3,31 @@ const path = require('path');
 const { fork } = require('child_process');
 
 let mainWindow;
+let osLanguage = 'en'; // Default language
 let serverProcess;
 const PORT = 3001;
 const isDev = process.argv.includes('--dev');
 const isPackaged = app.isPackaged;
 
+// Detect OS language
+function detectOSLanguage() {
+    const locale = app.getLocale(); // Returns language code like 'en-US', 'de-DE', etc.
+    console.log('OS Locale detected:', locale);
+    
+    // Extract base language code (e.g., 'en' from 'en-US')
+    const baseLang = locale.split(/[-_]/)[0].toLowerCase();
+    
+    // Supported languages
+    const supportedLanguages = ['en', 'de', 'fr', 'es', 'it'];
+    
+    // Return supported language or default to English
+    return supportedLanguages.includes(baseLang) ? baseLang : 'en';
+}
+
 function createWindow() {
+    // Detect OS language before creating window
+    osLanguage = detectOSLanguage();
+    console.log('Using language:', osLanguage);
     mainWindow = new BrowserWindow({
         width: 1400,
         height: 900,
@@ -18,11 +37,19 @@ function createWindow() {
             enableRemoteModule: false
         },
         icon: path.join(__dirname, 'public', 'icon.png'),
-        title: 'CAMT.052 Kontoauszug Viewer'
+        title: 'CAMT.052 Account Statement Viewer'
     });
 
-    // Load the app
-    mainWindow.loadURL(`http://localhost:${PORT}`);
+    // Load the app with language parameter
+    mainWindow.loadURL(`http://localhost:${PORT}?electronLang=${osLanguage}`);
+    
+    // Inject language into window after page loads
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.executeJavaScript(`
+            window.electronLanguage = '${osLanguage}';
+            console.log('Electron language set to:', '${osLanguage}');
+        `);
+    });
 
     // Open DevTools in development mode
     if (isDev) {
