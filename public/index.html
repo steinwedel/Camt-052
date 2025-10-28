@@ -1062,8 +1062,8 @@
             let basicHTML = '';
             basicHTML += createDetailItem(t('transactionDetails.fields.entryRef'), transaction.entryRef, 'highlight');
             basicHTML += createDetailItem(t('transactionDetails.fields.acctSvcrRef'), transaction.acctSvcrRef, 'highlight');
-            basicHTML += createDetailItem(t('transactionDetails.fields.transactionType'), transaction.type, 'highlight');
-            basicHTML += createDetailItem(t('transactionDetails.fields.status'), transaction.status);
+            basicHTML += createDetailItem(t('transactionDetails.fields.transactionType'), translateTransactionType(transaction.type), 'highlight');
+            basicHTML += createDetailItem(t('transactionDetails.fields.status'), translateStatus(transaction.status));
             basicHTML += createDetailItem(t('transactionDetails.fields.reversalIndicator'), transaction.reversalIndicator);
             basicHTML += createDetailItem(t('transactionDetails.fields.fileName'), transaction.fileName);
             
