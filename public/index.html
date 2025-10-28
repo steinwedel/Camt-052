@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -580,26 +580,27 @@
             }
         }
     </style>
+    <script src="i18n.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
                 <img src="icon.png" alt="Bank Icon" class="header-icon">
-                <h1>CAMT.052 Kontoauszug Viewer</h1>
+                <h1 id="app-title">CAMT.052 Account Statement Viewer</h1>
             </div>
-            <p>Laden Sie Ihre CAMT.052 v8 XML-Datei oder ZIP-Datei mit mehreren XML-Dateien hoch</p>
+            <p id="app-subtitle">Upload your CAMT.052 v8 XML file or ZIP file with multiple XML files</p>
         </div>
 
         <div class="upload-section">
             <div class="upload-container">
                 <div class="file-input-wrapper">
                     <input type="file" id="xmlFile" accept=".xml,.zip" />
-                    <label for="xmlFile" class="file-input-label">📁 Datei auswählen</label>
+                    <label for="xmlFile" class="file-input-label" id="upload-select-file">📁 Select File</label>
                 </div>
-                <div class="file-name" id="fileName">Keine Datei ausgewählt</div>
-                <div style="width: 100%; text-align: center; color: #6c757d; font-size: 0.9em; margin-top: 10px;">
-                    oder ziehen Sie eine Datei hierher
+                <div class="file-name" id="fileName">No file selected</div>
+                <div style="width: 100%; text-align: center; color: #6c757d; font-size: 0.9em; margin-top: 10px;" id="upload-drag-hint">
+                    or drag and drop a file here
                 </div>
             </div>
         </div>
@@ -607,7 +608,7 @@
         <div class="content">
             <div id="loading" class="loading hidden">
                 <div class="spinner"></div>
-                <p>Datei wird verarbeitet...</p>
+                <p id="upload-processing">Processing file...</p>
             </div>
 
             <div id="error" class="error-message hidden"></div>
