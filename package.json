@@ -32,7 +32,11 @@
     "banking",
     "transactions"
   ],
-  "author": "",
+  "author": "Gerhard Steinwedel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/steinwedel/Camt-052"
+  },
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.16",
