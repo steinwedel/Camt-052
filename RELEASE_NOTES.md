@@ -41,9 +41,9 @@ Dies ist die erste offizielle Version des CAMT.052 Viewers.
 
 ## 🔐 Checksums (SHA256)
 
-Siehe `SHA256SUMS.txt` Dateien zur Verifizierung der Downloads:
-- `dist-server/SHA256SUMS.txt` - Checksums für Server-Executables
-- `dist-desktop/SHA256SUMS.txt` - Checksums für Desktop-Anwendungen
+Siehe Checksum-Dateien zur Verifizierung der Downloads:
+- `SHA256SUMS-server.txt` - Checksums für Server-Executables
+- `SHA256SUMS-desktop.txt` - Checksums für Desktop-Anwendungen
 
 ## 📖 Installation & Verwendung
 
