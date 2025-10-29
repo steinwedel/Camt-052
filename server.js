@@ -378,7 +378,7 @@ function parseCamt052(xmlData, fileName = '') {
                     bookingDateTime: bookingDateTime,
                     valueDate: formatDate(entry.ValDt?.Dt || entry.ValDt),
                     amount: formatAmount(amount, currency),
-                    rawAmount: parseFloat(amount),
+                    rawAmount: Number(amount) || 0,
                     currency: currency,
                     creditDebit: creditDebit,
                     type: creditDebit, // Send raw code for client-side translation
@@ -407,10 +407,10 @@ function parseCamt052(xmlData, fileName = '') {
                     proprietaryRefValue: prtryRefValue,
                     // Amount details
                     instructedAmount: instdAmt !== 'N/A' ? formatAmount(instdAmt, instdAmtCcy) : 'N/A',
-                    instructedAmountRaw: instdAmt !== 'N/A' ? parseFloat(instdAmt) : null,
+                    instructedAmountRaw: instdAmt !== 'N/A' ? Number(instdAmt) : null,
                     instructedAmountCcy: instdAmtCcy,
                     transactionAmount: txAmt !== 'N/A' ? formatAmount(txAmt, txAmtCcy) : 'N/A',
-                    transactionAmountRaw: txAmt !== 'N/A' ? parseFloat(txAmt) : null,
+                    transactionAmountRaw: txAmt !== 'N/A' ? Number(txAmt) : null,
                     transactionAmountCcy: txAmtCcy,
                     // Bank Transaction Code
                     bkTxCdDomain: bkTxCdDomain,
