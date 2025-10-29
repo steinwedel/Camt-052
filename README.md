@@ -414,6 +414,7 @@ Die Anwendung unterstützt das CAMT.052 v8 Format (ISO 20022 Standard) für Kont
 - Robuste Fehlerbehandlung
 
 ### Sicherheit
+- **Datenschutz**: Alle Daten werden ausschließlich lokal auf Ihrem Computer verarbeitet - keine Übertragung an externe Server oder Dritte
 - Hochgeladene Dateien werden nach dem Parsen automatisch gelöscht
 - Nur XML-Dateien werden akzeptiert
 - Fehlerhafte Dateien werden mit aussagekräftigen Fehlermeldungen abgelehnt
