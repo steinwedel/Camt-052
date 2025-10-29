@@ -18,7 +18,50 @@ Eine Node.js-Webanwendung zum Auslesen und Anzeigen von Buchungen aus CAMT.052 v
 - **Statistiken**: Anzahl der Buchungen, Eingänge und Ausgänge
 - **Moderne Benutzeroberfläche**: Responsive Design mit professionellem Look
 
-## 🚀 Installation
+## 📥 Binäre Dateien herunterladen (Empfohlen)
+
+**Keine Installation erforderlich!** Laden Sie die vorkompilierten ausführbaren Dateien direkt herunter:
+
+### Desktop-Anwendungen (Direkt ausführbar)
+
+**Windows:**
+- [CAMT.052 Viewer 1.0.0.exe](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer.1.0.0.exe) (Portable, ~100-150 MB)
+  - Einfach herunterladen und per Doppelklick starten - keine Installation nötig!
+
+**macOS:**
+- [CAMT.052 Viewer-1.0.0-universal.dmg](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer-1.0.0-universal.dmg) (Universal Binary, ~200-250 MB)
+  - Funktioniert auf Intel und Apple Silicon Macs
+  - DMG öffnen, App in Programme-Ordner ziehen und starten
+
+**Linux:**
+- [CAMT.052 Viewer-1.0.0.AppImage](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer-1.0.0.AppImage) (~150-200 MB)
+  - Ausführbar machen: `chmod +x CAMT.052.Viewer-1.0.0.AppImage`
+  - Starten: `./CAMT.052.Viewer-1.0.0.AppImage`
+
+### Server-Executables (Standalone)
+
+**Windows:**
+- [camt52-viewer-windows.exe](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-windows.exe) (~38 MB)
+
+**macOS:**
+- [camt52-viewer-macos](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-macos) (~51 MB)
+  - Ausführbar machen: `chmod +x camt52-viewer-macos`
+
+**Linux:**
+- [camt52-viewer-linux](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-linux) (~46 MB)
+  - Ausführbar machen: `chmod +x camt52-viewer-linux`
+
+### Checksums (SHA256)
+
+Zur Verifizierung der Downloads:
+- [SHA256SUMS-server.txt](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/SHA256SUMS-server.txt)
+- [SHA256SUMS-desktop.txt](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/SHA256SUMS-desktop.txt)
+
+**Alle Releases anzeigen:** [GitHub Releases](https://github.com/steinwedel/Camt-052/releases)
+
+---
+
+## 🚀 Installation (Für Entwickler)
 
 1. **Repository klonen oder Dateien herunterladen**
 
