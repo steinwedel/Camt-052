@@ -34,6 +34,15 @@ Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen
   - Funktioniert auf Intel und Apple Silicon Macs
   - DMG öffnen, App in Programme-Ordner ziehen und starten
 
+> **⚠️ macOS Sicherheitshinweis**
+> 
+> Beim Ausführen wird folgende Fehlermeldung angezeigt:
+> 
+> *"Apple konnte nicht überprüfen, ob „CAMT.052 Viewer" frei von Schadsoftware ist, die deinen Mac beschädigen oder deine Privatsphäre verletzen kann."*
+> 
+> **Lösung:** Das Problem kann wie folgt behoben werden:  
+> 👉 [Apple Support: App aus unbekannter Quelle öffnen](https://support.apple.com/de-de/guide/mac-help/mchleab3a043/mac)
+
 **Linux:**
 - [CAMT.052 Viewer-1.0.0.AppImage](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer-1.0.0.AppImage) (~150-200 MB)
   - Ausführbar machen: `chmod +x CAMT.052.Viewer-1.0.0.AppImage`
