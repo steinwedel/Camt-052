@@ -146,7 +146,10 @@ function getNestedValue(obj, path) {
 
 // Helper function to format amount
 function formatAmount(amount, currency = 'EUR') {
-    const num = parseFloat(amount);
+    const num = Number(amount);
+    if (isNaN(num)) {
+        return 'N/A';
+    }
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: currency
