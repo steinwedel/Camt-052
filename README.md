@@ -1,6 +1,7 @@
 # CAMT.052 Kontoauszug Viewer
 
-Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen aus CAMT.052 v8 XML-Dateien.
+Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen aus CAMT.052 v8 XML-Dateien. Dabei werden alle Daten ausschließlich lokal auf Ihrem Computer (Desktop-Anwendung) oder dem Server (Serveranwendung) verarbeitet. Eine Übertragung an externe Server oder Dritte findet nicht statt.
+
 
 ## 📋 Funktionen
 
