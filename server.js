@@ -6,7 +6,32 @@ const path = require('path');
 const AdmZip = require('adm-zip');
 
 const app = express();
-const PORT = 3001;
+
+// Parse command-line arguments for port specification
+// Supports: node server.js 8080 or node server.js --port 8080
+let PORT = 3001; // Default port
+const args = process.argv.slice(2);
+
+if (args.length > 0) {
+    // Check for --port flag
+    const portFlagIndex = args.indexOf('--port');
+    if (portFlagIndex !== -1 && args[portFlagIndex + 1]) {
+        const portArg = parseInt(args[portFlagIndex + 1], 10);
+        if (!isNaN(portArg) && portArg > 0 && portArg <= 65535) {
+            PORT = portArg;
+        } else {
+            console.warn(`Invalid port number: ${args[portFlagIndex + 1]}. Using default port ${PORT}.`);
+        }
+    } else if (!args[0].startsWith('--')) {
+        // First argument is the port number (without flag)
+        const portArg = parseInt(args[0], 10);
+        if (!isNaN(portArg) && portArg > 0 && portArg <= 65535) {
+            PORT = portArg;
+        } else {
+            console.warn(`Invalid port number: ${args[0]}. Using default port ${PORT}.`);
+        }
+    }
+}
 
 // Load translation files for server-side i18n
 const translations = {};
