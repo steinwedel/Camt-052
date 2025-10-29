@@ -276,9 +276,23 @@ npm run electron:dev
 npm start
 ```
 
-Der Server läuft auf **http://localhost:3001**
+Der Server läuft standardmäßig auf **http://localhost:3001**
 
-Öffnen Sie dann Ihren Browser und navigieren Sie zu `http://localhost:3001`
+**Port-Konfiguration:**
+
+Sie können einen benutzerdefinierten Port über die Kommandozeile angeben:
+
+```bash
+# Direktes Format (Port als Argument)
+node server.js 8080
+
+# Flag-Format (mit --port)
+node server.js --port 8080
+```
+
+Wenn kein Port angegeben wird, verwendet der Server automatisch Port 3001.
+
+Öffnen Sie dann Ihren Browser und navigieren Sie zu `http://localhost:3001` (oder dem von Ihnen gewählten Port)
 
 ### Anwendung verwenden
 
