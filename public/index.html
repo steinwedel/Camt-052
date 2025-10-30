@@ -1233,6 +1233,141 @@
                 `;
             }
             
+            // Ultimate Parties
+            let ultimateHTML = '';
+            ultimateHTML += createDetailItem('Ultimate Debtor', transaction.ultimateDebtor);
+            ultimateHTML += createDetailItem('Ultimate Creditor', transaction.ultimateCreditor);
+            
+            if (ultimateHTML && (shouldDisplay(transaction.ultimateDebtor) || shouldDisplay(transaction.ultimateCreditor))) {
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>🔗 Ultimate Parties</h4>
+                        <div class="detail-grid">
+                            ${ultimateHTML}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Charges
+            if (transaction.charges && transaction.charges.length > 0) {
+                let chargesHTML = '<div class="detail-grid">';
+                transaction.charges.forEach((charge, idx) => {
+                    chargesHTML += `
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <span class="detail-label">Charge ${idx + 1}</span>
+                            <div style="margin-left: 15px; margin-top: 5px;">
+                                <div><strong>Amount:</strong> ${formatAmount(charge.amount, charge.currency)}</div>
+                                <div><strong>Type:</strong> ${charge.type}</div>
+                                ${charge.bearer !== 'N/A' ? `<div><strong>Bearer:</strong> ${charge.bearer}</div>` : ''}
+                                ${charge.rate !== 'N/A' ? `<div><strong>Rate:</strong> ${charge.rate}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                chargesHTML += '</div>';
+                
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>💰 Charges & Fees</h4>
+                        ${chargesHTML}
+                    </div>
+                `;
+            }
+            
+            // Interest
+            if (transaction.interest && transaction.interest.length > 0) {
+                let interestHTML = '<div class="detail-grid">';
+                transaction.interest.forEach((int, idx) => {
+                    interestHTML += `
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <span class="detail-label">Interest ${idx + 1}</span>
+                            <div style="margin-left: 15px; margin-top: 5px;">
+                                <div><strong>Amount:</strong> ${formatAmount(int.amount, int.currency)}</div>
+                                <div><strong>Type:</strong> ${int.type}</div>
+                                ${int.rate !== 'N/A' ? `<div><strong>Rate:</strong> ${int.rate}%</div>` : ''}
+                                ${int.fromToDate !== 'N/A' ? `<div><strong>Period:</strong> ${int.fromToDate}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                interestHTML += '</div>';
+                
+                sectionsHTML += `
+                    <div class="detail-section">
+                        <h4>📊 Interest Information</h4>
+                        ${interestHTML}
+                    </div>
+                `;
+            }
+            
+            // Tax Information
+            if (transaction.tax) {
+                let taxHTML = '';
+                taxHTML += createDetailItem('Tax Creditor', transaction.tax.creditor);
+                taxHTML += createDetailItem('Tax Debtor', transaction.tax.debtor);
+                taxHTML += createDetailItem('Administration Zone', transaction.tax.administrationZone);
+                taxHTML += createDetailItem('Reference Number', transaction.tax.referenceNumber);
+                taxHTML += createDetailItem('Method', transaction.tax.method);
+                taxHTML += createDetailItem('Total Taxable Base', transaction.tax.totalTaxableBaseAmount);
+                taxHTML += createDetailItem('Total Tax Amount', transaction.tax.totalTaxAmount);
+                taxHTML += createDetailItem('Tax Date', transaction.tax.date);
+                
+                if (taxHTML) {
+                    sectionsHTML += `
+                        <div class="detail-section">
+                            <h4>🧾 Tax Information</h4>
+                            <div class="detail-grid">
+                                ${taxHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Return Information
+            if (transaction.returnInfo) {
+                let returnHTML = '';
+                returnHTML += createDetailItem('Original Bank Transaction Code', transaction.returnInfo.originalBankTransactionCode);
+                returnHTML += createDetailItem('Originator', transaction.returnInfo.originator);
+                returnHTML += createDetailItem('Return Reason', transaction.returnInfo.reason);
+                returnHTML += createDetailItem('Additional Info', transaction.returnInfo.additionalInfo);
+                
+                if (returnHTML) {
+                    sectionsHTML += `
+                        <div class="detail-section" style="border-left-color: #dc3545;">
+                            <h4>↩️ Return Information</h4>
+                            <div class="detail-grid">
+                                ${returnHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Card Transaction
+            if (transaction.cardTransaction) {
+                let cardHTML = '';
+                const card = transaction.cardTransaction;
+                cardHTML += createDetailItem('Card Number (PAN)', card.cardNumber ? '****' + card.cardNumber.slice(-4) : 'N/A');
+                cardHTML += createDetailItem('Card Sequence', card.cardSequenceNumber);
+                cardHTML += createDetailItem('Expiry Date', card.expiryDate);
+                cardHTML += createDetailItem('Card Brand', card.cardBrand);
+                cardHTML += createDetailItem('POS Terminal ID', card.poiId);
+                cardHTML += createDetailItem('POS System Name', card.poiSystemName);
+                
+                if (cardHTML) {
+                    sectionsHTML += `
+                        <div class="detail-section" style="border-left-color: #17a2b8;">
+                            <h4>💳 Card Transaction</h4>
+                            <div class="detail-grid">
+                                ${cardHTML}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
             // Additional Information
             let additionalHTML = '';
             additionalHTML += createDetailItem(t('transactionDetails.fields.additionalInfo'), transaction.additionalInfo);
