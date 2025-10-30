@@ -6,6 +6,7 @@
  * 
  * Verwendung:
  *   node build.js all                 - Server + Desktop für alle Plattformen
+ *   node build.js server              - Server-Executable für aktuelle Plattform
  *   node build.js server:all          - Server-Executables für alle Plattformen
  *   node build.js server:windows      - Server-Executable nur für Windows
  *   node build.js server:macos        - Server-Executable nur für macOS
@@ -242,6 +243,7 @@ function showHelp() {
     logInfo('  all                 - Server + Desktop für alle Plattformen');
     console.log('');
     log('Server-Executables (pkg):', colors.bright);
+    logInfo('  server              - Aktuelle Plattform');
     logInfo('  server:all          - Alle Plattformen');
     logInfo('  server:windows      - Nur Windows');
     logInfo('  server:macos        - Nur macOS');
@@ -292,18 +294,42 @@ function main() {
         
         // Bestimme Plattformen
         let platformsToBuild = [];
-        if (platform === 'all') {
+        if (!platform) {
+            // Keine Plattform angegeben - baue für aktuelle Plattform
+            const currentPlatform = process.platform;
+            if (currentPlatform === 'win32') {
+                platformsToBuild = ['windows'];
+                logInfo('Erstelle Server-Build für aktuelle Plattform (Windows)');
+            } else if (currentPlatform === 'darwin') {
+                platformsToBuild = ['macos'];
+                logInfo('Erstelle Server-Build für aktuelle Plattform (macOS)');
+            } else if (currentPlatform === 'linux') {
+                // Für Linux baue für die aktuelle Architektur
+                const arch = process.arch;
+                if (arch === 'arm64') {
+                    platformsToBuild = ['linux-arm64'];
+                    logInfo('Erstelle Server-Build für aktuelle Plattform (Linux ARM64)');
+                } else {
+                    platformsToBuild = ['linux-x64'];
+                    logInfo('Erstelle Server-Build für aktuelle Plattform (Linux x64)');
+                }
+            } else {
+                logError(`Unbekannte Plattform: ${currentPlatform}`);
+                process.exit(1);
+            }
+        } else if (platform === 'all') {
             platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
             logInfo('Erstelle Server-Builds für alle Plattformen');
         } else if (platform === 'linux') {
             platformsToBuild = ['linux-x64', 'linux-arm64'];
             logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
-        } else if (platform && serverBuilds[platform]) {
+        } else if (serverBuilds[platform]) {
             platformsToBuild = [platform];
             logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
         } else {
-            logError(`Fehlende oder unbekannte Plattform: ${platform || '(keine)'}`);
-            logInfo('Verwenden Sie "server:all" für alle Plattformen oder "server:windows", "server:macos", "server:linux"');
+            logError(`Unbekannte Plattform: ${platform}`);
+            logInfo('Verwenden Sie "server" für aktuelle Plattform, "server:all" für alle Plattformen');
+            logInfo('oder "server:windows", "server:macos", "server:linux"');
             console.log('');
             showHelp();
             process.exit(1);
