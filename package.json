@@ -10,7 +10,7 @@
     "electron": "electron .",
     "electron:dev": "electron . --dev",
     "build": "node build.js",
-    "build:server": "node build.js server",
+    "build:server": "node build.js server:all",
     "build:server:win": "node build.js server:windows",
     "build:server:mac": "node build.js server:macos",
     "build:server:linux": "node build.js server:linux",
