@@ -90,19 +90,25 @@ const serverBuilds = {
     windows: {
         name: 'Windows',
         target: 'node18-win-x64',
-        output: 'dist-server/camt52-viewer-windows.exe',
+        output: 'dist-server/camt.052-web-viewer-windows.exe',
         icon: '🪟'
     },
     macos: {
-        name: 'macOS',
+        name: 'macOS-universal',
         target: 'node18-macos-x64',
-        output: 'dist-server/camt52-viewer-macos',
+        output: 'dist-server/camt.052-web-viewer-macOS-universal',
         icon: '🍎'
     },
-    linux: {
-        name: 'Linux',
+    'linux-x64': {
+        name: 'Linux x64',
         target: 'node18-linux-x64',
-        output: 'dist-server/camt52-viewer-linux',
+        output: 'dist-server/camt.052-web-viewer-linux-x64',
+        icon: '🐧'
+    },
+    'linux-arm64': {
+        name: 'Linux ARM64',
+        target: 'node18-linux-arm64',
+        output: 'dist-server/camt.052-web-viewer-linux-arm64',
         icon: '🐧'
     }
 };
