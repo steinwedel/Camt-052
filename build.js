@@ -208,6 +208,14 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder --linux --config.directories.output=dist-desktop';
             platformName = 'Linux';
             log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'linux:x64') {
+            command = 'npx electron-builder --linux --x64 --config.directories.output=dist-desktop';
+            platformName = 'Linux x64';
+            log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'linux:arm64') {
+            command = 'npx electron-builder --linux --arm64 --config.directories.output=dist-desktop';
+            platformName = 'Linux ARM64';
+            log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
         } else {
             command = 'npx electron-builder --config.directories.output=dist-desktop';
             platformName = 'Aktuelle Plattform';
