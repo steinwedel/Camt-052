@@ -6,15 +6,15 @@
  * 
  * Verwendung:
  *   node build.js all                 - Server + Desktop für alle Plattformen
- *   node build.js server              - Server-Executables für alle Plattformen
+ *   node build.js server:all          - Server-Executables für alle Plattformen
  *   node build.js server:windows      - Server-Executable nur für Windows
  *   node build.js server:macos        - Server-Executable nur für macOS
- *   node build.js server:linux        - Server-Executable nur für Linux
+ *   node build.js server:linux        - Server-Executable nur für Linux (x64 + ARM64)
  *   node build.js desktop             - Desktop-App für aktuelle Plattform
  *   node build.js desktop:all         - Desktop-Apps für alle Plattformen
  *   node build.js desktop:windows     - Desktop-App nur für Windows
  *   node build.js desktop:macos       - Desktop-App nur für macOS
- *   node build.js desktop:linux       - Desktop-App nur für Linux
+ *   node build.js desktop:linux       - Desktop-App nur für Linux (x64 + ARM64)
  */
 
 const { execSync } = require('child_process');
@@ -242,10 +242,10 @@ function showHelp() {
     logInfo('  all                 - Server + Desktop für alle Plattformen');
     console.log('');
     log('Server-Executables (pkg):', colors.bright);
-    logInfo('  server              - Alle Plattformen');
+    logInfo('  server:all          - Alle Plattformen');
     logInfo('  server:windows      - Nur Windows');
     logInfo('  server:macos        - Nur macOS');
-    logInfo('  server:linux        - Nur Linux');
+    logInfo('  server:linux        - Nur Linux (x64 + ARM64)');
     console.log('');
     log('Desktop-Apps (Electron):', colors.bright);
     logInfo('  desktop             - Aktuelle Plattform');
@@ -291,19 +291,22 @@ function main() {
         createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
         
         // Bestimme Plattformen
-        let platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
-        if (platform === 'linux') {
+        let platformsToBuild = [];
+        if (platform === 'all') {
+            platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
+            logInfo('Erstelle Server-Builds für alle Plattformen');
+        } else if (platform === 'linux') {
             platformsToBuild = ['linux-x64', 'linux-arm64'];
             logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
         } else if (platform && serverBuilds[platform]) {
             platformsToBuild = [platform];
             logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
-        } else if (platform) {
-            logError(`Unbekannte Plattform: ${platform}`);
+        } else {
+            logError(`Fehlende oder unbekannte Plattform: ${platform || '(keine)'}`);
+            logInfo('Verwenden Sie "server:all" für alle Plattformen oder "server:windows", "server:macos", "server:linux"');
+            console.log('');
             showHelp();
             process.exit(1);
-        } else {
-            logInfo('Erstelle Server-Builds für alle Plattformen');
         }
         
         // Führe Builds aus
