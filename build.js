@@ -5,15 +5,21 @@
  * Erstellt ausführbare Dateien für Windows, macOS und Linux
  * 
  * Verwendung:
- *   node build.js server              - Server-Executables für alle Plattformen
+ *   node build.js all                 - Server + Desktop für alle Plattformen
+ *   node build.js server              - Server-Executable für aktuelle Plattform
+ *   node build.js server:all          - Server-Executables für alle Plattformen
  *   node build.js server:windows      - Server-Executable nur für Windows
  *   node build.js server:macos        - Server-Executable nur für macOS
- *   node build.js server:linux        - Server-Executable nur für Linux
+ *   node build.js server:linux        - Server-Executable für Linux (x64 + ARM64)
+ *   node build.js server:linux:x64    - Server-Executable nur für Linux x64
+ *   node build.js server:linux:arm64  - Server-Executable nur für Linux ARM64
  *   node build.js desktop             - Desktop-App für aktuelle Plattform
  *   node build.js desktop:all         - Desktop-Apps für alle Plattformen
  *   node build.js desktop:windows     - Desktop-App nur für Windows
  *   node build.js desktop:macos       - Desktop-App nur für macOS
- *   node build.js desktop:linux       - Desktop-App nur für Linux
+ *   node build.js desktop:linux       - Desktop-App für Linux (x64 + ARM64)
+ *   node build.js desktop:linux:x64   - Desktop-App nur für Linux x64
+ *   node build.js desktop:linux:arm64 - Desktop-App nur für Linux ARM64
  */
 
 const { execSync } = require('child_process');
@@ -90,19 +96,25 @@ const serverBuilds = {
     windows: {
         name: 'Windows',
         target: 'node18-win-x64',
-        output: 'dist-server/camt52-viewer-windows.exe',
+        output: 'dist-server/camt.052-web-viewer-windows.exe',
         icon: '🪟'
     },
     macos: {
-        name: 'macOS',
+        name: 'macOS-universal',
         target: 'node18-macos-x64',
-        output: 'dist-server/camt52-viewer-macos',
+        output: 'dist-server/camt.052-web-viewer-macOS-universal',
         icon: '🍎'
     },
-    linux: {
-        name: 'Linux',
+    'linux-x64': {
+        name: 'Linux x64',
         target: 'node18-linux-x64',
-        output: 'dist-server/camt52-viewer-linux',
+        output: 'dist-server/camt.052-web-viewer-linux-x64',
+        icon: '🐧'
+    },
+    'linux-arm64': {
+        name: 'Linux ARM64',
+        target: 'node18-linux-arm64',
+        output: 'dist-server/camt.052-web-viewer-linux-arm64',
         icon: '🐧'
     }
 };
@@ -196,6 +208,14 @@ function buildDesktop(platforms) {
             command = 'npx electron-builder --linux --config.directories.output=dist-desktop';
             platformName = 'Linux';
             log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'linux:x64') {
+            command = 'npx electron-builder --linux --x64 --config.directories.output=dist-desktop';
+            platformName = 'Linux x64';
+            log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
+        } else if (platforms === 'linux:arm64') {
+            command = 'npx electron-builder --linux --arm64 --config.directories.output=dist-desktop';
+            platformName = 'Linux ARM64';
+            log(`🐧 Erstelle ${platformName} Desktop-App...`, colors.cyan);
         } else {
             command = 'npx electron-builder --config.directories.output=dist-desktop';
             platformName = 'Aktuelle Plattform';
@@ -231,18 +251,26 @@ function showHelp() {
     logHeader('CAMT.052 Viewer - Build Script');
     logInfo('Verfügbare Optionen:');
     console.log('');
+    log('Alle Builds:', colors.bright);
+    logInfo('  all                 - Server + Desktop für alle Plattformen');
+    console.log('');
     log('Server-Executables (pkg):', colors.bright);
-    logInfo('  server              - Alle Plattformen');
+    logInfo('  server              - Aktuelle Plattform');
+    logInfo('  server:all          - Alle Plattformen');
     logInfo('  server:windows      - Nur Windows');
     logInfo('  server:macos        - Nur macOS');
-    logInfo('  server:linux        - Nur Linux');
+    logInfo('  server:linux        - Linux (x64 + ARM64)');
+    logInfo('  server:linux:x64    - Nur Linux x64');
+    logInfo('  server:linux:arm64  - Nur Linux ARM64');
     console.log('');
     log('Desktop-Apps (Electron):', colors.bright);
     logInfo('  desktop             - Aktuelle Plattform');
     logInfo('  desktop:all         - Alle Plattformen');
     logInfo('  desktop:windows     - Nur Windows');
     logInfo('  desktop:macos       - Nur macOS');
-    logInfo('  desktop:linux       - Nur Linux');
+    logInfo('  desktop:linux       - Linux (x64 + ARM64)');
+    logInfo('  desktop:linux:x64   - Nur Linux x64');
+    logInfo('  desktop:linux:arm64 - Nur Linux ARM64');
     console.log('');
     log('Ausgabeverzeichnisse:', colors.bright);
     logInfo('  Server-Builds:  dist-server/');
@@ -262,7 +290,11 @@ function main() {
     }
     
     // Parse Kommando (z.B. "server:windows" -> type="server", platform="windows")
-    const [buildType, platform] = buildCommand.split(':');
+    // oder "server:linux:x64" -> type="server", platform="linux", arch="x64"
+    const parts = buildCommand.split(':');
+    const buildType = parts[0];
+    const platform = parts[1];
+    const arch = parts[2]; // Optional: für linux:x64 oder linux:arm64
     
     // Server Builds
     if (buildType === 'server') {
@@ -281,16 +313,58 @@ function main() {
         createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
         
         // Bestimme Plattformen
-        let platformsToBuild = ['windows', 'macos', 'linux'];
-        if (platform && serverBuilds[platform]) {
+        let platformsToBuild = [];
+        if (!platform) {
+            // Keine Plattform angegeben - baue für aktuelle Plattform
+            const currentPlatform = process.platform;
+            if (currentPlatform === 'win32') {
+                platformsToBuild = ['windows'];
+                logInfo('Erstelle Server-Build für aktuelle Plattform (Windows)');
+            } else if (currentPlatform === 'darwin') {
+                platformsToBuild = ['macos'];
+                logInfo('Erstelle Server-Build für aktuelle Plattform (macOS)');
+            } else if (currentPlatform === 'linux') {
+                // Für Linux baue für die aktuelle Architektur
+                const arch = process.arch;
+                if (arch === 'arm64') {
+                    platformsToBuild = ['linux-arm64'];
+                    logInfo('Erstelle Server-Build für aktuelle Plattform (Linux ARM64)');
+                } else {
+                    platformsToBuild = ['linux-x64'];
+                    logInfo('Erstelle Server-Build für aktuelle Plattform (Linux x64)');
+                }
+            } else {
+                logError(`Unbekannte Plattform: ${currentPlatform}`);
+                process.exit(1);
+            }
+        } else if (platform === 'all') {
+            platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
+            logInfo('Erstelle Server-Builds für alle Plattformen');
+        } else if (platform === 'linux') {
+            if (arch === 'x64') {
+                platformsToBuild = ['linux-x64'];
+                logInfo('Erstelle Linux Server-Build (nur x64)');
+            } else if (arch === 'arm64') {
+                platformsToBuild = ['linux-arm64'];
+                logInfo('Erstelle Linux Server-Build (nur ARM64)');
+            } else if (!arch) {
+                platformsToBuild = ['linux-x64', 'linux-arm64'];
+                logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
+            } else {
+                logError(`Unbekannte Linux-Architektur: ${arch}`);
+                logInfo('Verwenden Sie "server:linux:x64" oder "server:linux:arm64"');
+                process.exit(1);
+            }
+        } else if (serverBuilds[platform]) {
             platformsToBuild = [platform];
             logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
-        } else if (platform) {
+        } else {
             logError(`Unbekannte Plattform: ${platform}`);
+            logInfo('Verwenden Sie "server" für aktuelle Plattform, "server:all" für alle Plattformen');
+            logInfo('oder "server:windows", "server:macos", "server:linux"');
+            console.log('');
             showHelp();
             process.exit(1);
-        } else {
-            logInfo('Erstelle Server-Builds für alle Plattformen');
         }
         
         // Führe Builds aus
@@ -331,8 +405,100 @@ function main() {
     }
     // Desktop Builds
     else if (buildType === 'desktop') {
-        const desktopPlatform = platform || 'current';
+        let desktopPlatform = platform || 'current';
+        
+        // Handle linux:x64 or linux:arm64
+        if (platform === 'linux' && arch) {
+            desktopPlatform = `linux:${arch}`;
+        }
+        
         buildDesktop(desktopPlatform);
+    }
+    // Alle Builds (Server + Desktop)
+    else if (buildType === 'all') {
+        logHeader('Vollständiger Build (Server + Desktop)');
+        logInfo('Erstelle alle Server-Executables und Desktop-Apps für alle Plattformen');
+        console.log('');
+        
+        // 1. Server Builds
+        logHeader('Phase 1: Server-Executables Build (pkg)');
+        
+        // Prüfe und installiere pkg
+        if (!checkPkgInstalled()) {
+            if (!installPkg()) {
+                process.exit(1);
+            }
+        } else {
+            logSuccess('pkg ist bereits installiert');
+        }
+        
+        // Erstelle dist-server Verzeichnis
+        createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
+        
+        // Alle Server-Plattformen
+        const platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
+        logInfo('Erstelle Server-Builds für alle Plattformen');
+        
+        console.log('');
+        const serverResults = {};
+        for (const plt of platformsToBuild) {
+            serverResults[plt] = buildServerPlatform(plt);
+            console.log('');
+        }
+        
+        // Server Build Zusammenfassung
+        logHeader('Server Build Zusammenfassung');
+        
+        let serverSuccessCount = 0;
+        let serverFailCount = 0;
+        
+        for (const [plt, success] of Object.entries(serverResults)) {
+            const config = serverBuilds[plt];
+            if (success) {
+                logSuccess(`${config.icon} ${config.name}: ${config.output}`);
+                serverSuccessCount++;
+            } else {
+                logError(`${config.icon} ${config.name}: Fehlgeschlagen`);
+                serverFailCount++;
+            }
+        }
+        
+        console.log('');
+        if (serverFailCount === 0) {
+            logSuccess(`Alle ${serverSuccessCount} Server-Builds erfolgreich erstellt!`);
+        } else {
+            logError(`${serverFailCount} Server-Build(s) fehlgeschlagen, ${serverSuccessCount} erfolgreich`);
+        }
+        
+        // 2. Desktop Builds
+        console.log('');
+        logHeader('Phase 2: Desktop-App Build (Electron)');
+        const desktopSuccess = buildDesktop('all');
+        
+        // Gesamtzusammenfassung
+        console.log('');
+        logHeader('Gesamtzusammenfassung');
+        
+        if (serverFailCount === 0 && desktopSuccess) {
+            logSuccess(`✓ Server-Builds: ${serverSuccessCount}/4 erfolgreich`);
+            logSuccess(`✓ Desktop-Builds: Erfolgreich`);
+            console.log('');
+            logSuccess('Alle Builds erfolgreich abgeschlossen!');
+            console.log('');
+            logInfo('Ausgabeverzeichnisse:');
+            logInfo('  • Server-Executables: dist-server/');
+            logInfo('  • Desktop-Apps: dist-desktop/');
+        } else {
+            if (serverFailCount > 0) {
+                logError(`✗ Server-Builds: ${serverFailCount} fehlgeschlagen`);
+            }
+            if (!desktopSuccess) {
+                logError(`✗ Desktop-Builds: Fehlgeschlagen`);
+            }
+            console.log('');
+            logError('Einige Builds sind fehlgeschlagen. Bitte Fehler überprüfen.');
+            process.exit(1);
+        }
     }
     // Unbekanntes Kommando
     else {

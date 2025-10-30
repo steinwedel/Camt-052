@@ -1,6 +1,6 @@
 {
   "name": "camt52-viewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CAMT.052 v8 XML transaction viewer",
   "main": "electron.js",
   "bin": "server.js",
@@ -10,7 +10,7 @@
     "electron": "electron .",
     "electron:dev": "electron . --dev",
     "build": "node build.js",
-    "build:server": "node build.js server",
+    "build:server": "node build.js server:all",
     "build:server:win": "node build.js server:windows",
     "build:server:mac": "node build.js server:macos",
     "build:server:linux": "node build.js server:linux",
@@ -52,6 +52,7 @@
   "build": {
     "appId": "com.camt52viewer.app",
     "productName": "CAMT.052 Viewer",
+    "artifactName": "camt.052-desktop-viewer-${os}.${ext}",
     "directories": {
       "output": "dist-desktop"
     },
@@ -69,6 +70,7 @@
     "mac": {
       "category": "public.app-category.finance",
       "icon": "build/icon.icns",
+      "artifactName": "camt.052-desktop-viewer-macOS-universal.${ext}",
       "target": [
         {
           "target": "dmg",
@@ -87,10 +89,11 @@
     },
     "linux": {
       "icon": "build/icon.png",
+      "artifactName": "camt.052-desktop-viewer-linux-${arch}.${ext}",
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": ["x64", "arm64"]
         }
       ],
       "category": "Finance"
