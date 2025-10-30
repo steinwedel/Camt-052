@@ -237,6 +237,9 @@ function showHelp() {
     logHeader('CAMT.052 Viewer - Build Script');
     logInfo('Verfügbare Optionen:');
     console.log('');
+    log('Alle Builds:', colors.bright);
+    logInfo('  all                 - Server + Desktop für alle Plattformen');
+    console.log('');
     log('Server-Executables (pkg):', colors.bright);
     logInfo('  server              - Alle Plattformen');
     logInfo('  server:windows      - Nur Windows');
