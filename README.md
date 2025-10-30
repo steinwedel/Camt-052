@@ -133,6 +133,12 @@ node build.js server:macos
 
 # Nur Linux (erstellt beide Architekturen: x64 und ARM64)
 node build.js server:linux
+
+# Nur Linux x64
+node build.js server:linux:x64
+
+# Nur Linux ARM64
+node build.js server:linux:arm64
 ```
 
 **Desktop-Apps (Electron - Direkt ausführbare Dateien):**
@@ -151,6 +157,12 @@ node build.js desktop:macos
 
 # Nur Linux (erstellt beide Architekturen: x64 und ARM64)
 node build.js desktop:linux
+
+# Nur Linux x64
+node build.js desktop:linux:x64
+
+# Nur Linux ARM64
+node build.js desktop:linux:arm64
 ```
 
 Die Desktop-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
