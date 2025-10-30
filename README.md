@@ -30,11 +30,11 @@ Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen
 ### Desktop-Anwendungen (Direkt ausführbar)
 
 **Windows:**
-- [CAMT.052 Viewer 1.0.0.exe](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer.1.0.0.exe) (Portable, ~100-150 MB)
+- [camt.052-desktop-viewer-windows.exe](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-windows.exe) (Portable, ~100-150 MB)
   - Einfach herunterladen und per Doppelklick starten - keine Installation nötig!
 
 **macOS:**
-- [CAMT.052 Viewer-1.0.0-universal.dmg](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer-1.0.0-universal.dmg) (Universal Binary, ~200-250 MB)
+- [camt.052-desktop-viewer-macOS-universal.dmg](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-macOS-universal.dmg) (Universal Binary, ~200-250 MB)
   - Funktioniert auf Intel und Apple Silicon Macs
   - DMG öffnen, App in Programme-Ordner ziehen und starten
 
@@ -48,28 +48,35 @@ Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen
 > 👉 [Apple Support: App aus unbekannter Quelle öffnen](https://support.apple.com/de-de/guide/mac-help/mchleab3a043/mac)
 
 **Linux:**
-- [CAMT.052 Viewer-1.0.0.AppImage](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/CAMT.052.Viewer-1.0.0.AppImage) (~150-200 MB)
-  - Ausführbar machen: `chmod +x CAMT.052.Viewer-1.0.0.AppImage`
-  - Starten: `./CAMT.052.Viewer-1.0.0.AppImage`
+- [camt.052-desktop-viewer-linux-x64.AppImage](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-linux-x64.AppImage) (Intel/AMD 64-bit, ~150-200 MB)
+  - Ausführbar machen: `chmod +x camt.052-desktop-viewer-linux-x64.AppImage`
+  - Starten: `./camt.052-desktop-viewer-linux-x64.AppImage`
+
+- [camt.052-desktop-viewer-linux-arm64.AppImage](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-linux-arm64.AppImage) (ARM 64-bit, ~150-200 MB)
+  - Ausführbar machen: `chmod +x camt.052-desktop-viewer-linux-arm64.AppImage`
+  - Starten: `./camt.052-desktop-viewer-linux-arm64.AppImage`
 
 ### Server-Executables (Standalone)
 
 **Windows:**
-- [camt52-viewer-windows.exe](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-windows.exe) (~38 MB)
+- [camt.052-web-viewer-windows.exe](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-web-viewer-windows.exe) (~38 MB)
 
 **macOS:**
-- [camt52-viewer-macos](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-macos) (~51 MB)
-  - Ausführbar machen: `chmod +x camt52-viewer-macos`
+- [camt.052-web-viewer-macOS-universal](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-web-viewer-macOS-universal) (~51 MB)
+  - Ausführbar machen: `chmod +x camt.052-web-viewer-macOS-universal`
 
 **Linux:**
-- [camt52-viewer-linux](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/camt52-viewer-linux) (~46 MB)
-  - Ausführbar machen: `chmod +x camt52-viewer-linux`
+- [camt.052-web-viewer-linux-x64](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-web-viewer-linux-x64) (Intel/AMD 64-bit, ~46 MB)
+  - Ausführbar machen: `chmod +x camt.052-web-viewer-linux-x64`
+
+- [camt.052-web-viewer-linux-arm64](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-web-viewer-linux-arm64) (ARM 64-bit, ~46 MB)
+  - Ausführbar machen: `chmod +x camt.052-web-viewer-linux-arm64`
 
 ### Checksums (SHA256)
 
 Zur Verifizierung der Downloads:
-- [SHA256SUMS-server.txt](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/SHA256SUMS-server.txt)
-- [SHA256SUMS-desktop.txt](https://github.com/steinwedel/Camt-052/releases/download/v1.0.0/SHA256SUMS-desktop.txt)
+- [SHA256SUMS-server.txt](https://github.com/steinwedel/Camt-052/releases/latest/download/SHA256SUMS-server.txt)
+- [SHA256SUMS-desktop.txt](https://github.com/steinwedel/Camt-052/releases/latest/download/SHA256SUMS-desktop.txt)
 
 **Alle Releases anzeigen:** [GitHub Releases](https://github.com/steinwedel/Camt-052/releases)
 
@@ -115,7 +122,7 @@ node build.js server:windows
 # Nur macOS
 node build.js server:macos
 
-# Nur Linux
+# Nur Linux (erstellt beide Architekturen: x64 und ARM64)
 node build.js server:linux
 ```
 
@@ -133,14 +140,14 @@ node build.js desktop:windows
 # Nur macOS
 node build.js desktop:macos
 
-# Nur Linux
+# Nur Linux (erstellt beide Architekturen: x64 und ARM64)
 node build.js desktop:linux
 ```
 
 Die Desktop-Builds erstellen **direkt ausführbare Dateien** ohne Installation:
 - **macOS**: DMG Installer (Universal Binary für Intel + Apple Silicon)
 - **Windows**: Portable .exe (keine Installation nötig)
-- **Linux**: AppImage (direkt ausführbar)
+- **Linux**: AppImage (direkt ausführbar, x64 und ARM64)
 
 Das Script:
 - ✅ Prüft automatisch ob `pkg` installiert ist
@@ -158,14 +165,14 @@ Das Script:
 npm run build:server           # Alle Plattformen
 npm run build:server:win       # Windows
 npm run build:server:mac       # macOS
-npm run build:server:linux     # Linux
+npm run build:server:linux     # Linux (x64 und ARM64)
 
 # Desktop-Apps
 npm run build:desktop          # Aktuelle Plattform
 npm run build:desktop:all      # Alle Plattformen
 npm run build:desktop:win      # Windows
 npm run build:desktop:mac      # macOS
-npm run build:desktop:linux    # Linux
+npm run build:desktop:linux    # Linux (x64 und ARM64)
 ```
 
 ### Erstellte Dateien
@@ -174,23 +181,26 @@ npm run build:desktop:linux    # Linux
 
 ```
 dist-server/
-├── camt52-viewer-windows.exe    # Windows (ca. 50-70 MB)
-├── camt52-viewer-macos          # macOS (ca. 50-70 MB)
-└── camt52-viewer-linux          # Linux (ca. 50-70 MB)
+├── camt.052-web-viewer-windows.exe          # Windows (ca. 50-70 MB)
+├── camt.052-web-viewer-macOS-universal      # macOS Universal (ca. 50-70 MB)
+├── camt.052-web-viewer-linux-x64            # Linux Intel/AMD (ca. 50-70 MB)
+└── camt.052-web-viewer-linux-arm64          # Linux ARM (ca. 50-70 MB)
 ```
 
 **Desktop-Apps** (im `dist-desktop/` Verzeichnis):
 
 ```
 dist-desktop/
-├── CAMT.052 Viewer-1.0.0.exe           # Windows Portable (ca. 100-150 MB)
-├── CAMT.052 Viewer-1.0.0.dmg           # macOS DMG Installer (ca. 200-250 MB)
-└── CAMT.052 Viewer-1.0.0.AppImage      # Linux (ca. 150-200 MB)
+├── camt.052-desktop-viewer-windows.exe              # Windows Portable (ca. 100-150 MB)
+├── camt.052-desktop-viewer-macOS-universal.dmg      # macOS DMG Installer (ca. 200-250 MB)
+├── camt.052-desktop-viewer-linux-x64.AppImage       # Linux Intel/AMD (ca. 150-200 MB)
+└── camt.052-desktop-viewer-linux-arm64.AppImage     # Linux ARM (ca. 150-200 MB)
 ```
 
 **Hinweis**: 
 - Die Desktop-Apps sind größer als Server-Executables, da sie eine vollständige Chromium-Engine enthalten
 - Die macOS DMG ist eine Universal Binary (Intel + Apple Silicon)
+- Linux-Builds sind für beide Architekturen verfügbar (x64 und ARM64)
 
 ### Executables ausführen
 
@@ -199,25 +209,27 @@ dist-desktop/
 **Windows:**
 ```bash
 # Doppelklick auf die .exe Datei oder im Terminal:
-camt52-viewer-windows.exe
+camt.052-web-viewer-windows.exe
 ```
 
 **macOS:**
 ```bash
 # Ausführbar machen (einmalig):
-chmod +x camt52-viewer-macos
+chmod +x camt.052-web-viewer-macOS-universal
 
 # Starten:
-./camt52-viewer-macos
+./camt.052-web-viewer-macOS-universal
 ```
 
 **Linux:**
 ```bash
-# Ausführbar machen (einmalig):
-chmod +x camt52-viewer-linux
+# Intel/AMD 64-bit:
+chmod +x camt.052-web-viewer-linux-x64
+./camt.052-web-viewer-linux-x64
 
-# Starten:
-./camt52-viewer-linux
+# ARM 64-bit:
+chmod +x camt.052-web-viewer-linux-arm64
+./camt.052-web-viewer-linux-arm64
 ```
 
 #### Desktop-Apps (Direkt ausführbar)
@@ -225,14 +237,14 @@ chmod +x camt52-viewer-linux
 **Windows:**
 ```bash
 # Einfach die portable .exe Datei starten:
-"CAMT.052 Viewer-1.0.0.exe"
+camt.052-desktop-viewer-windows.exe
 # Oder per Doppelklick - keine Installation erforderlich!
 ```
 
 **macOS:**
 ```bash
 # DMG öffnen und App in Applications-Ordner ziehen:
-open "CAMT.052 Viewer-1.0.0.dmg"
+open camt.052-desktop-viewer-macOS-universal.dmg
 # Dann .app aus Applications-Ordner starten
 # Oder per Doppelklick auf die DMG-Datei
 
@@ -242,9 +254,14 @@ open "CAMT.052 Viewer-1.0.0.dmg"
 
 **Linux:**
 ```bash
-# AppImage ausführbar machen und starten:
-chmod +x "CAMT.052 Viewer-1.0.0.AppImage"
-./"CAMT.052 Viewer-1.0.0.AppImage"
+# Intel/AMD 64-bit:
+chmod +x camt.052-desktop-viewer-linux-x64.AppImage
+./camt.052-desktop-viewer-linux-x64.AppImage
+
+# ARM 64-bit:
+chmod +x camt.052-desktop-viewer-linux-arm64.AppImage
+./camt.052-desktop-viewer-linux-arm64.AppImage
+
 # Oder per Doppelklick
 ```
 
@@ -279,8 +296,8 @@ Die erstellten Executables können einfach verteilt werden:
 - **Kompression**: GZip
 - **Plattformen**: 
   - Windows: x64
-  - macOS: x64
-  - Linux: x64
+  - macOS: x64 (Universal Binary)
+  - Linux: x64 und ARM64
 
 ### Fehlerbehebung
 
@@ -292,14 +309,16 @@ npm install --save-dev pkg@5.8.1
 **Problem**: Executable startet nicht auf macOS
 ```bash
 # Sicherheitseinstellungen umgehen:
-xattr -d com.apple.quarantine camt52-viewer-macos
-chmod +x camt52-viewer-macos
+xattr -d com.apple.quarantine camt.052-web-viewer-macOS-universal
+chmod +x camt.052-web-viewer-macOS-universal
 ```
 
 **Problem**: Executable startet nicht auf Linux
 ```bash
 # Ausführungsrechte setzen:
-chmod +x camt52-viewer-linux
+chmod +x camt.052-web-viewer-linux-x64
+# oder für ARM:
+chmod +x camt.052-web-viewer-linux-arm64
 ```
 
 ## 💻 Verwendung
