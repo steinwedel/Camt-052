@@ -198,6 +198,15 @@ function parseCamt052(xmlData, fileName = '') {
         const statementId = rpt.Id || 'N/A';
         const creationDate = rpt.CreDtTm || '';
         
+        // Extract transaction summary (TxsSummry)
+        const txsSummary = rpt.TxsSummry || {};
+        const totalEntries = getNestedValue(txsSummary, 'TtlNtries.NbOfNtries') || 'N/A';
+        const totalEntriesSum = getNestedValue(txsSummary, 'TtlNtries.Sum') || 'N/A';
+        const totalCreditEntries = getNestedValue(txsSummary, 'TtlCdtNtries.NbOfNtries') || 'N/A';
+        const totalCreditSum = getNestedValue(txsSummary, 'TtlCdtNtries.Sum') || 'N/A';
+        const totalDebitEntries = getNestedValue(txsSummary, 'TtlDbtNtries.NbOfNtries') || 'N/A';
+        const totalDebitSum = getNestedValue(txsSummary, 'TtlDbtNtries.Sum') || 'N/A';
+        
         // Get statement date from closing balance or creation date
         let statementDate = 'N/A';
         const balanceData = rpt.Bal;
@@ -218,16 +227,45 @@ function parseCamt052(xmlData, fileName = '') {
             owner: getNestedValue(account, 'Ownr.Nm') || 'N/A'
         };
 
-        // Extract balances (reuse balanceData from above)
+        // Extract balances with availability information
         if (balanceData) {
             const balArray = Array.isArray(balanceData) ? balanceData : [balanceData];
-            balances = balArray.map(bal => ({
-                type: getNestedValue(bal, 'Tp.CdOrPrtry.Cd') || 'N/A',
-                amount: getNestedValue(bal, 'Amt.#text') || getNestedValue(bal, 'Amt') || '0',
-                currency: getNestedValue(bal, 'Amt.@_Ccy') || accountInfo.currency,
-                creditDebit: bal.CdtDbtInd || 'N/A',
-                date: bal.Dt?.Dt || bal.Dt || 'N/A'
-            }));
+            balances = balArray.map(bal => {
+                // Extract availability information
+                const availability = bal.Avlbty;
+                let availabilityInfo = [];
+                if (availability) {
+                    const avlArray = Array.isArray(availability) ? availability : [availability];
+                    availabilityInfo = avlArray.map(avl => ({
+                        date: avl.Dt?.ActlDt || avl.Dt?.NbOfDays || 'N/A',
+                        amount: getNestedValue(avl, 'Amt.#text') || getNestedValue(avl, 'Amt') || '0',
+                        currency: getNestedValue(avl, 'Amt.@_Ccy') || accountInfo.currency,
+                        creditDebit: avl.CdtDbtInd || 'N/A'
+                    }));
+                }
+                
+                return {
+                    type: getNestedValue(bal, 'Tp.CdOrPrtry.Cd') || 'N/A',
+                    subType: getNestedValue(bal, 'Tp.SubTp.Cd') || getNestedValue(bal, 'Tp.SubTp.Prtry') || 'N/A',
+                    amount: getNestedValue(bal, 'Amt.#text') || getNestedValue(bal, 'Amt') || '0',
+                    currency: getNestedValue(bal, 'Amt.@_Ccy') || accountInfo.currency,
+                    creditDebit: bal.CdtDbtInd || 'N/A',
+                    date: bal.Dt?.Dt || bal.Dt || 'N/A',
+                    availability: availabilityInfo
+                };
+            });
+        }
+        
+        // Store transaction summary for this report
+        if (Object.keys(accountInfo).length === 0) {
+            accountInfo.transactionSummary = {
+                totalEntries: totalEntries,
+                totalEntriesSum: totalEntriesSum,
+                totalCreditEntries: totalCreditEntries,
+                totalCreditSum: totalCreditSum,
+                totalDebitEntries: totalDebitEntries,
+                totalDebitSum: totalDebitSum
+            };
         }
 
         // Extract entries (transactions)
@@ -358,6 +396,94 @@ function parseCamt052(xmlData, fileName = '') {
                 const creditorAgentClrSysId = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.ClrSysMmbId.ClrSysId.Cd') || 'N/A';
                 const creditorAgentMmbId = getNestedValue(tx, 'RltdAgts.CdtrAgt.FinInstnId.ClrSysMmbId.MmbId') || 'N/A';
 
+                // Extract charges information
+                const charges = tx.Chrgs || entry.Chrgs;
+                let chargesInfo = [];
+                if (charges) {
+                    const totalCharges = getNestedValue(charges, 'TtlChrgsAndTaxAmt.#text') || 
+                                        getNestedValue(charges, 'TtlChrgsAndTaxAmt') || 'N/A';
+                    const chargeRecords = charges.Rcrd;
+                    if (chargeRecords) {
+                        const chargeArray = Array.isArray(chargeRecords) ? chargeRecords : [chargeRecords];
+                        chargesInfo = chargeArray.map(chrg => ({
+                            amount: getNestedValue(chrg, 'Amt.#text') || getNestedValue(chrg, 'Amt') || '0',
+                            currency: getNestedValue(chrg, 'Amt.@_Ccy') || currency,
+                            creditDebit: chrg.CdtDbtInd || 'N/A',
+                            type: getNestedValue(chrg, 'Tp.Cd') || getNestedValue(chrg, 'Tp.Prtry.Id') || 'N/A',
+                            rate: chrg.Rate || 'N/A',
+                            bearer: chrg.Br || 'N/A'
+                        }));
+                    }
+                }
+
+                // Extract interest information
+                const interest = tx.Intrst || entry.Intrst;
+                let interestInfo = [];
+                if (interest) {
+                    const totalInterest = getNestedValue(interest, 'TtlIntrstAndTaxAmt.#text') || 
+                                         getNestedValue(interest, 'TtlIntrstAndTaxAmt') || 'N/A';
+                    const interestRecords = interest.Rcrd;
+                    if (interestRecords) {
+                        const intArray = Array.isArray(interestRecords) ? interestRecords : [interestRecords];
+                        interestInfo = intArray.map(int => ({
+                            amount: getNestedValue(int, 'Amt.#text') || getNestedValue(int, 'Amt') || '0',
+                            currency: getNestedValue(int, 'Amt.@_Ccy') || currency,
+                            creditDebit: int.CdtDbtInd || 'N/A',
+                            type: getNestedValue(int, 'Tp.Cd') || getNestedValue(int, 'Tp.Prtry') || 'N/A',
+                            rate: getNestedValue(int, 'Rate.Tp.Pctg') || 'N/A',
+                            fromToDate: int.FrToDt ? `${int.FrToDt.FrDtTm || int.FrToDt.FrDt || ''} - ${int.FrToDt.ToDtTm || int.FrToDt.ToDt || ''}` : 'N/A'
+                        }));
+                    }
+                }
+
+                // Extract tax information
+                const tax = tx.Tax;
+                let taxInfo = null;
+                if (tax) {
+                    taxInfo = {
+                        creditor: getNestedValue(tax, 'Cdtr.TaxId') || 'N/A',
+                        debtor: getNestedValue(tax, 'Dbtr.TaxId') || 'N/A',
+                        administrationZone: tax.AdmstnZone || 'N/A',
+                        referenceNumber: tax.RefNb || 'N/A',
+                        method: tax.Mtd || 'N/A',
+                        totalTaxableBaseAmount: getNestedValue(tax, 'TtlTaxblBaseAmt.#text') || 'N/A',
+                        totalTaxAmount: getNestedValue(tax, 'TtlTaxAmt.#text') || 'N/A',
+                        date: tax.Dt || 'N/A'
+                    };
+                }
+
+                // Extract return information
+                const returnInfo = tx.RtrInf;
+                let returnData = null;
+                if (returnInfo) {
+                    returnData = {
+                        originalBankTransactionCode: getNestedValue(returnInfo, 'OrgnlBkTxCd.Domn.Cd') || 'N/A',
+                        originator: getNestedValue(returnInfo, 'Orgtr.Nm') || 'N/A',
+                        reason: getNestedValue(returnInfo, 'Rsn.Cd') || getNestedValue(returnInfo, 'Rsn.Prtry') || 'N/A',
+                        additionalInfo: returnInfo.AddtlInf ? (Array.isArray(returnInfo.AddtlInf) ? returnInfo.AddtlInf.join(' ') : returnInfo.AddtlInf) : 'N/A'
+                    };
+                }
+
+                // Extract card transaction information
+                const cardTx = tx.CardTx || entry.CardTx;
+                let cardInfo = null;
+                if (cardTx) {
+                    cardInfo = {
+                        cardNumber: getNestedValue(cardTx, 'Card.PlainCardData.PAN') || 'N/A',
+                        cardSequenceNumber: getNestedValue(cardTx, 'Card.PlainCardData.CardSeqNb') || 'N/A',
+                        expiryDate: getNestedValue(cardTx, 'Card.PlainCardData.XpryDt') || 'N/A',
+                        cardBrand: getNestedValue(cardTx, 'Card.CardBrnd.Id') || 'N/A',
+                        poiId: getNestedValue(cardTx, 'POI.Id.Id') || 'N/A',
+                        poiSystemName: getNestedValue(cardTx, 'POI.SysNm') || 'N/A'
+                    };
+                }
+
+                // Extract ultimate parties
+                const ultimateDebtor = getNestedValue(tx, 'RltdPties.UltmtDbtr.Pty.Nm') || 
+                                      getNestedValue(tx, 'RltdPties.UltmtDbtr.Nm') || 'N/A';
+                const ultimateCreditor = getNestedValue(tx, 'RltdPties.UltmtCdtr.Pty.Nm') || 
+                                        getNestedValue(tx, 'RltdPties.UltmtCdtr.Nm') || 'N/A';
+
                 // Extract additional entry information
                 const additionalInfo = entry.AddtlNtryInf || 'N/A';
 
@@ -386,6 +512,8 @@ function parseCamt052(xmlData, fileName = '') {
                     debtorAccount: debtorAccount,
                     creditor: creditor,
                     creditorAccount: creditorAccount,
+                    ultimateDebtor: ultimateDebtor,
+                    ultimateCreditor: ultimateCreditor,
                     sender: debtor,
                     senderAccount: debtorAccount,
                     receiver: creditor,
@@ -438,6 +566,12 @@ function parseCamt052(xmlData, fileName = '') {
                     additionalInfo: additionalInfo,
                     statusCode: statusCode,
                     status: statusCode, // Send raw code for client-side translation
+                    // New fields based on XSD schema
+                    charges: chargesInfo.length > 0 ? chargesInfo : null,
+                    interest: interestInfo.length > 0 ? interestInfo : null,
+                    tax: taxInfo,
+                    returnInfo: returnData,
+                    cardTransaction: cardInfo,
                     rawXML: rawXML,
                     fileName: fileName
                 };
