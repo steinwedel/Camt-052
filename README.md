@@ -111,6 +111,12 @@ Sie können eigenständige ausführbare Dateien für Windows, macOS und Linux er
 
 Das `build.js` Script bietet eine benutzerfreundliche Oberfläche für **beide Build-Typen**:
 
+**Alle Builds (Server + Desktop):**
+```bash
+# Erstellt alle Server-Executables UND Desktop-Apps für alle Plattformen
+node build.js all
+```
+
 **Server-Executables (Standalone):**
 ```bash
 # Alle Plattformen erstellen
