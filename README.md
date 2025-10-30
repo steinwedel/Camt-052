@@ -120,7 +120,7 @@ node build.js all
 **Server-Executables (Standalone):**
 ```bash
 # Alle Plattformen erstellen
-node build.js server
+node build.js server:all
 
 # Nur Windows
 node build.js server:windows
@@ -168,7 +168,7 @@ Das Script:
 
 ```bash
 # Server-Executables
-npm run build:server           # Alle Plattformen
+npm run build:server           # Alle Plattformen (entspricht server:all)
 npm run build:server:win       # Windows
 npm run build:server:mac       # macOS
 npm run build:server:linux     # Linux (x64 und ARM64)
