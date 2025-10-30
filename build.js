@@ -346,6 +346,92 @@ function main() {
         const desktopPlatform = platform || 'current';
         buildDesktop(desktopPlatform);
     }
+    // Alle Builds (Server + Desktop)
+    else if (buildType === 'all') {
+        logHeader('Vollständiger Build (Server + Desktop)');
+        logInfo('Erstelle alle Server-Executables und Desktop-Apps für alle Plattformen');
+        console.log('');
+        
+        // 1. Server Builds
+        logHeader('Phase 1: Server-Executables Build (pkg)');
+        
+        // Prüfe und installiere pkg
+        if (!checkPkgInstalled()) {
+            if (!installPkg()) {
+                process.exit(1);
+            }
+        } else {
+            logSuccess('pkg ist bereits installiert');
+        }
+        
+        // Erstelle dist-server Verzeichnis
+        createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
+        
+        // Alle Server-Plattformen
+        const platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
+        logInfo('Erstelle Server-Builds für alle Plattformen');
+        
+        console.log('');
+        const serverResults = {};
+        for (const plt of platformsToBuild) {
+            serverResults[plt] = buildServerPlatform(plt);
+            console.log('');
+        }
+        
+        // Server Build Zusammenfassung
+        logHeader('Server Build Zusammenfassung');
+        
+        let serverSuccessCount = 0;
+        let serverFailCount = 0;
+        
+        for (const [plt, success] of Object.entries(serverResults)) {
+            const config = serverBuilds[plt];
+            if (success) {
+                logSuccess(`${config.icon} ${config.name}: ${config.output}`);
+                serverSuccessCount++;
+            } else {
+                logError(`${config.icon} ${config.name}: Fehlgeschlagen`);
+                serverFailCount++;
+            }
+        }
+        
+        console.log('');
+        if (serverFailCount === 0) {
+            logSuccess(`Alle ${serverSuccessCount} Server-Builds erfolgreich erstellt!`);
+        } else {
+            logError(`${serverFailCount} Server-Build(s) fehlgeschlagen, ${serverSuccessCount} erfolgreich`);
+        }
+        
+        // 2. Desktop Builds
+        console.log('');
+        logHeader('Phase 2: Desktop-App Build (Electron)');
+        const desktopSuccess = buildDesktop('all');
+        
+        // Gesamtzusammenfassung
+        console.log('');
+        logHeader('Gesamtzusammenfassung');
+        
+        if (serverFailCount === 0 && desktopSuccess) {
+            logSuccess(`✓ Server-Builds: ${serverSuccessCount}/4 erfolgreich`);
+            logSuccess(`✓ Desktop-Builds: Erfolgreich`);
+            console.log('');
+            logSuccess('Alle Builds erfolgreich abgeschlossen!');
+            console.log('');
+            logInfo('Ausgabeverzeichnisse:');
+            logInfo('  • Server-Executables: dist-server/');
+            logInfo('  • Desktop-Apps: dist-desktop/');
+        } else {
+            if (serverFailCount > 0) {
+                logError(`✗ Server-Builds: ${serverFailCount} fehlgeschlagen`);
+            }
+            if (!desktopSuccess) {
+                logError(`✗ Desktop-Builds: Fehlgeschlagen`);
+            }
+            console.log('');
+            logError('Einige Builds sind fehlgeschlagen. Bitte Fehler überprüfen.');
+            process.exit(1);
+        }
+    }
     // Unbekanntes Kommando
     else {
         logError(`Unbekanntes Kommando: ${buildCommand}`);
