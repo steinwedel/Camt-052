@@ -1,6 +1,6 @@
 {
   "name": "camt52-viewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CAMT.052 v8 XML transaction viewer",
   "main": "electron.js",
   "bin": "server.js",
