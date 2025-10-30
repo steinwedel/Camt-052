@@ -89,6 +89,7 @@
     },
     "linux": {
       "icon": "build/icon.png",
+      "artifactName": "camt.052-desktop-viewer-linux-${arch}.${ext}",
       "target": [
         {
           "target": "AppImage",
