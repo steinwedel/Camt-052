@@ -10,12 +10,16 @@
  *   node build.js server:all          - Server-Executables für alle Plattformen
  *   node build.js server:windows      - Server-Executable nur für Windows
  *   node build.js server:macos        - Server-Executable nur für macOS
- *   node build.js server:linux        - Server-Executable nur für Linux (x64 + ARM64)
+ *   node build.js server:linux        - Server-Executable für Linux (x64 + ARM64)
+ *   node build.js server:linux:x64    - Server-Executable nur für Linux x64
+ *   node build.js server:linux:arm64  - Server-Executable nur für Linux ARM64
  *   node build.js desktop             - Desktop-App für aktuelle Plattform
  *   node build.js desktop:all         - Desktop-Apps für alle Plattformen
  *   node build.js desktop:windows     - Desktop-App nur für Windows
  *   node build.js desktop:macos       - Desktop-App nur für macOS
- *   node build.js desktop:linux       - Desktop-App nur für Linux (x64 + ARM64)
+ *   node build.js desktop:linux       - Desktop-App für Linux (x64 + ARM64)
+ *   node build.js desktop:linux:x64   - Desktop-App nur für Linux x64
+ *   node build.js desktop:linux:arm64 - Desktop-App nur für Linux ARM64
  */
 
 const { execSync } = require('child_process');
@@ -247,14 +251,18 @@ function showHelp() {
     logInfo('  server:all          - Alle Plattformen');
     logInfo('  server:windows      - Nur Windows');
     logInfo('  server:macos        - Nur macOS');
-    logInfo('  server:linux        - Nur Linux (x64 + ARM64)');
+    logInfo('  server:linux        - Linux (x64 + ARM64)');
+    logInfo('  server:linux:x64    - Nur Linux x64');
+    logInfo('  server:linux:arm64  - Nur Linux ARM64');
     console.log('');
     log('Desktop-Apps (Electron):', colors.bright);
     logInfo('  desktop             - Aktuelle Plattform');
     logInfo('  desktop:all         - Alle Plattformen');
     logInfo('  desktop:windows     - Nur Windows');
     logInfo('  desktop:macos       - Nur macOS');
-    logInfo('  desktop:linux       - Nur Linux');
+    logInfo('  desktop:linux       - Linux (x64 + ARM64)');
+    logInfo('  desktop:linux:x64   - Nur Linux x64');
+    logInfo('  desktop:linux:arm64 - Nur Linux ARM64');
     console.log('');
     log('Ausgabeverzeichnisse:', colors.bright);
     logInfo('  Server-Builds:  dist-server/');
@@ -274,7 +282,11 @@ function main() {
     }
     
     // Parse Kommando (z.B. "server:windows" -> type="server", platform="windows")
-    const [buildType, platform] = buildCommand.split(':');
+    // oder "server:linux:x64" -> type="server", platform="linux", arch="x64"
+    const parts = buildCommand.split(':');
+    const buildType = parts[0];
+    const platform = parts[1];
+    const arch = parts[2]; // Optional: für linux:x64 oder linux:arm64
     
     // Server Builds
     if (buildType === 'server') {
@@ -321,8 +333,20 @@ function main() {
             platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
             logInfo('Erstelle Server-Builds für alle Plattformen');
         } else if (platform === 'linux') {
-            platformsToBuild = ['linux-x64', 'linux-arm64'];
-            logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
+            if (arch === 'x64') {
+                platformsToBuild = ['linux-x64'];
+                logInfo('Erstelle Linux Server-Build (nur x64)');
+            } else if (arch === 'arm64') {
+                platformsToBuild = ['linux-arm64'];
+                logInfo('Erstelle Linux Server-Build (nur ARM64)');
+            } else if (!arch) {
+                platformsToBuild = ['linux-x64', 'linux-arm64'];
+                logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
+            } else {
+                logError(`Unbekannte Linux-Architektur: ${arch}`);
+                logInfo('Verwenden Sie "server:linux:x64" oder "server:linux:arm64"');
+                process.exit(1);
+            }
         } else if (serverBuilds[platform]) {
             platformsToBuild = [platform];
             logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
@@ -373,7 +397,13 @@ function main() {
     }
     // Desktop Builds
     else if (buildType === 'desktop') {
-        const desktopPlatform = platform || 'current';
+        let desktopPlatform = platform || 'current';
+        
+        // Handle linux:x64 or linux:arm64
+        if (platform === 'linux' && arch) {
+            desktopPlatform = `linux:${arch}`;
+        }
+        
         buildDesktop(desktopPlatform);
     }
     // Alle Builds (Server + Desktop)
