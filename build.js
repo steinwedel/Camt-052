@@ -5,6 +5,7 @@
  * Erstellt ausführbare Dateien für Windows, macOS und Linux
  * 
  * Verwendung:
+ *   node build.js all                 - Server + Desktop für alle Plattformen
  *   node build.js server              - Server-Executables für alle Plattformen
  *   node build.js server:windows      - Server-Executable nur für Windows
  *   node build.js server:macos        - Server-Executable nur für macOS
