@@ -287,8 +287,11 @@ function main() {
         createDirectory(path.join(__dirname, 'dist-server'), 'dist-server');
         
         // Bestimme Plattformen
-        let platformsToBuild = ['windows', 'macos', 'linux'];
-        if (platform && serverBuilds[platform]) {
+        let platformsToBuild = ['windows', 'macos', 'linux-x64', 'linux-arm64'];
+        if (platform === 'linux') {
+            platformsToBuild = ['linux-x64', 'linux-arm64'];
+            logInfo('Erstelle Linux Server-Builds (x64 und ARM64)');
+        } else if (platform && serverBuilds[platform]) {
             platformsToBuild = [platform];
             logInfo(`Erstelle nur ${serverBuilds[platform].name} Server-Build`);
         } else if (platform) {
