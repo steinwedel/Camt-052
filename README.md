@@ -48,7 +48,7 @@ Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen
 > 👉 [Apple Support: App aus unbekannter Quelle öffnen](https://support.apple.com/de-de/guide/mac-help/mchleab3a043/mac)
 
 **Linux:**
-- [camt.052-desktop-viewer-linux-x64.AppImage](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-linux-x64.AppImage) (Intel/AMD 64-bit, ~150-200 MB)
+- [camt.052-desktop-viewer-linux-x86_64.AppImage](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-linux-x86_64.AppImage) (Intel/AMD 64-bit, ~150-200 MB)
   - Ausführbar machen: `chmod +x camt.052-desktop-viewer-linux-x64.AppImage`
   - Starten: `./camt.052-desktop-viewer-linux-x64.AppImage`
 
