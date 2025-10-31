@@ -30,7 +30,7 @@ Eine Node.js-Anwendung (Web und Desktop) zum Auslesen und Anzeigen von Buchungen
 ### Desktop-Anwendungen (Direkt ausführbar)
 
 **Windows:**
-- [camt.052-desktop-viewer-windows.exe](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-windows.exe) (Portable, ~100-150 MB)
+- [camt.052-desktop-viewer-win.exe](https://github.com/steinwedel/Camt-052/releases/latest/download/camt.052-desktop-viewer-win.exe) (Portable, ~100-150 MB)
   - Einfach herunterladen und per Doppelklick starten - keine Installation nötig!
 
 **macOS:**
