@@ -80,6 +80,7 @@
     },
     "win": {
       "icon": "build/icon.png",
+      "artifactName": "camt.052-desktop-viewer-windows.${ext}",
       "target": [
         {
           "target": "portable",
