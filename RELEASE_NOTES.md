@@ -31,13 +31,14 @@ Dies ist die erste offizielle Version des CAMT.052 Viewers.
 ### Server-Executables (Standalone)
 
 **Windows:**
-- `camt52-viewer-windows.exe`
+- `camt.052-web-viewer-windows.exe`
 
 **macOS:**
-- `camt52-viewer-macos`
+- `camt.052-web-viewer-macOS-universal`
 
 **Linux:**
-- `camt52-viewer-linux`
+- `camt.052-web-viewer-linux-x64` (Intel/AMD 64-bit)
+- `camt.052-web-viewer-linux-arm64` (ARM 64-bit)
 
 ## 🔐 Checksums (SHA256)
 
@@ -68,14 +69,26 @@ Siehe Checksum-Dateien zur Verifizierung der Downloads:
 
 **Windows:**
 ```cmd
-camt52-viewer-windows.exe
+camt.052-web-viewer-windows.exe
 ```
 Dann Browser öffnen: http://localhost:3001
 
-**macOS/Linux:**
+**macOS:**
 ```bash
-chmod +x camt52-viewer-macos  # oder camt52-viewer-linux
-./camt52-viewer-macos         # oder ./camt52-viewer-linux
+chmod +x camt.052-web-viewer-macOS-universal
+./camt.052-web-viewer-macOS-universal
+```
+Dann Browser öffnen: http://localhost:3001
+
+**Linux:**
+```bash
+# Intel/AMD 64-bit:
+chmod +x camt.052-web-viewer-linux-x64
+./camt.052-web-viewer-linux-x64
+
+# ARM 64-bit:
+chmod +x camt.052-web-viewer-linux-arm64
+./camt.052-web-viewer-linux-arm64
 ```
 Dann Browser öffnen: http://localhost:3001
 
